@@ -114,7 +114,7 @@ module CyberarmEngine
     end
 
     # Fills container background with color
-    def fill(color = Gosu::Color::BLACK, z = 0)
+    def fill(color = Gosu::Color::BLACK, z = -1)
       $window.draw_rect(@x, @y, @width, @height, color, z)
     end
 
@@ -132,12 +132,12 @@ module CyberarmEngine
 
     # Return X position relative to container
     def relative_x(int)
-      int-self.x
+      self.x+int
     end
 
     # Return Y position relative to container
     def relative_y(int)
-      int-self.y
+      self.y+int
     end
 
     def calc_percentage(positive, total)

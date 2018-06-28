@@ -9,7 +9,7 @@ module CyberarmEngine
       @x, @y = x, y
       @checked = checked
       @size = size
-      @text = Text.new("✔", false, x: x, y: y, size: size, color: BUTTON_TEXT_COLOR, shadow: true)
+      @text = Text.new("✔", x: x, y: y, size: size, color: BUTTON_TEXT_COLOR, shadow: true)
       return self
     end
 
@@ -55,8 +55,8 @@ module CyberarmEngine
     end
 
     def mouse_over?
-      if $window.mouse.x.between?(@x, @x+width)
-        if $window.mouse.y.between?(@y, @y+height)
+      if $window.mouse_x.between?(@x, @x+width)
+        if $window.mouse_y.between?(@y, @y+height)
           true
         end
       end
