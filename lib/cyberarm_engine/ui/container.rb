@@ -1,14 +1,20 @@
 module CyberarmEngine
   class Container
+    include Common
+
     attr_accessor :text_color
     attr_reader :elements, :x, :y, :width, :height, :options
     attr_reader :scroll_x, :scroll_y, :internal_width, :internal_height
 
-    def initialize(x = 0, y = 100, width = $window.width, height = $window.height, options = {})
+    def initialize(x = 0, y = 0, width = $window.width, height = $window.height, options = {})
+      raise unless x.is_a?(Numeric)
+      raise unless y.is_a?(Numeric)
+      raise unless width.is_a?(Numeric)
+      raise unless height.is_a?(Numeric)
+      raise unless options.is_a?(Hash)
       @x, @y, @width, @height, @internal_width, @internal_height = x, y, width, height-y, width, height-y
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
-      puts "#{self.class}: width #{width}, height #{@height}"
 
       @options = {}
       @allow_recreation_on_resize = true
@@ -60,8 +66,8 @@ module CyberarmEngine
     end
 
     def text(text, x, y, size = 18, color = self.text_color, alignment = nil, font = nil)
-      relative_x = @x+x
-      relative_y = @y+y
+      relative_x(x)
+      relative_y(y)
       _text      = Text.new(text, x: relative_x, y: relative_y, size: size, color: color, alignment: alignment, font: font)
       @elements.push(_text)
       if _text.y-(_text.height*2) > @internal_height
@@ -72,8 +78,8 @@ module CyberarmEngine
     end
 
     def button(text, x, y, tooltip = "", &block)
-      relative_x = @x+x
-      relative_y = @y+y
+      relative_x(x)
+      relative_y(y)
       _button    = Button.new(text, relative_x, relative_y, false, tooltip) { if block.is_a?(Proc); block.call; end }
       @elements.push(_button)
       if _button.y-(_button.height*2) > @internal_height
@@ -84,8 +90,8 @@ module CyberarmEngine
     end
 
     def input(text, x, y, width = Input::WIDTH, size = 18, color = Gosu::Color::BLACK, tooltip = "")
-      relative_x = @x+x
-      relative_y = @y+y
+      relative_x(x)
+      relative_y(y)
       _input     = Input.new(text, relative_x, relative_y, width, size, color)
       @elements.push(_input)
       if _input.y-(_input.height*2) > @internal_height
@@ -96,8 +102,8 @@ module CyberarmEngine
     end
 
     def check_box(x, y, checked = false, size = CheckBox::SIZE)
-      relative_x = @x+x
-      relative_y = @y+y
+      relative_x(x)
+      relative_y(y)
       _check_box = CheckBox.new(relative_x, relative_y, checked, size)
       @elements.push(_check_box)
       if _check_box.y-(_check_box.height*2) > @internal_height
@@ -115,7 +121,7 @@ module CyberarmEngine
 
     # Fills container background with color
     def fill(color = Gosu::Color::BLACK, z = -1)
-      $window.draw_rect(@x, @y, @width, @height, color, z)
+      Gosu.draw_rect(@x, @y, @width, @height, color, z)
     end
 
     def set_layout_y(start, spacing)

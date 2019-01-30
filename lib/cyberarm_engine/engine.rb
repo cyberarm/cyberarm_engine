@@ -1,7 +1,7 @@
 module CyberarmEngine
   class Engine < Gosu::Window
     attr_accessor :show_cursor
-    attr_reader :current_game_state, :last_game_state, :last_frame_time
+    attr_reader :current_state, :last_frame_time
 
     def self.now
       Gosu.milliseconds
@@ -20,19 +20,17 @@ module CyberarmEngine
       @current_frame_time = Gosu.milliseconds
       self.caption = "CyberarmEngine #{CyberarmEngine::VERSION} #{Gosu.language}"
 
+      @states = []
+
       setup if defined?(setup)
     end
 
     def draw
-      if @current_game_state.is_a?(GameState)
-        @current_game_state.draw
-      end
+      current_state.draw if current_state
     end
 
     def update
-      if @current_game_state.is_a?(GameState)
-        @current_game_state.update
-      end
+      current_state.update if current_state
       @last_frame_time = Gosu.milliseconds-@current_frame_time
       @current_frame_time = Gosu.milliseconds
     end
@@ -46,27 +44,28 @@ module CyberarmEngine
     end
 
     def button_up(id)
-      @current_game_state.button_up(id) if @current_game_state
+      current_state.button_up(id) if current_state
     end
 
-    def push_game_state(klass, options={})
-      @last_game_state = @current_game_state if @current_game_state
+    def push_state(klass, options={})
       if klass.instance_of?(klass.class) && defined?(klass.options)
-        @current_game_state = klass
+        @states << klass
       else
-        klass.new(options)
+        @states << klass.new(options) if child_of?(klass, GameState)
+        @states << klass.new if child_of?(klass, Container)
       end
     end
 
-    def set_game_state(klass_instance)
-      @current_game_state = klass_instance
+    private def child_of?(input, klass)
+      input.ancestors.detect {|c| c == klass}
     end
 
-    def previous_game_state
-      # current_game_state = @current_game_state
-      # @current_game_state = @last_frame_time
-      # @last_game_state = current_game_state
-      @last_game_state
+    def current_state
+      @states.last
+    end
+
+    def previous_state
+      @states.pop
     end
 
     # Sourced from https://gist.github.com/ippa/662583

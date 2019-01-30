@@ -2,6 +2,8 @@ require "gosu"
 
 require_relative "cyberarm_engine/version"
 
+require_relative "cyberarm_engine/common"
+
 require_relative "cyberarm_engine/game_object"
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/engine"
