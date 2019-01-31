@@ -1,13 +1,13 @@
 module CyberarmEngine
-  class Input
+  class EditLine < Element
     WIDTH = 200
     FOCUS_BACKGROUND_COLOR = Gosu::Color.rgb(150,150,144)
     NO_FOCUS_BACKGROUND_COLOR = Gosu::Color.rgb(130,130,130)
 
     attr_accessor :text, :x, :y, :width, :size, :color, :type, :focus
-    attr_reader :text_object, :text_input, :height, :fixed_x
+    attr_reader :text_object, :text_input, :height
 
-    def initialize(text, x, y, width = WIDTH, size = Text::SIZE, color = Gosu::Color::BLACK, tooltip = "", type = nil)
+    def initialize(text, options = {})
       @text = text
       @x, @y= x, y
       @width= width
@@ -24,8 +24,6 @@ module CyberarmEngine
       @text_input.text = @text
 
       @background_color = NO_FOCUS_BACKGROUND_COLOR
-      @fixed_x = @x
-      @x_offset= 0
 
       @carot_ticks = 0
       @carot_width = 2.5
@@ -94,14 +92,6 @@ module CyberarmEngine
         @text_object.x = self.fixed_x-@x_offset
       else
         @text_object.x = self.fixed_x
-      end
-    end
-
-    def mouse_over?
-      if $window.mouse_x.between?(@x, @x+width)
-        if $window.mouse_y.between?(@y, @y+height)
-          true
-        end
       end
     end
 

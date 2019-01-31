@@ -1,16 +1,18 @@
 module CyberarmEngine
   class GameState
     include Common
+    include DSL
 
-    SCALE_X_BASE = 1920.0
-    SCALE_Y_BASE = 1080.0
-    attr_accessor :options, :global_pause
+    attr_accessor :options, :global_pause, :active_container, :active_grid
     attr_reader :game_objects
 
     def initialize(options={})
-      @options = options unless @options
+      @options = options
       @game_objects = []
       @global_pause = false
+
+      @active_container = nil
+      @active_grid      = nil
 
       setup
     end
@@ -19,18 +21,11 @@ module CyberarmEngine
     end
 
     def draw
-      @game_objects.each do |o|
-        o.draw if o.visible
-      end
+      @game_objects.each(&:draw)
     end
 
     def update
-      @game_objects.each do |o|
-        unless o.paused || @global_pause
-          o.update
-          o.update_debug_text if $debug
-        end
-      end
+      @game_objects.each(&:update)
     end
 
     def destroy
@@ -40,7 +35,7 @@ module CyberarmEngine
 
     def button_up(id)
       @game_objects.each do |o|
-        o.button_up(id) unless o.paused
+        o.button_up(id)
       end
     end
 

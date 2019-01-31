@@ -2,30 +2,55 @@ module CyberarmEngine
   class Container
     include Common
 
-    attr_accessor :text_color
-    attr_reader :elements, :x, :y, :width, :height, :options
+    attr_accessor :stroke_color, :fill_color, :background_color
+    attr_reader :elements, :x, :y, :z, :width, :height, :options
     attr_reader :scroll_x, :scroll_y, :internal_width, :internal_height
 
-    def initialize(x = 0, y = 0, width = $window.width, height = $window.height, options = {})
-      raise unless x.is_a?(Numeric)
-      raise unless y.is_a?(Numeric)
-      raise unless width.is_a?(Numeric)
-      raise unless height.is_a?(Numeric)
-      raise unless options.is_a?(Hash)
-      @x, @y, @width, @height, @internal_width, @internal_height = x, y, width, height-y, width, height-y
+    def initialize(options = {}, block = nil)
+      options[:parent].active_container = self
+
+      options = {
+        x: 0, y: 0, z: 0,
+        width: $window.width, height: $window.height
+      }.merge!(options)
+
+      x = options.dig(:x)
+      y = options.dig(:y)
+      z = options.dig(:z)
+
+      width  = options.dig(:width)
+      height = options.dig(:height)
+
+      raise "#{self.class} 'x' must be a number" unless x.is_a?(Numeric)
+      raise "#{self.class} 'y' must be a number" unless y.is_a?(Numeric)
+      raise "#{self.class} 'z' must be a number" unless z.is_a?(Numeric)
+      raise "#{self.class} 'width' must be a number" unless width.is_a?(Numeric)
+      raise "#{self.class} 'height' must be a number" unless height.is_a?(Numeric)
+      raise "#{self.class} 'options' must be a Hash" unless options.is_a?(Hash)
+
+      @x, @y, @z, @width, @height, @internal_width, @internal_height = x, y, z, width-x, height-y, width-x, height-y
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
 
-      @options = {}
-      @allow_recreation_on_resize = true
+      @options = options
+
       @text_color = options[:text_color] || Gosu::Color::WHITE
+      @background_color = Gosu::Color::NONE
       @elements = []
 
-      if defined?(self.setup); setup; end
+      block.call(self) if block
+
+      options[:parent].active_container = nil
+
+      recalculate
+
+      return self
     end
 
     def draw
       Gosu.clip_to(x, y, width, height) do
+        background
+
         Gosu.translate(scroll_x, scroll_y) do
           @elements.each(&:draw)
         end
@@ -48,7 +73,6 @@ module CyberarmEngine
             @scroll_y-=@scroll_speed
             if $window.height-@internal_height-y > 0
               @scroll_y = 0
-              p "H: #{@height-@internal_height}", "Y: #{@scroll_y}"
             else
               @scroll_y = @height-@internal_height if @scroll_y <= @height-@internal_height
             end
@@ -61,103 +85,35 @@ module CyberarmEngine
       @elements.each {|e| if defined?(e.button_up); e.button_up(id); end}
     end
 
-    def build(&block)
-      yield(self)
+    def background
+      Gosu.draw_rect(@x, @y, @width, @height, @background_color, @z)
     end
 
-    def text(text, x, y, size = 18, color = self.text_color, alignment = nil, font = nil)
-      relative_x(x)
-      relative_y(y)
-      _text      = Text.new(text, x: relative_x, y: relative_y, size: size, color: color, alignment: alignment, font: font)
-      @elements.push(_text)
-      if _text.y-(_text.height*2) > @internal_height
-        @internal_height+=_text.height
-      end
+    def recalculate
+      raise "mode was not defined!" unless @mode
+      @packing_x = @x
+      @packing_y = @y
 
-      return _text
-    end
-
-    def button(text, x, y, tooltip = "", &block)
-      relative_x(x)
-      relative_y(y)
-      _button    = Button.new(text, relative_x, relative_y, false, tooltip) { if block.is_a?(Proc); block.call; end }
-      @elements.push(_button)
-      if _button.y-(_button.height*2) > @internal_height
-        @internal_height+=_button.height
-      end
-
-      return _button
-    end
-
-    def input(text, x, y, width = Input::WIDTH, size = 18, color = Gosu::Color::BLACK, tooltip = "")
-      relative_x(x)
-      relative_y(y)
-      _input     = Input.new(text, relative_x, relative_y, width, size, color)
-      @elements.push(_input)
-      if _input.y-(_input.height*2) > @internal_height
-        @internal_height+=_input.height
-      end
-
-      return _input
-    end
-
-    def check_box(x, y, checked = false, size = CheckBox::SIZE)
-      relative_x(x)
-      relative_y(y)
-      _check_box = CheckBox.new(relative_x, relative_y, checked, size)
-      @elements.push(_check_box)
-      if _check_box.y-(_check_box.height*2) > @internal_height
-        @internal_height+=_check_box.height
-      end
-
-      return _check_box
-    end
-
-    def resize
-      if @allow_recreation_on_resize
-        $window.active_container = self.class.new
+      @elements.each do |element|
+        flow(element)  if @mode == :flow
+        stack(element) if @mode == :stack
       end
     end
 
-    # Fills container background with color
-    def fill(color = Gosu::Color::BLACK, z = -1)
-      Gosu.draw_rect(@x, @y, @width, @height, color, z)
+    def flow(element)
+      element.x = @x + @packing_x
+      element.y = @y
+      element.recalculate
+
+      @packing_x += element.width + 1
     end
 
-    def set_layout_y(start, spacing)
-      @layout_y_start = start
-      @layout_y_spacing = spacing
-      @layout_y_count = 0
-    end
+    def stack(element)
+      element.x = @x
+      element.y = @y + @packing_y
+      element.recalculate
 
-    def layout_y(stay = false)
-      i = @layout_y_start+(@layout_y_spacing*@layout_y_count)
-      @layout_y_count+=1 unless stay
-      return i
-    end
-
-    # Return X position relative to container
-    def relative_x(int)
-      self.x+int
-    end
-
-    # Return Y position relative to container
-    def relative_y(int)
-      self.y+int
-    end
-
-    def calc_percentage(positive, total)
-      begin
-        i = ((positive.to_f/total.to_f)*100.0).round(2)
-        if !i.nan?
-          return "#{i}%"
-        else
-          "N/A"
-        end
-      rescue ZeroDivisionError => e
-        puts e
-        return "N/A" # 0 / 0, safe to assume no actionable data
-      end
+      @packing_y += element.height + 1
     end
   end
 end
