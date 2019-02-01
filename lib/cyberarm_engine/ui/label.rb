@@ -9,18 +9,31 @@ module CyberarmEngine
     end
 
     def draw
-      $window.draw_rect(@x, @y, width, height, @options[:fill], @z+1)
+      $window.draw_rect(relative_x, relative_y, width, height, @options[:fill], @z+1)
 
       @text.draw
+    end
+
+    def button_up(id)
+      case id
+      when Gosu::MsLeft
+        if mouse_over?
+          @block.call(self) if @block
+        end
+      end
     end
 
     def recalculate
       @width = @text.width
       @height= @text.height
 
-      @text.x = @x + @padding
-      @text.y = @y + @padding
+      @text.x = relative_x + @padding
+      @text.y = relative_y + @padding
       @text.z = @z + 3
+    end
+
+    def value
+      @text.text
     end
   end
 end

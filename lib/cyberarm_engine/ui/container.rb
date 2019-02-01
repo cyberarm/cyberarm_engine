@@ -2,17 +2,15 @@ module CyberarmEngine
   class Container
     include Common
 
-    attr_accessor :stroke_color, :fill_color, :background_color
-    attr_reader :elements, :x, :y, :z, :width, :height, :options
+    attr_accessor :stroke_color, :fill_color, :background_color, :x, :y, :z, :width, :height
+    attr_reader :elements, :children, :options
     attr_reader :scroll_x, :scroll_y, :internal_width, :internal_height
 
     def initialize(options = {}, block = nil)
-      options[:parent].active_container = self
-
       options = {
         x: 0, y: 0, z: 0,
-        width: $window.width, height: $window.height
-      }.merge!(options)
+        width: 0, height: 0
+      }.merge(options)
 
       x = options.dig(:x)
       y = options.dig(:y)
@@ -32,23 +30,43 @@ module CyberarmEngine
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
 
+      @block = block
       @options = options
+      @parent = options[:parent] || nil
 
       @text_color = options[:text_color] || Gosu::Color::WHITE
       @background_color = Gosu::Color::NONE
+
       @elements = []
+      @children = []
 
-      block.call(self) if block
-
-      options[:parent].active_container = nil
-
-      recalculate
+      @theme = {}
 
       return self
     end
 
+    def build
+      @block.call(self) if @block
+
+      recalculate
+    end
+
+    def add_child(container)
+      @children << container
+      @elements << container
+
+      recalculate
+    end
+
+    def add(element)
+      @elements << element
+
+      recalculate
+    end
+
     def draw
-      Gosu.clip_to(x, y, width, height) do
+      Gosu.clip_to(@x, @y, @width, @height) do
+        raise "width and height are 0!" if @width == 0 && @height == 0 && Gosu.milliseconds > 1500 && @elements.size > 0
         background
 
         Gosu.translate(scroll_x, scroll_y) do
@@ -68,7 +86,6 @@ module CyberarmEngine
           when Gosu::MsWheelUp
             @scroll_y+=@scroll_speed
             @scroll_y = 0 if @scroll_y > 0
-            @elements.each {|e| e.set_offset(@scroll_x, @scroll_y) if e.is_a?(Button) }
           when Gosu::MsWheelDown
             @scroll_y-=@scroll_speed
             if $window.height-@internal_height-y > 0
@@ -76,13 +93,23 @@ module CyberarmEngine
             else
               @scroll_y = @height-@internal_height if @scroll_y <= @height-@internal_height
             end
-
-            @elements.each {|e| e.set_offset(@scroll_x, @scroll_y) if e.is_a?(Button) }
           end
         end
       end
 
       @elements.each {|e| if defined?(e.button_up); e.button_up(id); end}
+    end
+
+    def theme
+      @theme
+    end
+
+    def stroke(color)
+      @theme[:stroke] = color
+    end
+
+    def fill(color)
+      @theme[:fill] = color
     end
 
     def background
@@ -91,26 +118,40 @@ module CyberarmEngine
 
     def recalculate
       raise "mode was not defined!" unless @mode
-      @packing_x = @x
-      @packing_y = @y
+      # puts "<#{self.class}:#{self.object_id}> X: #{@x}, Y: #{@y}, width: #{@width}, height: #{@height} (children: #{@children.count}, parents: #{@parent&.children&.count})"
+
+      @packing_x = 0
+      @packing_y = 0
+
+      @width = 0
+      @height= 0
 
       @elements.each do |element|
         flow(element)  if @mode == :flow
         stack(element) if @mode == :stack
+
+        case @mode
+        when :flow
+          @width += element.width
+          @height = element.height if element.height > @height
+        when :stack
+          @height += element.height
+          @width = element.width if element.width > @width
+        end
       end
     end
 
     def flow(element)
-      element.x = @x + @packing_x
-      element.y = @y
+      element.x = @packing_x
+      element.y = 0
       element.recalculate
 
       @packing_x += element.width + 1
     end
 
     def stack(element)
-      element.x = @x
-      element.y = @y + @packing_y
+      element.x = 0
+      element.y = @packing_y
       element.recalculate
 
       @packing_y += element.height + 1

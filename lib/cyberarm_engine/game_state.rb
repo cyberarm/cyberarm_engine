@@ -4,15 +4,16 @@ module CyberarmEngine
     include DSL
 
     attr_accessor :options, :global_pause, :active_container, :active_grid
-    attr_reader :game_objects
+    attr_reader :game_objects, :containers
 
     def initialize(options={})
       @options = options
       @game_objects = []
       @global_pause = false
 
-      @active_container = nil
-      @active_grid      = nil
+      @root_container = Stack.new(x: 0, y: 0, width: $window.width, height: $window.height)
+      @game_objects << @root_container
+      @containers     = [@root_container]
 
       setup
     end

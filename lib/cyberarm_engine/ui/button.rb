@@ -1,48 +1,44 @@
 module CyberarmEngine
-  class Button < Element
-    def initialize(text, options = {}, block = nil)
-      super(options, block)
-
-      @text = Text.new(text, font: @options[:font], color: @options[:interactive_stroke], size: @options[:text_size], shadow: @options[:text_shadow])
-
-      return self
-    end
-
+  class Button < Label
     def draw
       @text.draw
 
-      $window.draw_rect(@x, @y, width, height, @options[:background], @z+1)
+      $window.draw_rect(relative_x, relative_y, width, height, @options[:background], @z+1)
 
       if mouse_over? && $window.button_down?(Gosu::MsLeft)
-        $window.draw_rect(@x+1, @y+1, width-2, height-2, @options[:interactive_active_background], @z+2)
+        $window.draw_rect(
+          relative_x+@options[:interactive_border_size],
+          relative_y+@options[:interactive_border_size],
+          width-(@options[:interactive_border_size]*2),
+          height-(@options[:interactive_border_size]*2),
+          @options[:interactive_active_background],
+          @z+2
+        )
+
+        @text.color = @options[:interactive_active_stroke]
       elsif mouse_over?
-        $window.draw_rect(@x+1, @y+1, width-2, height-2, @options[:interactive_hover_background], @z+2)
+        $window.draw_rect(
+          relative_x+@options[:interactive_border_size],
+          relative_y+@options[:interactive_border_size],
+          width-(@options[:interactive_border_size]*2),
+          height-(@options[:interactive_border_size]*2),
+          @options[:interactive_hover_background],
+          @z+2
+        )
         # show_tooltip
+        @text.color = @options[:interactive_stroke]
       else
-        $window.draw_rect(@x+1, @y+1, width-2, height-2, @options[:interactive_background], @z+2)
+        $window.draw_rect(
+          relative_x+@options[:interactive_border_size],
+          relative_y+@options[:interactive_border_size],
+          width-(@options[:interactive_border_size]*2),
+          height-(@options[:interactive_border_size]*2),
+          @options[:interactive_background],
+          @z+2
+        )
+
+        @text.color = @options[:interactive_stroke]
       end
-    end
-
-    def button_up(id)
-      case id
-      when Gosu::MsLeft
-        if mouse_over?
-          @block.call(self) if @block
-        end
-      end
-    end
-
-    def recalculate
-      @width = @text.width
-      @height= @text.height
-
-      @text.x = @x + @padding
-      @text.y = @y + @padding
-      @text.z = @z + 3
-    end
-
-    def value
-      @text.text
     end
   end
 end

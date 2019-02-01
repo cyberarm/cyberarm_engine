@@ -13,32 +13,31 @@ module CyberarmEngine
       stroke:     Gosu::Color::WHITE,
       fill:       Gosu::Color::NONE,
       background: Gosu::Color.rgb(12,12,12),
+      checkmark: "X", # ✓
 
       padding: 20,
       margin:   0,
 
       interactive_stroke:            Gosu::Color::WHITE,
-      interactive_active_stroke:     Gosu::Color::BLACK,
+      interactive_active_stroke:     Gosu::Color::GRAY,
 
       interactive_background:        Gosu::Color::GRAY,
       interactive_hover_background:  Gosu::Color.rgb(100, 100, 100),
       interactive_active_background: Gosu::Color.rgb(50, 50, 50),
+      interactive_border_size: 1,
 
       text_size: 22,
       text_shadow: true,
       font: "Consolas"
     }
 
-    attr_accessor :x, :y, :z
-    attr_accessor :offset_x, :offset_y
+    attr_accessor :x, :y, :z, :width, :height, :padding, :margin
 
     def initialize(options = {}, block = nil)
-      options = (THEME).merge(DEFAULTS).merge(options)
+      @parent = options[:parent] # parent Container (i.e. flow/stack)
+      options = (THEME).merge(DEFAULTS).merge(@parent.theme).merge(options)
       @options = options
       @block = block
-
-      @offset_x = 0
-      @offset_y = 0
 
       @x = options[:x]
       @y = options[:y]
@@ -49,8 +48,6 @@ module CyberarmEngine
 
       @padding = options[:padding]
       @margin  = options[:margin]
-
-      @parent = options[:parent]
     end
 
     def draw
@@ -66,8 +63,8 @@ module CyberarmEngine
     end
 
     def mouse_over?
-      if $window.mouse_x.between?(@x + @offset_x, @x + @offset_x + width)
-        if $window.mouse_y.between?(@y + @offset_y, @y + @offset_y + height)
+      if $window.mouse_x.between?(relative_x, relative_x + width)
+        if $window.mouse_y.between?(relative_y, relative_y + height)
           true
         end
       end
@@ -81,11 +78,20 @@ module CyberarmEngine
       @height + (@padding * 2)
     end
 
+    def relative_x
+      @parent.x + @parent.scroll_x + @x
+    end
+
+    def relative_y
+      @parent.y + @parent.scroll_y + @y
+    end
+
     def recalculate
+      raise "#{self.class}#recalculate was not overridden!"
     end
 
     def value
-      raise "#{self.klass}#value was not overridden!"
+      raise "#{self.class}#value was not overridden!"
     end
   end
 end
