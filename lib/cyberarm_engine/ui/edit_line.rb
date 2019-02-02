@@ -1,107 +1,80 @@
 module CyberarmEngine
-  class EditLine < Element
-    WIDTH = 200
-    FOCUS_BACKGROUND_COLOR = Gosu::Color.rgb(150,150,144)
-    NO_FOCUS_BACKGROUND_COLOR = Gosu::Color.rgb(130,130,130)
+  class EditLine < Button
+    def initialize(text, options = {}, block = nil)
+      super(text, options, block)
 
-    attr_accessor :text, :x, :y, :width, :size, :color, :type, :focus
-    attr_reader :text_object, :text_input, :height
+      @type = @options[:type] || :plain
 
-    def initialize(text, options = {})
-      @text = text
-      @x, @y= x, y
-      @width= width
-      @size = size
-      @color= color
-      @tooltip=tooltip
-      @type = type
 
-      @focus = false
+      @caret_width = @options[:caret_width]
+      @caret_height= @text.height
+      @caret_color = @options[:caret_color]
+      @caret_interval = @options[:caret_interval]
+      @caret_last_interval = Gosu.milliseconds
+      @show_caret  = true
 
-      @text_object = Text.new(text, x: x, y: y, size: size, color: color, shadow: true)
-      @height      = @text_object.height
-      @text_input  = Gosu::TextInput.new
-      @text_input.text = @text
-
-      @background_color = NO_FOCUS_BACKGROUND_COLOR
-
-      @carot_ticks = 0
-      @carot_width = 2.5
-      @carot_height= @text_object.height
-      @carot_color = Gosu::Color.rgb(50,50,25)
-      @carot_show_ticks = 25
-      @show_carot  = true
+      @text_input = Gosu::TextInput.new
+      @text_input.text = text
 
       return self
     end
 
-    def text=(string)
-      @text = string
-      @text_input.text, @text_object.text = @text, @text
-    end
-
     def draw
-      $window.draw_rect(x, y, width, height, Gosu::Color::BLACK)
-      $window.draw_rect(x+1, y+1, width-2, height-2, @background_color)
-      Gosu.clip_to(x, @text_object.y, width, @text_object.height) do
-        @text_object.draw
+      Gosu.clip_to(relative_x, relative_y, width, height) do
+        super
 
-        # Carot (Cursor)
-        $window.draw_rect((@x+@text_object.width)-@x_offset, @text_object.y, @carot_width, @carot_height, @carot_color) if @show_carot && @focus
+        Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z + 40) if @show_caret
       end
-
     end
 
     def update
-      @text_object.y = @y+BUTTON_PADDING
-
-      if (@text_object.width+@carot_width)-@width >= 0
-        @x_offset = (@text_object.width+@carot_width)-@width
+      if @type == :password
+        @text.text = @options[:edit_line_password_character] * @text_input.text.length
       else
-        @x_offset = 0
+        @text.text = @text_input.text
       end
 
-      @text     = @text_object.text
-      @carot_ticks+=1
-      if @carot_ticks >= @carot_show_ticks
-        if @show_carot
-          @show_carot = false
-        else
-          @show_carot = true
+      if Gosu.milliseconds >= @caret_last_interval + @caret_interval
+        @caret_last_interval = Gosu.milliseconds
+
+        @show_caret = !@show_caret
+      end
+    end
+
+    def button_up(id)
+      case id
+      when Gosu::MsLeft
+        if mouse_over?
+          @focus = !@focus
+
+          if @focus
+            $window.text_input = @text_input
+          else
+            $window.text_input = nil
+          end
+          @block.call(self) if @block
         end
-
-        @carot_ticks = 0
       end
+    end
 
-      if @focus
-        @text_object.text = @text_input.text
-        $window.text_input = @text_input unless $window.text_input == @text_input
-      end
-
-      if mouse_over? && $window.button_down?(Gosu::MsLeft)
-        @focus = true
-        @background_color = FOCUS_BACKGROUND_COLOR
-      end
-      if !mouse_over? && $window.button_down?(Gosu::MsLeft)
-        @focus = false
-        $window.text_input = nil
-        @background_color = NO_FOCUS_BACKGROUND_COLOR
-      end
-
-      if @text_object.width >= @width
-        @text_object.x = self.fixed_x-@x_offset
+    def caret_position
+      if $window.text_input && $window.text_input == @text_input
+        if @type == :password
+          @text.x + @text.textobject.text_width(@options[:edit_line_password_character] * @text_input.text[0..@text_input.caret_pos].length)
+        else
+          @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.caret_pos])
+        end
       else
-        @text_object.x = self.fixed_x
+        0
       end
     end
 
-    def width(text_object = @text_object)
-      # text_object.textobject.text_width(text_object.text)+BUTTON_PADDING*2
-      @width
+    def width
+      @options[:edit_line_width]
     end
 
-    def height(text_object = @text_object)
-      text_object.textobject.height+BUTTON_PADDING*2
+    def value
+      @text_input.text
     end
   end
 end

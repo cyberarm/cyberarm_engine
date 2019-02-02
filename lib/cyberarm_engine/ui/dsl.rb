@@ -1,8 +1,8 @@
 module CyberarmEngine
   module DSL
     def flow(options = {}, &block)
-      puts "Flow"
       options[:parent] = @containers.last
+      puts "Flow"
       _container = Flow.new(options, block)
       @containers << _container
       _container.build
@@ -13,8 +13,8 @@ module CyberarmEngine
     end
 
     def stack(options = {}, &block)
-      puts "Stack"
       options[:parent] = @containers.last
+      puts "Stack"
       _container = Stack.new(options, block)
       @containers << _container
       _container.build
@@ -51,6 +51,14 @@ module CyberarmEngine
     def check_box(options = {}, &block)
       options[:parent] = @containers.last
       _element = CheckBox.new(options, block)
+      @containers.last.add(_element)
+
+      return _element
+    end
+
+    def image(path, options = {}, &block)
+      options[:parent] = @containers.last
+      _element = Image.new(path, options, block)
       @containers.last.add(_element)
 
       return _element

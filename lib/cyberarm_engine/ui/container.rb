@@ -5,8 +5,11 @@ module CyberarmEngine
     attr_accessor :stroke_color, :fill_color, :background_color, :x, :y, :z, :width, :height
     attr_reader :elements, :children, :options
     attr_reader :scroll_x, :scroll_y, :internal_width, :internal_height
+    attr_reader :origin_x, :origin_y, :origin_width, :origin_height
 
     def initialize(options = {}, block = nil)
+      @parent = options[:parent] || nil
+
       options = {
         x: 0, y: 0, z: 0,
         width: 0, height: 0
@@ -27,15 +30,16 @@ module CyberarmEngine
       raise "#{self.class} 'options' must be a Hash" unless options.is_a?(Hash)
 
       @x, @y, @z, @width, @height, @internal_width, @internal_height = x, y, z, width-x, height-y, width-x, height-y
+      @origin_x, @origin_x = @x, @x
+      @origin_width, @origin_height = @width, @height
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
 
       @block = block
       @options = options
-      @parent = options[:parent] || nil
 
-      @text_color = options[:text_color] || Gosu::Color::WHITE
-      @background_color = Gosu::Color::NONE
+      @text_color = options[:text_color] || Element::THEME[:stroke]
+      @background_color = Element::THEME[:background]
 
       @elements = []
       @children = []
@@ -65,11 +69,10 @@ module CyberarmEngine
     end
 
     def draw
-      Gosu.clip_to(@x, @y, @width, @height) do
-        raise "width and height are 0!" if @width == 0 && @height == 0 && Gosu.milliseconds > 1500 && @elements.size > 0
+      Gosu.clip_to(@x, @y, @width + @spacing_x, @height + @spacing_y) do
         background
 
-        Gosu.translate(scroll_x, scroll_y) do
+        Gosu.translate(@scroll_x, @scroll_y) do
           @elements.each(&:draw)
         end
       end
@@ -80,18 +83,18 @@ module CyberarmEngine
     end
 
     def button_up(id)
-      if $window.mouse_x.between?(@x, @x+@width)
-        if $window.mouse_y.between?(@y, @y+@height)
+      if $window.mouse_x.between?(@x, @x + @width)
+        if $window.mouse_y.between?(@y, @y + @height)
           case id
           when Gosu::MsWheelUp
-            @scroll_y+=@scroll_speed
-            @scroll_y = 0 if @scroll_y > 0
+            @scroll_y += @scroll_speed
+            @scroll_y  = 0 if @scroll_y > 0
           when Gosu::MsWheelDown
-            @scroll_y-=@scroll_speed
-            if $window.height-@internal_height-y > 0
+            @scroll_y -= @scroll_speed
+            if $window.height - @internal_height - @y > 0
               @scroll_y = 0
             else
-              @scroll_y = @height-@internal_height if @scroll_y <= @height-@internal_height
+              @scroll_y = @height - @internal_height if @scroll_y <= @height - @internal_height
             end
           end
         end
@@ -113,7 +116,7 @@ module CyberarmEngine
     end
 
     def background
-      Gosu.draw_rect(@x, @y, @width, @height, @background_color, @z)
+      Gosu.draw_rect(@x, @y, @width + @spacing_x, @height + @spacing_y, @background_color, @z)
     end
 
     def recalculate
@@ -123,8 +126,13 @@ module CyberarmEngine
       @packing_x = 0
       @packing_y = 0
 
-      @width = 0
-      @height= 0
+      @spacing_x = 0
+      @spacing_y = 0
+
+      @spacer = 1
+
+      @width = @origin_width
+      @height= @origin_height
 
       @elements.each do |element|
         flow(element)  if @mode == :flow
@@ -132,29 +140,39 @@ module CyberarmEngine
 
         case @mode
         when :flow
-          @width += element.width
-          @height = element.height if element.height > @height
+          @width += element.width unless @origin_width.nonzero?
+          @height = element.height if element.height > @height unless @origin_height.nonzero?
         when :stack
-          @height += element.height
-          @width = element.width if element.width > @width
+          @width = element.width if element.width > @width unless @origin_width.nonzero?
+          @height += element.height unless @origin_height.nonzero?
         end
       end
     end
 
     def flow(element)
       element.x = @packing_x
-      element.y = 0
+      if element.is_a?(Container)
+        element.y = @y
+      else
+        element.y = 0
+      end
       element.recalculate
 
-      @packing_x += element.width + 1
+      @packing_x += element.width + @spacer
+      @spacing_x += @spacer
     end
 
     def stack(element)
-      element.x = 0
+      if element.is_a?(Container)
+        element.x = @x
+      else
+        element.x = 0
+      end
       element.y = @packing_y
       element.recalculate
 
-      @packing_y += element.height + 1
+      @packing_y += element.height + @spacer
+      @spacing_y += @spacer
     end
   end
 end

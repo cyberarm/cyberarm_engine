@@ -3,7 +3,7 @@ module CyberarmEngine
     def draw
       @text.draw
 
-      $window.draw_rect(relative_x, relative_y, width, height, @options[:background], @z+1)
+      $window.draw_rect(relative_x, relative_y, width, height, @options[:element_background], @z+1)
 
       if mouse_over? && $window.button_down?(Gosu::MsLeft)
         $window.draw_rect(

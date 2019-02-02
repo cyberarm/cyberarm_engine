@@ -12,11 +12,13 @@ module CyberarmEngine
     THEME = {
       stroke:     Gosu::Color::WHITE,
       fill:       Gosu::Color::NONE,
-      background: Gosu::Color.rgb(12,12,12),
-      checkmark: "X", # ✓
+      background: Gosu::Color::NONE,
+      checkmark: "√", # √
 
       padding: 20,
       margin:   0,
+
+      element_background: Gosu::Color.rgb(12,12,12),
 
       interactive_stroke:            Gosu::Color::WHITE,
       interactive_active_stroke:     Gosu::Color::GRAY,
@@ -26,12 +28,20 @@ module CyberarmEngine
       interactive_active_background: Gosu::Color.rgb(50, 50, 50),
       interactive_border_size: 1,
 
+      edit_line_width: 200,
+      edit_line_password_character: "•", # •
+      caret_width: 2,
+      caret_color: Gosu::Color.rgb(50,50,25),
+      caret_interval: 500,
+
+      image_retro: false,
+
       text_size: 22,
       text_shadow: true,
       font: "Consolas"
     }
 
-    attr_accessor :x, :y, :z, :width, :height, :padding, :margin
+    attr_accessor :x, :y, :z, :width, :height, :padding, :margin, :focus
 
     def initialize(options = {}, block = nil)
       @parent = options[:parent] # parent Container (i.e. flow/stack)
@@ -48,6 +58,8 @@ module CyberarmEngine
 
       @padding = options[:padding]
       @margin  = options[:margin]
+
+      @focus = false
     end
 
     def draw
