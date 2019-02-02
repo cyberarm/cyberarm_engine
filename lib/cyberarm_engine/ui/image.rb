@@ -27,6 +27,15 @@ module CyberarmEngine
       @image.draw(relative_x + @padding, relative_y + @padding, @z + 2, @scale_x, @scale_y) # TODO: Add color support?
     end
 
+    def button_up(id)
+      case id
+      when Gosu::MsLeft
+        if mouse_over?
+          @block.call(self) if @block
+        end
+      end
+    end
+
     def recalculate
       @width  = @image.width * @scale_x
       @height = @image.height * @scale_y

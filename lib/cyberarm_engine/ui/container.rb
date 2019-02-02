@@ -129,17 +129,20 @@ module CyberarmEngine
       @width = @origin_width
       @height= @origin_height
 
-      padded_margin = 0
-      @elements.reverse.each do |e|
-        if defined?(e.margin)
-          padded_margin = e.margin
-          break
-        end
-      end
+      widest_element  = nil
+      highest_element = nil
 
       @elements.each do |element|
         flow(element)  if @mode == :flow
         stack(element) if @mode == :stack
+
+        if element.is_a?(Element)
+          widest_element  ||= element
+          highest_element ||= element
+
+          widest_element  = element if element.width > widest_element.width
+          highest_element = element if element.height > widest_element.height
+        end
 
         margin = 0
         margin = element.margin if defined?(element.margin)
@@ -153,8 +156,8 @@ module CyberarmEngine
         end
       end
 
-      @width  += padded_margin unless @origin_width.nonzero?
-      @height += padded_margin unless @origin_height.nonzero?
+      @width  += widest_element.margin  if widest_element  && !@origin_width.nonzero?
+      @height += highest_element.margin if highest_element && !@origin_height.nonzero?
     end
 
     def flow(element)
