@@ -69,7 +69,7 @@ module CyberarmEngine
     end
 
     def draw
-      Gosu.clip_to(@x, @y, @width + @spacing_x, @height + @spacing_y) do
+      Gosu.clip_to(@x, @y, @width, @height) do
         background
 
         Gosu.translate(@scroll_x, @scroll_y) do
@@ -116,7 +116,7 @@ module CyberarmEngine
     end
 
     def background
-      Gosu.draw_rect(@x, @y, @width + @spacing_x, @height + @spacing_y, @background_color, @z)
+      Gosu.draw_rect(@x, @y, @width, @height, @background_color, @z)
     end
 
     def recalculate
@@ -126,27 +126,35 @@ module CyberarmEngine
       @packing_x = 0
       @packing_y = 0
 
-      @spacing_x = 0
-      @spacing_y = 0
-
-      @spacer = 1
-
       @width = @origin_width
       @height= @origin_height
+
+      padded_margin = 0
+      @elements.reverse.each do |e|
+        if defined?(e.margin)
+          padded_margin = e.margin
+          break
+        end
+      end
 
       @elements.each do |element|
         flow(element)  if @mode == :flow
         stack(element) if @mode == :stack
 
+        margin = 0
+        margin = element.margin if defined?(element.margin)
         case @mode
         when :flow
-          @width += element.width unless @origin_width.nonzero?
-          @height = element.height if element.height > @height unless @origin_height.nonzero?
+          @width += element.width + margin unless @origin_width.nonzero?
+          @height = element.height + margin if element.height + margin > @height + margin unless @origin_height.nonzero?
         when :stack
-          @width = element.width if element.width > @width unless @origin_width.nonzero?
-          @height += element.height unless @origin_height.nonzero?
+          @width = element.width + margin if element.width + margin > @width + margin unless @origin_width.nonzero?
+          @height += element.height + margin unless @origin_height.nonzero?
         end
       end
+
+      @width  += padded_margin unless @origin_width.nonzero?
+      @height += padded_margin unless @origin_height.nonzero?
     end
 
     def flow(element)
@@ -158,8 +166,8 @@ module CyberarmEngine
       end
       element.recalculate
 
-      @packing_x += element.width + @spacer
-      @spacing_x += @spacer
+      @packing_x += element.margin if defined?(element.margin)
+      @packing_x += element.width
     end
 
     def stack(element)
@@ -171,8 +179,8 @@ module CyberarmEngine
       element.y = @packing_y
       element.recalculate
 
-      @packing_y += element.height + @spacer
-      @spacing_y += @spacer
+      @packing_y += element.margin if defined?(element.margin)
+      @packing_y += element.height
     end
   end
 end

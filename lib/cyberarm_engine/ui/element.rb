@@ -16,7 +16,7 @@ module CyberarmEngine
       checkmark: "√", # √
 
       padding: 20,
-      margin:   0,
+      margin:   2,
 
       element_background: Gosu::Color.rgb(12,12,12),
 
@@ -91,11 +91,11 @@ module CyberarmEngine
     end
 
     def relative_x
-      @parent.x + @parent.scroll_x + @x
+      @parent.x + @parent.scroll_x + @x + @margin
     end
 
     def relative_y
-      @parent.y + @parent.scroll_y + @y
+      @parent.y + @parent.scroll_y + @y + @margin
     end
 
     def recalculate

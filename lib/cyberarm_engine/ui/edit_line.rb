@@ -21,10 +21,11 @@ module CyberarmEngine
 
     def draw
       Gosu.clip_to(relative_x, relative_y, width, height) do
-        super
-
+        draw_text
         Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z + 40) if @show_caret
       end
+
+      draw_button
     end
 
     def update
@@ -69,8 +70,10 @@ module CyberarmEngine
       end
     end
 
-    def width
-      @options[:edit_line_width]
+    def recalculate
+      super
+
+      @width = @options[:edit_line_width]
     end
 
     def value

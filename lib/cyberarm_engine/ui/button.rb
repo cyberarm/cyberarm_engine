@@ -1,8 +1,15 @@
 module CyberarmEngine
   class Button < Label
     def draw
-      @text.draw
+      draw_text
+      draw_button
+    end
 
+    def draw_text
+      @text.draw
+    end
+
+    def draw_button
       $window.draw_rect(relative_x, relative_y, width, height, @options[:element_background], @z+1)
 
       if mouse_over? && $window.button_down?(Gosu::MsLeft)
