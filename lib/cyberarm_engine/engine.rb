@@ -65,6 +65,10 @@ module CyberarmEngine
     end
 
     def previous_state
+      state = @states[@states.size-2]
+    end
+
+    def pop_state
       @states.pop
     end
 
