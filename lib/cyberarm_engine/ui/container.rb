@@ -130,7 +130,7 @@ module CyberarmEngine
       @height= @origin_height
 
       widest_element  = nil
-      highest_element = nil
+      last_element    = nil
 
       @elements.each do |element|
         flow(element)  if @mode == :flow
@@ -141,7 +141,7 @@ module CyberarmEngine
           highest_element ||= element
 
           widest_element  = element if element.width > widest_element.width
-          highest_element = element if element.height > widest_element.height
+          last_element    = element
         end
 
         margin = 0
@@ -156,8 +156,8 @@ module CyberarmEngine
         end
       end
 
-      @width  += widest_element.margin  if widest_element  && !@origin_width.nonzero?
-      @height += highest_element.margin if highest_element && !@origin_height.nonzero?
+      @width  += widest_element.margin if widest_element  && !@origin_width.nonzero?
+      @height += last_element.margin   if last_element && !@origin_height.nonzero?
     end
 
     def flow(element)
