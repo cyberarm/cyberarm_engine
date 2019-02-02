@@ -4,7 +4,7 @@ module CyberarmEngine
       super(options[:checkmark], options, block)
       @checked = options[:checked] || false
       if @checked
-        @text.text = options[:checkmark]
+        @text.text = @options[:checkmark]
       else
         @text.text = ""
       end
