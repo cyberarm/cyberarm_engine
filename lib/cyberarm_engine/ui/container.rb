@@ -129,6 +129,12 @@ module CyberarmEngine
       @width = @origin_width
       @height= @origin_height
 
+      if @parent
+        neighbors = @parent.children.size > 0 ? @parent.children.size : 1
+        @width  = @parent.width  / neighbors
+        @height = @parent.height / neighbors
+      end
+
       widest_element  = nil
       last_element    = nil
 
@@ -148,16 +154,16 @@ module CyberarmEngine
         margin = element.margin if defined?(element.margin)
         case @mode
         when :flow
-          @width += element.width + margin unless @origin_width.nonzero?
-          @height = element.height + margin if element.height + margin > @height + margin unless @origin_height.nonzero?
+          @internal_width += element.width + margin unless @origin_width.nonzero?
+          @internal_height = element.height + margin if element.height + margin > @internal_height + margin unless @origin_height.nonzero?
         when :stack
-          @width = element.width + margin if element.width + margin > @width + margin unless @origin_width.nonzero?
-          @height += element.height + margin unless @origin_height.nonzero?
+          @internal_width = element.width + margin if element.width + margin > @internal_width + margin unless @origin_width.nonzero?
+          @internal_height += element.height + margin unless @origin_height.nonzero?
         end
       end
 
-      @width  += widest_element.margin if widest_element  && !@origin_width.nonzero?
-      @height += last_element.margin   if last_element && !@origin_height.nonzero?
+      @internal_width  += widest_element.margin if widest_element  && !@origin_width.nonzero?
+      @internal_height += last_element.margin   if last_element && !@origin_height.nonzero?
     end
 
     def flow(element)
