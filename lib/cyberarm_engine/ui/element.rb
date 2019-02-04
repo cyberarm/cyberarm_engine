@@ -82,6 +82,10 @@ module CyberarmEngine
       end
     end
 
+    def active_element
+      mouse_over? || @focus
+    end
+
     def width
       @width + (@padding * 2)
     end

@@ -18,6 +18,7 @@ module CyberarmEngine
       case id
       when Gosu::MsLeft
         if mouse_over?
+          puts "HI"
           @block.call(self) if @block
         end
       end

@@ -29,7 +29,7 @@ module CyberarmEngine
       raise "#{self.class} 'height' must be a number" unless height.is_a?(Numeric)
       raise "#{self.class} 'options' must be a Hash" unless options.is_a?(Hash)
 
-      @x, @y, @z, @width, @height, @internal_width, @internal_height = x, y, z, width-x, height-y, width-x, height-y
+      @x, @y, @z, @width, @height, @internal_width, @internal_height = x, y, z, width, height, width, height
       @origin_x, @origin_x = @x, @x
       @origin_width, @origin_height = @width, @height
       @scroll_x, @scroll_y = 0, 0
@@ -50,6 +50,7 @@ module CyberarmEngine
     end
 
     def build
+      @theme.merge(@parent.theme) if @parent
       @block.call(self) if @block
 
       recalculate
@@ -83,24 +84,43 @@ module CyberarmEngine
     end
 
     def button_up(id)
-      if $window.mouse_x.between?(@x, @x + @width)
-        if $window.mouse_y.between?(@y, @y + @height)
-          case id
-          when Gosu::MsWheelUp
-            @scroll_y += @scroll_speed
-            @scroll_y  = 0 if @scroll_y > 0
-          when Gosu::MsWheelDown
-            @scroll_y -= @scroll_speed
-            if $window.height - @internal_height - @y > 0
-              @scroll_y = 0
-            else
-              @scroll_y = @height - @internal_height if @scroll_y <= @height - @internal_height
-            end
-          end
+      unless active_container
+        @children.each {|child| child.button_up(id)}
+        return
+      end
+
+      case id
+      when Gosu::MsWheelUp
+        scroll_down
+      when Gosu::MsWheelDown
+        scroll_up
+      end
+
+      @elements.each do |e|
+        if true#e.active_element
+          puts "REACHED"
+          e.button_up(id)
         end
       end
 
-      @elements.each {|e| if defined?(e.button_up); e.button_up(id); end}
+    end
+
+    def scroll_up
+      @scroll_y += @scroll_speed
+      @scroll_y  = 0 if @scroll_y > 0
+    end
+
+    def scroll_down
+      @scroll_y -= @scroll_speed
+      if $window.height - @internal_height > 0
+        @scroll_y = 0
+      else
+        @scroll_y = @height - @internal_height if @scroll_y <= @height - @internal_height
+      end
+    end
+
+    def mouse_over?
+      $window.mouse_x.between?(@x, @x + @width) && $window.mouse_y.between?(@y, @y + @height)
     end
 
     def theme
@@ -116,7 +136,27 @@ module CyberarmEngine
     end
 
     def background
-      Gosu.draw_rect(@x, @y, @width, @height, @background_color, @z)
+      Gosu.draw_rect(@x, @y, @width, @height, @background_color, @z) unless active_container
+    end
+
+    def active_container(children = @children)
+      active = false
+
+      children.each do |child|
+        if child.mouse_over?
+          if child.children.count == 0
+            active = true
+          else
+            child.active_container(child.children)
+          end
+        end
+      end
+
+      return active
+    end
+
+    def active_element
+      false
     end
 
     def recalculate
@@ -126,13 +166,16 @@ module CyberarmEngine
       @packing_x = 0
       @packing_y = 0
 
-      @width = @origin_width
-      @height= @origin_height
-
       if @parent
         neighbors = @parent.children.size > 0 ? @parent.children.size : 1
-        @width  = @parent.width  / neighbors
-        @height = @parent.height / neighbors
+
+        if @mode == :flow
+          @width  = @parent.width  / neighbors
+          @height = @parent.height
+        else # :stack
+          @width  = @parent.width  / neighbors
+          @height = @parent.height / neighbors
+        end
       end
 
       widest_element  = nil
@@ -161,6 +204,9 @@ module CyberarmEngine
           @internal_height += element.height + margin unless @origin_height.nonzero?
         end
       end
+
+      # @internal_width  = @width  if @width  < @internal_width
+      # @internal_height = @height if @height < @internal_height
 
       @internal_width  += widest_element.margin if widest_element  && !@origin_width.nonzero?
       @internal_height += last_element.margin   if last_element && !@origin_height.nonzero?
