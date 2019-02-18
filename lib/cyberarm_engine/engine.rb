@@ -65,7 +65,11 @@ module CyberarmEngine
     end
 
     def previous_state
-      state = @states[@states.size-2]
+      if @states.size > 1 && state = @states[@states.size-2]
+        return state
+      else
+        return nil
+      end
     end
 
     def pop_state

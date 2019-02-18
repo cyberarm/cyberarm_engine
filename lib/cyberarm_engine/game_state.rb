@@ -3,7 +3,7 @@ module CyberarmEngine
     include Common
     include DSL
 
-    attr_accessor :options, :global_pause, :active_container, :active_grid
+    attr_accessor :options, :global_pause
     attr_reader :game_objects, :containers
 
     def initialize(options={})

@@ -75,11 +75,9 @@ module CyberarmEngine
     end
 
     def mouse_over?
-      if $window.mouse_x.between?(relative_x, relative_x + width)
-        if $window.mouse_y.between?(relative_y, relative_y + height)
-          true
-        end
-      end
+      @parent.mouse_over? &&
+      $window.mouse_x.between?(relative_x, relative_x + width) &&
+      $window.mouse_y.between?(relative_y, relative_y + height)
     end
 
     def active_element
