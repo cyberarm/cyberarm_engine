@@ -73,11 +73,30 @@ module CyberarmEngine
     end
 
     def redirect_mouse_button(button)
-      @mouse_over.publish(:"#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
+      if @focus && @mouse_over != @focus
+        @focus.publish(:blur)
+        @focus = nil
+      end
+
+      if @mouse_over
+        @mouse_down_position[button] = Vector.new(window.mouse_x, window.mouse_y)
+        @mouse_down_on[button]       = @mouse_over
+
+        @mouse_over.publish(:"#{button}_mouse_button", window.mouse_x, window.mouse_y)
+      else
+        @mouse_down_position[button] = nil
+        @mouse_down_on[button]       = nil
+      end
     end
 
     def redirect_released_mouse_button(button)
       @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
+      @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over == @mouse_down_on[button]
+
+      p @mouse_over.class, @mouse_down_on[button].class
+
+      @mouse_down_position[button] = nil
+      @mouse_down_on[button]       = nil
     end
 
     def redirect_holding_mouse_button(button)

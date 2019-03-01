@@ -8,7 +8,6 @@ module CyberarmEngine
 
     def initialize(options = {}, block = nil)
       super
-      # @current_position = Vector.new(@x, @y)
 
       @origin_x, @origin_x = @x, @x
       @origin_width, @origin_height = @width, @height
@@ -105,7 +104,7 @@ module CyberarmEngine
     def position_on_current_line(element)
       element.x = @current_position.x
       element.y = @current_position.y
-      @current_position.x += element.width
+      @current_position.x += element.outer_width
 
       @current_position.x = @x if @current_position.x >= max_width
     end
@@ -113,7 +112,7 @@ module CyberarmEngine
     def move_to_next_line(element)
       element.x = @current_position.x
       element.y = @current_position.y
-      @current_position.y += element.height
+      @current_position.y += element.outer_height
     end
   end
 end

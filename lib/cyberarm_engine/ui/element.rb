@@ -88,6 +88,14 @@ module CyberarmEngine
       @height + (@padding * 2)
     end
 
+    def outer_width
+      width + (@margin * 2)
+    end
+
+    def outer_height
+      height + (@margin * 2)
+    end
+
     def relative_x
       @x# + @margin
     end
