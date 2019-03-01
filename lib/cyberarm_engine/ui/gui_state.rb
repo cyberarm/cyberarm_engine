@@ -32,7 +32,7 @@ module CyberarmEngine
       new_mouse_over = @root_container.hit_element?(window.mouse_x, window.mouse_y)
       if new_mouse_over
         new_mouse_over.publish(:enter) if new_mouse_over != @mouse_over
-        new_mouse_over.publish(:hover, window.mouse_x, window.mouse_y)
+        new_mouse_over.publish(:hover)
       end
       @mouse_over.publish(:leave) if @mouse_over && new_mouse_over != @mouse_over
       @mouse_over = new_mouse_over
@@ -92,8 +92,6 @@ module CyberarmEngine
     def redirect_released_mouse_button(button)
       @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
       @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over == @mouse_down_on[button]
-
-      p @mouse_over.class, @mouse_down_on[button].class
 
       @mouse_down_position[button] = nil
       @mouse_down_on[button]       = nil

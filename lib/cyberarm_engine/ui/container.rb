@@ -47,10 +47,6 @@ module CyberarmEngine
       @children.each(&:update)
     end
 
-    def mouse_over?
-      $window.mouse_x.between?(@x, @x + @width) && $window.mouse_y.between?(@y, @y + @height)
-    end
-
     def theme
       @theme
     end
@@ -83,8 +79,7 @@ module CyberarmEngine
     end
 
     def recalculate
-      raise "mode was not defined!" unless @mode
-      @current_position = Vector.new(@x, @y)
+      @current_position = Vector.new(@margin_left + @x, @margin_top + @y)
 
       layout
     end
@@ -98,21 +93,22 @@ module CyberarmEngine
     end
 
     def fits_on_line?(element)
-      @current_position.x + element.width <= max_width
+      @current_position.x + element.margin_left + element.width + element.margin_right <= max_width
     end
 
     def position_on_current_line(element)
       element.x = @current_position.x
       element.y = @current_position.y
-      @current_position.x += element.outer_width
 
+      @current_position.x += element.width + element.margin_right
       @current_position.x = @x if @current_position.x >= max_width
     end
 
     def move_to_next_line(element)
       element.x = @current_position.x
       element.y = @current_position.y
-      @current_position.y += element.outer_height
+
+      @current_position.y += element.height + element.margin_bottom
     end
   end
 end

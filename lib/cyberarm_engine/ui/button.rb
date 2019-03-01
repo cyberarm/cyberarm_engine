@@ -20,16 +20,16 @@ module CyberarmEngine
     end
 
     def clicked_left_mouse_button(sender, x, y)
-      @block.call if block
+      @block.call(self) if @block
     end
 
     def draw_button
-      $window.draw_rect(relative_x, relative_y, width, height, @options[:element_background], @z+1)
+      $window.draw_rect(@x, @y, width, height, @options[:element_background], @z+1)
 
       @background ||= @options[:interactive_background]
       $window.draw_rect(
-        relative_x + @options[:interactive_border_size],
-        relative_y + @options[:interactive_border_size],
+        @x + @options[:interactive_border_size],
+        @y + @options[:interactive_border_size],
         width - (@options[:interactive_border_size]*2),
         height- (@options[:interactive_border_size]*2),
         @background,

@@ -29,7 +29,7 @@ module CyberarmEngine
       @game_objects = nil
     end
 
-    def down_up(id)
+    def button_down(id)
       @game_objects.each do |o|
         o.button_down(id)
       end

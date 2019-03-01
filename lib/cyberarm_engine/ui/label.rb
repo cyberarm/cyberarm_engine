@@ -9,7 +9,7 @@ module CyberarmEngine
     end
 
     def draw
-      $window.draw_rect(relative_x, relative_y, width, height, @options[:fill], @z+1)
+      $window.draw_rect(@x, @y, width, height, @options[:fill], @z+1)
 
       @text.draw
     end
@@ -27,8 +27,8 @@ module CyberarmEngine
       @width = @text.width
       @height= @text.height
 
-      @text.x = relative_x + @padding
-      @text.y = relative_y + @padding
+      @text.x = @x + @padding_left
+      @text.y = @y + @padding_top
       @text.z = @z + 3
     end
 

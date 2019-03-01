@@ -22,18 +22,13 @@ module CyberarmEngine
     end
 
     def draw
-      $window.draw_rect(relative_x, relative_y, width, height, @options[:fill], @z+1)
+      $window.draw_rect(@x, @y, width, height, @options[:fill], @z+1)
 
-      @image.draw(relative_x + @padding, relative_y + @padding, @z + 2, @scale_x, @scale_y) # TODO: Add color support?
+      @image.draw(@x + @padding_left, @y + @padding_top, @z + 2, @scale_x, @scale_y) # TODO: Add color support?
     end
 
-    def button_up(id)
-      case id
-      when Gosu::MsLeft
-        if mouse_over?
-          @block.call(self) if @block
-        end
-      end
+    def clicked_left_mouse_button(sender, x, y)
+      @block.call(self) if @block
     end
 
     def recalculate

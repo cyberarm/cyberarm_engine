@@ -20,7 +20,7 @@ module CyberarmEngine
     end
 
     def draw
-      Gosu.clip_to(relative_x, relative_y, width, height) do
+      Gosu.clip_to(@x, @y, width, height) do
         draw_text
         Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z + 40) if @show_caret
       end
@@ -56,6 +56,16 @@ module CyberarmEngine
           @block.call(self) if @block
         end
       end
+    end
+
+    def clicked_left_mouse_button(sender, x, y)
+      window.current_state.focus=self
+      window.text_input = @text_input
+      @block.call(self) if @block
+    end
+
+    def blur(sender)
+      window.text_input = nil
     end
 
     def caret_position

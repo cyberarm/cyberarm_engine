@@ -48,9 +48,17 @@ module CyberarmEngine
       return _element
     end
 
-    def check_box(options = {}, &block)
+    def toggle_button(options = {}, &block)
       options[:parent] = @containers.last
-      _element = CheckBox.new(options, block)
+      _element = ToggleButton.new(options, block)
+      @containers.last.add(_element)
+
+      return _element
+    end
+
+    def check_box(text, options = {}, &block)
+      options[:parent] = @containers.last
+      _element = CheckBox.new(text, options, block)
       @containers.last.add(_element)
 
       return _element

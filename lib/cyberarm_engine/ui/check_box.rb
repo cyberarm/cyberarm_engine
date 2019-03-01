@@ -1,39 +1,33 @@
 module CyberarmEngine
-  class CheckBox < Button
-    def initialize(options, block = nil)
-      super(options[:checkmark], options, block)
-      @checked = options[:checked] || false
-      if @checked
-        @text.text = @options[:checkmark]
-      else
-        @text.text = ""
-      end
+  class CheckBox < Flow
+    def initialize(text, options, block = nil)
+      super(options = {}, block = nil)
 
-      return self
+      @toggle_button = ToggleButton.new(options)
+      @label         = Label.new(text, options)
+
+      add(@toggle_button)
+      add(@label)
+
+      @width  = @toggle_button.width + @label.width
+      @height = @toggle_button.height + @label.height
+
+      @background_color = Gosu::Color::RED
+
+      recalculate
     end
 
-    def button_up(id)
-      if mouse_over? && id == Gosu::MsLeft
-        if @checked
-          @checked = false
-          @text.text = ""
-        else
-          @checked = true
-          @text.text = @options[:checkmark]
-        end
-
-        @block.call(self) if @block
-      end
+    def text=(text)
+      @label.text = text
+      recalculate
     end
 
-    def recalculate
-      super
-
-      @width = @text.textobject.text_width(@options[:checkmark])
+    def hover(sender)
+      # puts "a-#{Gosu.milliseconds}"
     end
 
-    def value
-      @checked
+    def clicked_left_mouse_button(sender, x, y)
+      @toggle_button.toggled = !@toggle_button.toggled
     end
   end
 end

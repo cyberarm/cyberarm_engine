@@ -45,6 +45,10 @@ module CyberarmEngine
       @last_frame_time/1000.0
     end
 
+    def button_down(id)
+      current_state.button_down(id) if current_state
+    end
+
     def button_up(id)
       current_state.button_up(id) if current_state
     end

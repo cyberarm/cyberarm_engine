@@ -15,8 +15,8 @@ module CyberarmEngine
       background: Gosu::Color::NONE,
       checkmark: "√", # √
 
-      padding: 20,
-      margin:   2,
+      margin:   0,
+      padding:  5,
 
       element_background: Gosu::Color.rgb(12,12,12),
 
@@ -38,7 +38,7 @@ module CyberarmEngine
 
       text_size: 22,
       text_shadow: true,
-      font: "Consolas"
+      font: "Sans Serif"
     }
   end
 end
