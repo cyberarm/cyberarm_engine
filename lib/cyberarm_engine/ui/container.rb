@@ -3,39 +3,17 @@ module CyberarmEngine
     include Common
 
     attr_accessor :stroke_color, :fill_color, :background_color, :x, :y, :z, :width, :height
-    attr_reader :children, :options, :parent
+    attr_reader :children
     attr_reader :scroll_x, :scroll_y
 
     def initialize(options = {}, block = nil)
-      @parent = options[:parent] || nil
+      super
+      # @current_position = Vector.new(@x, @y)
 
-      options = {
-        x: 0, y: 0, z: 0,
-        width: 0, height: 0
-      }.merge(options)
-
-      x = options.dig(:x)
-      y = options.dig(:y)
-      z = options.dig(:z)
-
-      width  = options.dig(:width)
-      height = options.dig(:height)
-
-      raise "#{self.class} 'x' must be a number" unless x.is_a?(Numeric)
-      raise "#{self.class} 'y' must be a number" unless y.is_a?(Numeric)
-      raise "#{self.class} 'z' must be a number" unless z.is_a?(Numeric)
-      raise "#{self.class} 'width' must be a number" unless width.is_a?(Numeric)
-      raise "#{self.class} 'height' must be a number" unless height.is_a?(Numeric)
-      raise "#{self.class} 'options' must be a Hash" unless options.is_a?(Hash)
-
-      @x, @y, @z, @width, @height, = x, y, z, width, height
       @origin_x, @origin_x = @x, @x
       @origin_width, @origin_height = @width, @height
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
-
-      @block = block
-      @options = options
 
       @text_color = options[:text_color] || Element::THEME[:stroke]
       @background_color = Element::THEME[:background]
@@ -43,8 +21,6 @@ module CyberarmEngine
       @children = []
 
       @theme = {}
-
-      return self
     end
 
     def build

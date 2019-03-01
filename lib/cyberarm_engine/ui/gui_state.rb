@@ -30,6 +30,10 @@ module CyberarmEngine
       super
 
       new_mouse_over = @root_container.hit_element?(window.mouse_x, window.mouse_y)
+      if new_mouse_over
+        new_mouse_over.publish(:enter) if new_mouse_over != @mouse_over
+        new_mouse_over.publish(:hover, window.mouse_x, window.mouse_y)
+      end
       @mouse_over.publish(:leave) if @mouse_over && new_mouse_over != @mouse_over
       @mouse_over = new_mouse_over
 
@@ -69,7 +73,7 @@ module CyberarmEngine
     end
 
     def redirect_mouse_button(button)
-      @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
+      @mouse_over.publish(:"#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
     end
 
     def redirect_released_mouse_button(button)
@@ -81,7 +85,7 @@ module CyberarmEngine
     end
 
     def redirect_mouse_wheel(button)
-      @mouse_over.publish(:"scroll_#{button}", window.mouse_x, window.mouse_y) if @mouse_over
+      @mouse_over.publish(:"mouse_wheel_#{button}", window.mouse_x, window.mouse_y) if @mouse_over
     end
   end
 end
