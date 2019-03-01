@@ -9,6 +9,8 @@ module CyberarmEngine
       @text.draw
     end
 
+    def mouse_over?; false; end
+
     def draw_button
       $window.draw_rect(relative_x, relative_y, width, height, @options[:element_background], @z+1)
 

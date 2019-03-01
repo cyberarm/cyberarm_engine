@@ -1,7 +1,6 @@
 module CyberarmEngine
   class GameState
     include Common
-    include DSL
 
     attr_accessor :options, :global_pause
     attr_reader :game_objects, :containers
@@ -10,10 +9,6 @@ module CyberarmEngine
       @options = options
       @game_objects = []
       @global_pause = false
-
-      @root_container = Stack.new(x: 0, y: 0, width: $window.width, height: $window.height)
-      @game_objects << @root_container
-      @containers     = [@root_container]
 
       setup
     end
@@ -32,6 +27,12 @@ module CyberarmEngine
     def destroy
       @options = nil
       @game_objects = nil
+    end
+
+    def down_up(id)
+      @game_objects.each do |o|
+        o.button_down(id)
+      end
     end
 
     def button_up(id)

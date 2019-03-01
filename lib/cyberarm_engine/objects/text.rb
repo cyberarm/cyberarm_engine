@@ -9,7 +9,7 @@ module CyberarmEngine
       @text = text || ""
       @options = options
       @size = options[:size] || 18
-      @font = options[:font] || Gosu.default_font_name
+      @font = options[:font] || "sans-serif"#Gosu.default_font_name
       @x = options[:x] || 0
       @y = options[:y] || 0
       @z = options[:z] || 1025

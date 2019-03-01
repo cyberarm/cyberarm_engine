@@ -3,7 +3,6 @@ module CyberarmEngine
     INSTANCES = []
     IMAGES = {}
     SAMPLES= {}
-    Vertex = Struct.new(:x, :y)
     attr_accessor :image, :x, :y, :z, :angle, :center_x, :center_y, :scale_x, :scale_y,
                   :color, :alpha, :mode, :options, :paused, :radius, :last_x, :last_y
     attr_reader :world_center_point
@@ -31,7 +30,7 @@ module CyberarmEngine
       @paused = false
       @speed = 0
       @debug_color = Gosu::Color::GREEN
-      @world_center_point = Vertex.new(0,0)
+      @world_center_point = Vector.new(0,0)
       setup
       @debug_text = MultiLineText.new("", color: @debug_color, y: self.y-(self.height*self.scale), z: 9999)
       @debug_text.x = self.x
@@ -157,7 +156,7 @@ module CyberarmEngine
       _x = @x+(ahead_by*Math.cos(direction))
       _y = @y+(ahead_by*Math.sin(direction))
       return direction if angle_only
-      return Vertex.new(_x, _y) unless angle_only
+      return Vector.new(_x, _y) unless angle_only
     end
 
     def show_debug_heading

@@ -1,47 +1,9 @@
 module CyberarmEngine
   class Element
-    DEFAULTS = {
-      x: 0,
-      y: 0,
-      z: 30,
+    include Theme
+    include Event
 
-      width: 0,
-      height: 0
-    }
-
-    THEME = {
-      stroke:     Gosu::Color::WHITE,
-      fill:       Gosu::Color::NONE,
-      background: Gosu::Color::NONE,
-      checkmark: "√", # √
-
-      padding: 20,
-      margin:   2,
-
-      element_background: Gosu::Color.rgb(12,12,12),
-
-      interactive_stroke:            Gosu::Color::WHITE,
-      interactive_active_stroke:     Gosu::Color::GRAY,
-
-      interactive_background:        Gosu::Color::GRAY,
-      interactive_hover_background:  Gosu::Color.rgb(100, 100, 100),
-      interactive_active_background: Gosu::Color.rgb(50, 50, 50),
-      interactive_border_size: 1,
-
-      edit_line_width: 200,
-      edit_line_password_character: "•", # •
-      caret_width: 2,
-      caret_color: Gosu::Color.rgb(50,50,25),
-      caret_interval: 500,
-
-      image_retro: false,
-
-      text_size: 22,
-      text_shadow: true,
-      font: "Consolas"
-    }
-
-    attr_accessor :x, :y, :z, :width, :height, :padding, :margin, :focus
+    attr_accessor :x, :y, :z, :width, :height, :padding, :margin, :enabled
 
     def initialize(options = {}, block = nil)
       @parent = options[:parent] # parent Container (i.e. flow/stack)
@@ -53,13 +15,23 @@ module CyberarmEngine
       @y = options[:y]
       @z = options[:z]
 
+      @fixed_x = @x if @x != 0
+      @fixed_y = @y if @y != 0
+
       @width = options[:width]
       @height = options[:width]
+
+      @max_width  = @width  if @width  != 0
+      @max_height = @height if @height != 0
 
       @padding = options[:padding]
       @margin  = options[:margin]
 
-      @focus = false
+      @enabled = true
+    end
+
+    def enabled?
+      @enabled
     end
 
     def draw
@@ -74,14 +46,9 @@ module CyberarmEngine
     def button_up(id)
     end
 
-    def mouse_over?
-      @parent.mouse_over? &&
-      $window.mouse_x.between?(relative_x, relative_x + width) &&
-      $window.mouse_y.between?(relative_y, relative_y + height)
-    end
-
-    def active_element
-      mouse_over? || @focus
+    def hit?(x, y)
+      x.between?(relative_x, relative_x + width) &&
+      y.between?(relative_y, relative_y + height)
     end
 
     def width
@@ -93,11 +60,11 @@ module CyberarmEngine
     end
 
     def relative_x
-      @parent.x + @parent.scroll_x + @x + @margin
+      @x# + @margin
     end
 
     def relative_y
-      @parent.y + @parent.scroll_y + @y + @margin
+      @y# + @margin
     end
 
     def recalculate

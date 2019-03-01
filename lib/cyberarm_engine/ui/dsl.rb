@@ -6,7 +6,7 @@ module CyberarmEngine
       _container = Flow.new(options, block)
       @containers << _container
       _container.build
-      options[:parent].add_child(_container)
+      options[:parent].add(_container)
       @containers.pop
 
       return _container
@@ -18,7 +18,7 @@ module CyberarmEngine
       _container = Stack.new(options, block)
       @containers << _container
       _container.build
-      options[:parent].add_child(_container)
+      options[:parent].add(_container)
       @containers.pop
 
       return _container

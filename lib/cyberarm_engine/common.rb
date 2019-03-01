@@ -23,5 +23,9 @@ module CyberarmEngine
     def draw_rect(x, y, width, height, color, z = 0)
       $window.draw_rect(x,y,width,height,color,z)
     end
+
+    def window
+      $window
+    end
   end
 end

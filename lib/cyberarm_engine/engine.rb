@@ -1,4 +1,6 @@
 module CyberarmEngine
+  Vector = Struct.new(:x, :y, :z, :weight)
+
   class Engine < Gosu::Window
     attr_accessor :show_cursor
     attr_reader :current_state, :last_frame_time
