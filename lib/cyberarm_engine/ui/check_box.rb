@@ -23,14 +23,6 @@ module CyberarmEngine
       recalculate
     end
 
-    def hover(sender)
-      # puts "a-#{Gosu.milliseconds}"
-    end
-
-    def clicked_left_mouse_button(sender, x, y)
-      @toggle_button.clicked_left_mouse_button(sender, x, y)
-    end
-
     def define_label_singletons
       @label.define_singleton_method(:_toggle_button) do |button|
         @_toggle_button = button
