@@ -15,7 +15,7 @@ module CyberarmEngine
       background: Gosu::Color::NONE,
       checkmark: "√", # √
 
-      margin:   0,
+      margin:   10,
       padding:  5,
 
       element_background: Gosu::Color.rgb(12,12,12),

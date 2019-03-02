@@ -90,8 +90,10 @@ module CyberarmEngine
     end
 
     def redirect_released_mouse_button(button)
-      @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
-      @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over == @mouse_down_on[button]
+      if @mouse_over
+        @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y)
+        @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over == @mouse_down_on[button]
+      end
 
       @mouse_down_position[button] = nil
       @mouse_down_on[button]       = nil

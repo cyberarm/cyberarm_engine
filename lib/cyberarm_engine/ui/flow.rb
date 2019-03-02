@@ -4,17 +4,16 @@ module CyberarmEngine
 
     def layout
       @children.each do |child|
+        child.recalculate
+
         if fits_on_line?(child)
           position_on_current_line(child)
         else
+          @current_position.x = @margin_left + @x
+
           move_to_next_line(child)
         end
-
-        child.recalculate
       end
-
-      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max || 0)
-      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max || 0)
     end
   end
 end

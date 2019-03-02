@@ -27,8 +27,8 @@ module CyberarmEngine
       @width = @text.width
       @height= @text.height
 
-      @text.x = @x + @padding_left
-      @text.y = @y + @padding_top
+      @text.x = @padding_left + @x
+      @text.y = @padding_top  + @y
       @text.z = @z + 3
     end
 

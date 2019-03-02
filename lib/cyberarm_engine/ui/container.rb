@@ -82,6 +82,9 @@ module CyberarmEngine
       @current_position = Vector.new(@margin_left + @x, @margin_top + @y)
 
       layout
+
+      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max + @margin_right  || 0)
+      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max + @margin_bottom || 0)
     end
 
     def layout
@@ -101,7 +104,7 @@ module CyberarmEngine
       element.y = @current_position.y
 
       @current_position.x += element.width + element.margin_right
-      @current_position.x = @x if @current_position.x >= max_width
+      @current_position.x = @margin_left + @x if @current_position.x >= max_width
     end
 
     def move_to_next_line(element)
