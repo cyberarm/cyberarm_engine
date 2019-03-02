@@ -36,11 +36,11 @@ module CyberarmEngine
     end
 
     def draw
-      Gosu.clip_to(@x, @y, @width, @height) do
+      # Gosu.clip_to(@x, @y, @width, @height) do
         background
 
         @children.each(&:draw)
-      end
+      # end
     end
 
     def update
@@ -79,12 +79,23 @@ module CyberarmEngine
     end
 
     def recalculate
-      @current_position = Vector.new(@margin_left + @x, @margin_top + @y)
+      @current_position = Vector.new(@margin_left, @margin_top)
 
       layout
 
       @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max + @margin_right  || 0)
       @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max + @margin_bottom || 0)
+
+      # Move child to parent after positioning
+      @children.each do |child|
+        child.x += @x
+        child.y += @y
+
+        # Fix child being displaced
+        child.recalculate
+      end
+      # puts unless @parent
+      # puts "<#{self.class} X: #{@x}, Y: #{@y}, width: #{@width}, height: #{@height} (children: #{@children.count}) [#{children.first.class}]"
     end
 
     def layout
@@ -92,7 +103,7 @@ module CyberarmEngine
     end
 
     def max_width
-      @max_width ? @max_width : window.width
+      @max_width ? @max_width : window.width - (@parent ? @parent.margin_right + @margin_right : @margin_right)
     end
 
     def fits_on_line?(element)
@@ -103,6 +114,8 @@ module CyberarmEngine
       element.x = @current_position.x
       element.y = @current_position.y
 
+      element.recalculate
+
       @current_position.x += element.width + element.margin_right
       @current_position.x = @margin_left + @x if @current_position.x >= max_width
     end
@@ -111,7 +124,23 @@ module CyberarmEngine
       element.x = @current_position.x
       element.y = @current_position.y
 
+      element.recalculate
+
       @current_position.y += element.height + element.margin_bottom
+    end
+
+    # def mouse_wheel_up(sender, x, y)
+    #   @children.each {|c| c.y -= @scroll_speed}
+    #   @children.each {|c| c.recalculate}
+    # end
+
+    # def mouse_wheel_down(sender, x, y)
+    #   @children.each {|c| c.y += @scroll_speed}
+    #   @children.each {|c| c.recalculate}
+    # end
+
+    def value
+      @children.map {|c| c.class}.join(", ")
     end
   end
 end

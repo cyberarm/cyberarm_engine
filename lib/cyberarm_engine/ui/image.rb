@@ -2,6 +2,7 @@ module CyberarmEngine
   class Image < Element
     def initialize(path, options = {}, block = nil)
       super(options, block)
+      @path = path
 
       @image = Gosu::Image.new(path, retro: @options[:image_retro])
       if @options[:width].nonzero? && @options[:height].nonzero?
@@ -34,6 +35,10 @@ module CyberarmEngine
     def recalculate
       @width  = @image.width * @scale_x
       @height = @image.height * @scale_y
+    end
+
+    def value
+      @path
     end
   end
 end

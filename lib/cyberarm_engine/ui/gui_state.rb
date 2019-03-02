@@ -33,6 +33,7 @@ module CyberarmEngine
       if new_mouse_over
         new_mouse_over.publish(:enter) if new_mouse_over != @mouse_over
         new_mouse_over.publish(:hover)
+        # puts "#{new_mouse_over.class}[#{new_mouse_over.value}]: #{new_mouse_over.x}:#{new_mouse_over.y} #{new_mouse_over.width}:#{new_mouse_over.height}" if new_mouse_over != @mouse_over
       end
       @mouse_over.publish(:leave) if @mouse_over && new_mouse_over != @mouse_over
       @mouse_over = new_mouse_over

@@ -4,8 +4,6 @@ module CyberarmEngine
 
     def layout
       @children.each do |child|
-        child.recalculate
-
         move_to_next_line(child)
       end
     end
