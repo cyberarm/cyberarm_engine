@@ -14,7 +14,7 @@ module CyberarmEngine
       @text.color = @options[:interactive_stroke]
     end
 
-    def holding_left_mouse_button(sender, x, y)
+    def left_mouse_button(sender, x, y)
       @background = @options[:interactive_active_background]
       @text.color = @options[:interactive_active_stroke]
     end
