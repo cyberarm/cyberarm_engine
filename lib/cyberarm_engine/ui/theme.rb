@@ -16,10 +16,10 @@ module CyberarmEngine
       class_names = self.class.ancestors
       class_names = class_names[0..class_names.index(CyberarmEngine::Element)].map! {|c| c.to_s.split("::").last.to_sym}.reverse!
 
-      class_names.reverse.each do |klass|
+      class_names.each do |klass|
         next unless data = THEME.dig(klass)
         data.each do |key, value|
-          hash[key] = value
+          hash.merge!(data)
         end
       end
 
@@ -44,7 +44,7 @@ module CyberarmEngine
       },
 
       Button: {
-        margin:   0,
+        margin:   2,
         padding:  2,
         border_thickness: 2,
         border_color: ["ffd59674".hex, "ffff8746".hex],
