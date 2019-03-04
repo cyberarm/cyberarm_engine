@@ -2,7 +2,6 @@ module CyberarmEngine
   module DSL
     def flow(options = {}, &block)
       options[:parent] = @containers.last
-      puts "Flow"
       _container = Flow.new(options, block)
       @containers << _container
       _container.build
@@ -14,7 +13,6 @@ module CyberarmEngine
 
     def stack(options = {}, &block)
       options[:parent] = @containers.last
-      puts "Stack"
       _container = Stack.new(options, block)
       @containers << _container
       _container.build

@@ -15,31 +15,31 @@ module CyberarmEngine
 
     def initialize(options = {}, block = nil)
       @parent = options[:parent] # parent Container (i.e. flow/stack)
-      options = (THEME).merge(DEFAULTS).merge(options)
+      options = theme_defaults.merge(options)
       @options = options
       @block = block
 
       @background_canvas = Background.new
       @border_canvas     = BorderCanvas.new(element: self)
 
-      @x = options.dig(:x)
-      @y = options.dig(:y)
-      @z = options.dig(:z)
+      @x = default(:x)
+      @y = default(:y)
+      @z = default(:z)
 
       @fixed_x = @x if @x != 0
       @fixed_y = @y if @y != 0
 
-      @width  = options.dig(:width)
-      @height = options.dig(:height)
+      @width  = default(:width)
+      @height = default(:height)
 
-      set_border_thickness(options.dig(:border_thickness))
+      set_border_thickness(default(:border_thickness))
 
-      set_padding(options.dig(:padding))
+      set_padding(default(:padding))
 
-      set_margin(options.dig(:margin))
+      set_margin(default(:margin))
 
-      set_background(options.dig(:background))
-      set_border_color(options.dig(:border_color))
+      set_background(default(:background))
+      set_border_color(default(:border_color))
 
       raise "#{self.class} 'x' must be a number" unless @x.is_a?(Numeric)
       raise "#{self.class} 'y' must be a number" unless @y.is_a?(Numeric)
@@ -66,19 +66,19 @@ module CyberarmEngine
     def set_border_thickness(border_thickness)
       @border_thickness = border_thickness
 
-      @border_thickness_left   = options.dig(:border_thickness_left)   || @border_thickness
-      @border_thickness_right  = options.dig(:border_thickness_right)  || @border_thickness
-      @border_thickness_top    = options.dig(:border_thickness_top)    || @border_thickness
-      @border_thickness_bottom = options.dig(:border_thickness_bottom) || @border_thickness
+      @border_thickness_left   = default(:border_thickness_left)   || @border_thickness
+      @border_thickness_right  = default(:border_thickness_right)  || @border_thickness
+      @border_thickness_top    = default(:border_thickness_top)    || @border_thickness
+      @border_thickness_bottom = default(:border_thickness_bottom) || @border_thickness
     end
 
     def set_border_color(color)
       @border_color = color
 
-      @border_color_left   = options.dig(:border_color_left)   || @border_color
-      @border_color_right  = options.dig(:border_color_right)  || @border_color
-      @border_color_top    = options.dig(:border_color_top)    || @border_color
-      @border_color_bottom = options.dig(:border_color_bottom) || @border_color
+      @border_color_left   = default(:border_color_left)   || @border_color
+      @border_color_right  = default(:border_color_right)  || @border_color
+      @border_color_top    = default(:border_color_top)    || @border_color
+      @border_color_bottom = default(:border_color_bottom) || @border_color
 
       @border_canvas.color = color
     end
@@ -86,19 +86,19 @@ module CyberarmEngine
     def set_padding(padding)
       @padding = padding
 
-      @padding_left   = options.dig(:padding_left)   || @padding
-      @padding_right  = options.dig(:padding_right)  || @padding
-      @padding_top    = options.dig(:padding_top)    || @padding
-      @padding_bottom = options.dig(:padding_bottom) || @padding
+      @padding_left   = default(:padding_left)   || @padding
+      @padding_right  = default(:padding_right)  || @padding
+      @padding_top    = default(:padding_top)    || @padding
+      @padding_bottom = default(:padding_bottom) || @padding
     end
 
     def set_margin(margin)
       @margin = margin
 
-      @margin_left   = options.dig(:margin_left)   || @margin
-      @margin_right  = options.dig(:margin_right)  || @margin
-      @margin_top    = options.dig(:margin_top)    || @margin
-      @margin_bottom = options.dig(:margin_bottom) || @margin
+      @margin_left   = default(:margin_left)   || @margin
+      @margin_right  = default(:margin_right)  || @margin
+      @margin_top    = default(:margin_top)    || @margin
+      @margin_bottom = default(:margin_bottom) || @margin
     end
 
     def default_events

@@ -3,13 +3,13 @@ module CyberarmEngine
     def initialize(text, options = {}, block = nil)
       super(text, options, block)
 
-      @type = @options[:type] || :plain
+      @type = default(:type)
 
 
-      @caret_width = @options[:caret_width]
+      @caret_width = default(:caret_width)
       @caret_height= @text.height
-      @caret_color = @options[:caret_color]
-      @caret_interval = @options[:caret_interval]
+      @caret_color = default(:caret_color)
+      @caret_interval = default(:caret_interval)
       @caret_last_interval = Gosu.milliseconds
       @show_caret  = true
 
@@ -26,7 +26,7 @@ module CyberarmEngine
 
     def update
       if @type == :password
-        @text.text = @options[:edit_line_password_character] * @text_input.text.length
+        @text.text = default(:password_character) * @text_input.text.length
       else
         @text.text = @text_input.text
       end
@@ -52,7 +52,7 @@ module CyberarmEngine
 
     def caret_position
       if @type == :password
-        @text.x + @text.textobject.text_width(@options[:edit_line_password_character] * @text_input.text[0..@text_input.caret_pos].length)
+        @text.x + @text.textobject.text_width(default(:password_character) * @text_input.text[0..@text_input.caret_pos].length)
       else
         @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.caret_pos])
       end
@@ -61,7 +61,7 @@ module CyberarmEngine
     def recalculate
       super
 
-      @width = @options[:edit_line_width]
+      @width = default(:width)
       update_background
     end
 

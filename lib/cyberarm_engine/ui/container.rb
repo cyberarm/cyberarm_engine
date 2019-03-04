@@ -12,7 +12,7 @@ module CyberarmEngine
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
 
-      @text_color = options[:text_color] || Element::THEME[:stroke]
+      @text_color = options[:color]
 
       @children = []
 
@@ -69,11 +69,15 @@ module CyberarmEngine
 
     def recalculate
       @current_position = Vector.new(@margin_left, @margin_top)
+      if @children.first
+        @current_position.x += @children.first.margin_left
+        @current_position.y += @children.first.margin_top
+      end
 
       layout
 
-      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max + @margin_right  || 0).round
-      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max + @margin_bottom || 0).round
+      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max || 0).round
+      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max || 0).round
 
       # Move child to parent after positioning
       @children.each do |child|
@@ -85,8 +89,6 @@ module CyberarmEngine
       end
 
       update_background
-      # puts unless @parent
-      # puts "<#{self.class} X: #{@x}, Y: #{@y}, width: #{@width}, height: #{@height} (children: #{@children.count}) [#{children.first.class}]"
     end
 
     def layout

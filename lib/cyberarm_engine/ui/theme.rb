@@ -1,43 +1,91 @@
 module CyberarmEngine
   module Theme
-    DEFAULTS = {
-      x: 0,
-      y: 0,
-      z: 30,
+    def default(*args)
+      value = @options
+      args.each do |arg|
+        value = value.dig(arg)
+      end
 
-      width: 0,
-      height: 0
-    }
+      value
+    end
+
+    def theme_defaults
+      raise "Error" unless self.class.ancestors.include?(CyberarmEngine::Element)
+
+      hash = {}
+      class_names = self.class.ancestors
+      class_names = class_names[0..class_names.index(CyberarmEngine::Element)].map! {|c| c.to_s.split("::").last.to_sym}.reverse!
+
+      class_names.reverse.each do |klass|
+        next unless data = THEME.dig(klass)
+        data.each do |key, value|
+          hash[key] = value
+        end
+      end
+
+      hash
+    end
 
     THEME = {
-      color:     Gosu::Color::WHITE,
-      background: Gosu::Color::NONE,
-      checkmark: "√", # √
+      Element: {
+        x: 0,
+        y: 0,
+        z: 30,
 
-      margin:   10,
-      padding:  5,
-      border_thickness: 2,
-      border_color: [Gosu::Color.rgb(12,12,12)],
-      border_radius: 0,
+        width:  0,
+        height: 0,
+        color:     Gosu::Color::WHITE,
+        background: Gosu::Color::NONE,
+        margin:   2,
+        padding:  2,
+        border_thickness: 0,
+        border_color: Gosu::Color::NONE,
+        border_radius: 0,
+      },
 
-      interactive_stroke:            Gosu::Color::WHITE,
-      interactive_active_stroke:     Gosu::Color::GRAY,
+      Button: {
+        margin:   0,
+        padding:  2,
+        border_thickness: 2,
+        border_color: ["ffd59674".hex, "ffff8746".hex],
+        border_radius: 0,
+        background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
 
-      interactive_background:        [Gosu::Color::GRAY, Gosu::Color::RED],
-      interactive_hover_background:  Gosu::Color.rgb(100, 100, 100),
-      interactive_active_background: Gosu::Color.rgb(50, 50, 50),
+        hover: {
+          color: Gosu::Color.rgb(200,200,200),
+          background:  ["ffB23E41".to_i(16), "ffFF7C00".to_i(16)],
+        },
 
-      edit_line_width: 200,
-      edit_line_password_character: "•", # •
-      caret_width: 2,
-      caret_color: Gosu::Color.rgb(50,50,25),
-      caret_interval: 500,
+        active: {
+          color: Gosu::Color::BLACK,
+          background: ["ffB23E41".to_i(16)]
+        }
+      },
 
-      image_retro: false,
+      EditLine: {
+        type: :text,
+        width: 200,
+        password_character: "•",
+        caret_width: 2,
+        caret_color: Gosu::Color::WHITE,
+        caret_interval: 500,
+      },
 
-      text_size: 22,
-      text_shadow: true,
-      font: "Sans Serif"
+      Image: {
+        retro: false
+      },
+
+      Label: {
+      text_size: 24,
+      text_shadow: false,
+      font: "Akaash"
+      },
+
+      ToggleButton: {
+        checkmark: "√",
+        padding_left: 0,
+        margin_left: 0
+      }
     }
   end
 end

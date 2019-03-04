@@ -3,7 +3,7 @@ module CyberarmEngine
     def initialize(text, options = {}, block = nil)
       super(text, options, block)
 
-      @background_canvas.background = @options[:interactive_background]
+      @background_canvas.background = default(:background)
     end
 
     def render
@@ -15,13 +15,13 @@ module CyberarmEngine
     end
 
     def enter(sender)
-      @background_canvas.background = @options[:interactive_hover_background]
-      @text.color = @options[:interactive_stroke]
+      @background_canvas.background = default(:hover, :background)
+      @text.color = default(:hover, :color)
     end
 
     def left_mouse_button(sender, x, y)
-      @background_canvas.background = @options[:interactive_active_background]
-      @text.color = @options[:interactive_active_stroke]
+      @background_canvas.background = default(:active, :background)
+      @text.color = default(:active, :color)
     end
 
     def released_left_mouse_button(sender,x, y)
@@ -29,8 +29,8 @@ module CyberarmEngine
     end
 
     def leave(sender)
-      @background_canvas.background = @options[:interactive_background]
-      @text.color = @options[:interactive_stroke]
+      @background_canvas.background = default(:background)
+      @text.color = default(:color)
     end
 
     def clicked_left_mouse_button(sender, x, y)

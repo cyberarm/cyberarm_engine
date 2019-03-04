@@ -8,6 +8,10 @@ module CyberarmEngine
       $window.current_state
     end
 
+    def previous_state
+      $window.previous_state
+    end
+
     def pop_state
       $window.pop_state
     end

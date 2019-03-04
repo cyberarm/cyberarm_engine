@@ -15,6 +15,7 @@ module CyberarmEngine
       @width  = @toggle_button.width + @label.width
       @height = @toggle_button.height + @label.height
 
+      p @options
       recalculate
     end
 
