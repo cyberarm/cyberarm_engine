@@ -73,7 +73,7 @@ module CyberarmEngine
     end
 
     def background(color = Gosu::Color::NONE)
-      @containers.last.background_color = color
+      @containers.last.background = color
     end
 
     # Foreground color, e.g. Text

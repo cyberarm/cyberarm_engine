@@ -19,13 +19,9 @@ module CyberarmEngine
       return self
     end
 
-    def draw
-      Gosu.clip_to(@x, @y, width, height) do
+    def render
         draw_text
-        Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z + 40) if @show_caret
-      end
-
-      draw_button
+        Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z + 40) if @focus && @show_caret
     end
 
     def update
@@ -42,41 +38,23 @@ module CyberarmEngine
       end
     end
 
-    def button_up(id)
-      case id
-      when Gosu::MsLeft
-        if mouse_over?
-          @focus = !@focus
-
-          if @focus
-            $window.text_input = @text_input
-          else
-            $window.text_input = nil
-          end
-          @block.call(self) if @block
-        end
-      end
-    end
-
     def clicked_left_mouse_button(sender, x, y)
+      @focus = true
       window.current_state.focus=self
       window.text_input = @text_input
       @block.call(self) if @block
     end
 
     def blur(sender)
+      @focus = false
       window.text_input = nil
     end
 
     def caret_position
-      if $window.text_input && $window.text_input == @text_input
-        if @type == :password
-          @text.x + @text.textobject.text_width(@options[:edit_line_password_character] * @text_input.text[0..@text_input.caret_pos].length)
-        else
-          @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.caret_pos])
-        end
+      if @type == :password
+        @text.x + @text.textobject.text_width(@options[:edit_line_password_character] * @text_input.text[0..@text_input.caret_pos].length)
       else
-        0
+        @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.caret_pos])
       end
     end
 
@@ -84,6 +62,7 @@ module CyberarmEngine
       super
 
       @width = @options[:edit_line_width]
+      update_background
     end
 
     def value

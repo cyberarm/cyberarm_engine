@@ -8,9 +8,7 @@ module CyberarmEngine
       return self
     end
 
-    def draw
-      $window.draw_rect(@x, @y, width, height, @options[:fill], @z+1)
-
+    def render
       @text.draw
     end
 
@@ -24,12 +22,14 @@ module CyberarmEngine
     end
 
     def recalculate
-      @width = @text.width
-      @height= @text.height
+      @width = @text.width.round
+      @height= @text.height.round
 
       @text.x = @padding_left + @x
       @text.y = @padding_top  + @y
       @text.z = @z + 3
+
+      update_background
     end
 
     def value

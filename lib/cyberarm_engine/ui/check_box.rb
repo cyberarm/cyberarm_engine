@@ -31,7 +31,7 @@ module CyberarmEngine
       @label._toggle_button(@toggle_button)
 
       @label.define_singleton_method(:holding_left_mouse_button) do |sender, x, y|
-        @_toggle_button.holding_left_mouse_button(sender, x, y)
+        @_toggle_button.left_mouse_button(sender, x, y)
       end
 
       @label.define_singleton_method(:released_left_mouse_button) do |sender, x, y|

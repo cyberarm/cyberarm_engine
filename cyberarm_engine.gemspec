@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Cyberarm"]
   spec.email         = ["matthewlikesrobots@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Make games quickly and easily with gosu}
+  spec.description   = %q{Yet another game making framework around gosu}
+  spec.homepage      = "https://github.com/cyberarm/cyberarm_engine"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

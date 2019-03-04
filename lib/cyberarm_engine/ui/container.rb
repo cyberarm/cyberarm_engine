@@ -2,20 +2,17 @@ module CyberarmEngine
   class Container < Element
     include Common
 
-    attr_accessor :stroke_color, :fill_color, :background_color, :x, :y, :z, :width, :height
+    attr_accessor :stroke_color, :fill_color
     attr_reader :children
     attr_reader :scroll_x, :scroll_y
 
     def initialize(options = {}, block = nil)
       super
 
-      @origin_x, @origin_x = @x, @x
-      @origin_width, @origin_height = @width, @height
       @scroll_x, @scroll_y = 0, 0
       @scroll_speed = 10
 
       @text_color = options[:text_color] || Element::THEME[:stroke]
-      @background_color = Element::THEME[:background]
 
       @children = []
 
@@ -35,12 +32,8 @@ module CyberarmEngine
       recalculate
     end
 
-    def draw
-      # Gosu.clip_to(@x, @y, @width, @height) do
-        background
-
+    def render
         @children.each(&:draw)
-      # end
     end
 
     def update
@@ -57,10 +50,6 @@ module CyberarmEngine
 
     def fill(color)
       @theme[:fill] = color
-    end
-
-    def background
-      Gosu.draw_rect(@x, @y, @width, @height, @background_color, @z)
     end
 
     def hit_element?(x, y)
@@ -83,8 +72,8 @@ module CyberarmEngine
 
       layout
 
-      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max + @margin_right  || 0)
-      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max + @margin_bottom || 0)
+      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max + @margin_right  || 0).round
+      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max + @margin_bottom || 0).round
 
       # Move child to parent after positioning
       @children.each do |child|
@@ -94,6 +83,8 @@ module CyberarmEngine
         # Fix child being displaced
         child.recalculate
       end
+
+      update_background
       # puts unless @parent
       # puts "<#{self.class} X: #{@x}, Y: #{@y}, width: #{@width}, height: #{@height} (children: #{@children.count}) [#{children.first.class}]"
     end

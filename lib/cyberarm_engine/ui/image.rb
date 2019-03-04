@@ -22,9 +22,7 @@ module CyberarmEngine
       raise "Scale Y" unless @scale_y.is_a?(Numeric)
     end
 
-    def draw
-      $window.draw_rect(@x, @y, width, height, @options[:fill], @z+1)
-
+    def render
       @image.draw(@x + @padding_left, @y + @padding_top, @z + 2, @scale_x, @scale_y) # TODO: Add color support?
     end
 
