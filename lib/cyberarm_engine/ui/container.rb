@@ -69,15 +69,11 @@ module CyberarmEngine
 
     def recalculate
       @current_position = Vector.new(@margin_left, @margin_top)
-      if @children.first
-        @current_position.x += @children.first.margin_left
-        @current_position.y += @children.first.margin_top
-      end
 
       layout
 
-      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width }.max || 0).round
-      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height}.max || 0).round
+      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width + c.margin_right}.max || 0).round
+      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height+ c.margin_top  }.max || 0).round
 
       # Move child to parent after positioning
       @children.each do |child|
@@ -104,8 +100,8 @@ module CyberarmEngine
     end
 
     def position_on_current_line(element)
-      element.x = @current_position.x
-      element.y = @current_position.y
+      element.x = element.margin_left + @current_position.x
+      element.y = element.margin_top  + @current_position.y
 
       element.recalculate
 
@@ -114,8 +110,8 @@ module CyberarmEngine
     end
 
     def move_to_next_line(element)
-      element.x = @current_position.x
-      element.y = @current_position.y
+      element.x = element.margin_left + @current_position.x
+      element.y = element.margin_top  + @current_position.y
 
       element.recalculate
 

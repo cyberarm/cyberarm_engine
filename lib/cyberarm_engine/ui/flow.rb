@@ -10,8 +10,8 @@ module CyberarmEngine
           @current_position.x = @margin_left + @x
           @current_position.y += child.height + child.margin_bottom
 
-          child.x = @current_position.x
-          child.y = @current_position.y
+          child.x = element.margin_left + @current_position.x
+          child.y = element.margin_top  + @current_position.y
 
           child.recalculate
 

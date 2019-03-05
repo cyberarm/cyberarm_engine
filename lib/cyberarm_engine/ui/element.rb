@@ -147,11 +147,11 @@ module CyberarmEngine
     end
 
     def width
-      @border_thickness_left + @padding_left + @width + @padding_right + @border_thickness_right
+      (@border_thickness_left + @padding_left) + @width + (@padding_right + @border_thickness_right)
     end
 
     def height
-      @border_thickness_top + @padding_top + @height + @padding_bottom + @border_thickness_bottom
+      (@border_thickness_top + @padding_top) + @height + (@padding_bottom + @border_thickness_bottom)
     end
 
     def background=(_background)

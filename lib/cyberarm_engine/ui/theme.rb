@@ -36,17 +36,17 @@ module CyberarmEngine
         height: 0,
         color:     Gosu::Color::WHITE,
         background: Gosu::Color::NONE,
-        margin:   2,
-        padding:  2,
+        margin:   0,
+        padding:  0,
         border_thickness: 0,
         border_color: Gosu::Color::NONE,
         border_radius: 0,
       },
 
       Button: {
-        margin:   2,
-        padding:  2,
-        border_thickness: 2,
+        margin:   1,
+        padding:  4,
+        border_thickness: 4,
         border_color: ["ffd59674".hex, "ffff8746".hex],
         border_radius: 0,
         background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
@@ -76,15 +76,15 @@ module CyberarmEngine
       },
 
       Label: {
-      text_size: 24,
+      text_size: 28,
       text_shadow: false,
-      font: "Akaash"
+      font: "Arial",
+      margin: 0,
+      padding: 2
       },
 
       ToggleButton: {
-        checkmark: "√",
-        padding_left: 0,
-        margin_left: 0
+        checkmark: "√"
       }
     }
   end
