@@ -75,13 +75,8 @@ module CyberarmEngine
     end
 
     # Foreground color, e.g. Text
-    def stroke(color)
-      @containers.last.stroke(color)
-    end
-
-    # Element background color
-    def fill(color)
-      @containers.last.fill(color)
+    def color(color)
+      @containers.last.color(color)
     end
   end
 end

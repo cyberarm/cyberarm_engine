@@ -44,12 +44,8 @@ module CyberarmEngine
       @theme
     end
 
-    def stroke(color)
-      @theme[:stroke] = color
-    end
-
-    def fill(color)
-      @theme[:fill] = color
+    def color(color)
+      @theme[:color] = color
     end
 
     def hit_element?(x, y)
@@ -72,8 +68,8 @@ module CyberarmEngine
 
       layout
 
-      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width + c.margin_right}.max || 0).round
-      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height+ c.margin_top  }.max || 0).round
+      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.width  + c.margin_right }.max || 0).round
+      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.height + c.margin_bottom}.max || 0).round
 
       # Move child to parent after positioning
       @children.each do |child|
@@ -95,27 +91,50 @@ module CyberarmEngine
       @max_width ? @max_width : window.width - (@parent ? @parent.margin_right + @margin_right : @margin_right)
     end
 
-    def fits_on_line?(element)
-      @current_position.x + element.margin_left + element.width + element.margin_right <= max_width
+    def fits_on_line?(element) # Flow
+      @current_position.x + element.outer_width <= max_width &&
+      @current_position.x + element.outer_width <= window.width
     end
 
-    def position_on_current_line(element)
+    def position_on_current_line(element) # Flow
       element.x = element.margin_left + @current_position.x
       element.y = element.margin_top  + @current_position.y
 
       element.recalculate
 
-      @current_position.x += element.width + element.margin_right
-      @current_position.x = @margin_left + @x if @current_position.x >= max_width
+      @current_position.x += element.outer_width
+      @current_position.x = @margin_left if @current_position.x >= max_width
     end
 
-    def move_to_next_line(element)
+    def tallest_neighbor(querier, y_position) # Flow
+      response = querier
+      @children.each do |child|
+        response = child if child.outer_height > response.outer_height
+        break if child == querier
+      end
+
+      return response
+    end
+
+    def position_on_next_line(child) # Flow
+      @current_position.x = @margin_left
+      @current_position.y += tallest_neighbor(child, @current_position.y).outer_height
+
+      child.x = child.margin_left + @current_position.x
+      child.y = child.margin_top  + @current_position.y
+
+      child.recalculate
+
+      @current_position.x += child.outer_width
+    end
+
+    def move_to_next_line(element) # Stack
       element.x = element.margin_left + @current_position.x
       element.y = element.margin_top  + @current_position.y
 
       element.recalculate
 
-      @current_position.y += element.height + element.margin_bottom
+      @current_position.y += element.outer_height
     end
 
     # def mouse_wheel_up(sender, x, y)

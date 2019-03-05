@@ -4,8 +4,8 @@ module CyberarmEngine
     include Event
     include Common
 
-    attr_accessor :x, :y, :z, :width, :height, :enabled
-    attr_reader :parent, :options, :event_handler, :background_canvas, :border_canvas
+    attr_accessor :x, :y, :z, :enabled
+    attr_reader :width, :height, :parent, :options, :event_handler, :background_canvas, :border_canvas
 
     attr_reader :border_thickness, :border_thickness_left, :border_thickness_right, :border_thickness_top, :border_thickness_bottom
     attr_reader :border_color, :border_color_left, :border_color_right, :border_color_top, :border_color_bottom
@@ -57,6 +57,9 @@ module CyberarmEngine
 
       default_events
     end
+
+    def width=(n); @max_width = n; end
+    def height=(n); @max_height = n; end
 
     def set_background(background)
       @background = background
@@ -150,8 +153,16 @@ module CyberarmEngine
       (@border_thickness_left + @padding_left) + @width + (@padding_right + @border_thickness_right)
     end
 
+    def outer_width
+      @margin_left + width + @margin_right
+    end
+
     def height
       (@border_thickness_top + @padding_top) + @height + (@padding_bottom + @border_thickness_bottom)
+    end
+
+    def outer_height
+      @margin_top + height + @margin_bottom
     end
 
     def background=(_background)
