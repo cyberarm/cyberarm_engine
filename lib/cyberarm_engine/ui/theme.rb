@@ -43,7 +43,7 @@ module CyberarmEngine
         border_radius: 0,
       },
 
-      Button: {
+      Button: { # < Label
         margin:   1,
         padding:  4,
         border_thickness: 4,
@@ -62,7 +62,7 @@ module CyberarmEngine
         }
       },
 
-      EditLine: {
+      EditLine: { # < Button
         type: :text,
         width: 200,
         password_character: "•",
@@ -75,7 +75,7 @@ module CyberarmEngine
         retro: false
       },
 
-      Label: {
+      Label: { # < Element
       text_size: 28,
       text_shadow: false,
       font: "Arial",
@@ -83,7 +83,7 @@ module CyberarmEngine
       padding: 2
       },
 
-      ToggleButton: {
+      ToggleButton: { # < Button
         checkmark: "√"
       }
     }
