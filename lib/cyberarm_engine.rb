@@ -17,6 +17,7 @@ require_relative "cyberarm_engine/objects/multi_line_text"
 
 require_relative "cyberarm_engine/ui/theme"
 require_relative "cyberarm_engine/ui/event"
+require_relative "cyberarm_engine/ui/style"
 require_relative "cyberarm_engine/ui/border_canvas"
 require_relative "cyberarm_engine/ui/element"
 require_relative "cyberarm_engine/ui/label"

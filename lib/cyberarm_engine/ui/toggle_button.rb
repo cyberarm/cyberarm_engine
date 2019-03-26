@@ -39,6 +39,7 @@ module CyberarmEngine
       super
 
       @width = @text.textobject.text_width(@options[:checkmark])
+      update_background
     end
 
     def value

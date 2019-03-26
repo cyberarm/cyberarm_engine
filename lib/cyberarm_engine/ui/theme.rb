@@ -32,8 +32,8 @@ module CyberarmEngine
         y: 0,
         z: 30,
 
-        width:  0,
-        height: 0,
+        width:  nil,
+        height: nil,
         color:     Gosu::Color::WHITE,
         background: Gosu::Color::NONE,
         margin:   0,

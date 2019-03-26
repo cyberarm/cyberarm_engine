@@ -19,6 +19,8 @@ module CyberarmEngine
       @options = options
       @block = block
 
+      @style             = Style.new(options)
+      @focus             = false
       @background_canvas = Background.new
       @border_canvas     = BorderCanvas.new(element: self)
 
@@ -29,8 +31,8 @@ module CyberarmEngine
       @fixed_x = @x if @x != 0
       @fixed_y = @y if @y != 0
 
-      @width  = default(:width)
-      @height = default(:height)
+      @width  = default(:width)  || $window.width
+      @height = default(:height) || $window.height
 
       set_border_thickness(default(:border_thickness))
 
@@ -44,22 +46,16 @@ module CyberarmEngine
       raise "#{self.class} 'x' must be a number" unless @x.is_a?(Numeric)
       raise "#{self.class} 'y' must be a number" unless @y.is_a?(Numeric)
       raise "#{self.class} 'z' must be a number" unless @z.is_a?(Numeric)
-      raise "#{self.class} 'width' must be a number" unless @width.is_a?(Numeric)
-      raise "#{self.class} 'height' must be a number" unless @height.is_a?(Numeric)
+      raise "#{self.class} 'width' must be a number"  unless @width.is_a?(Numeric)  || @width.nil?
+      raise "#{self.class} 'height' must be a number" unless @height.is_a?(Numeric) || @height.nil?
       raise "#{self.class} 'options' must be a Hash" unless @options.is_a?(Hash)
 
       # raise "#{self.class} 'padding' must be a number" unless @padding.is_a?(Numeric)
-
-      @max_width  = @width  if @width  != 0
-      @max_height = @height if @height != 0
 
       @enabled = true
 
       default_events
     end
-
-    def width=(n); @max_width = n; end
-    def height=(n); @max_height = n; end
 
     def set_background(background)
       @background = background
@@ -163,6 +159,14 @@ module CyberarmEngine
 
     def outer_height
       @margin_top + height + @margin_bottom
+    end
+
+    def style(hash)
+      if hash
+        @style.set(hash)
+      else
+        @style.hash
+      end
     end
 
     def background=(_background)

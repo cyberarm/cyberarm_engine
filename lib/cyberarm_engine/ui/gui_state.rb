@@ -21,9 +21,15 @@ module CyberarmEngine
       setup
     end
 
+    # throws :blur event to focused element and sets GuiState focused element
+    # Does NOT throw :focus event at element or set element as focused
     def focus=(element)
-      @focus.publish(:blur) if @focus and element
+      @focus.publish(:blur) if @focus and element && @focus != element
       @focus = element
+    end
+
+    def focused
+      @focus
     end
 
     def update

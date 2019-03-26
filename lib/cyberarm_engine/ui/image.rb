@@ -5,13 +5,13 @@ module CyberarmEngine
       @path = path
 
       @image = Gosu::Image.new(path, retro: @options[:image_retro])
-      if @options[:width].nonzero? && @options[:height].nonzero?
+      if @options[:width] && @options[:height]
         @scale_x = @options[:width].to_f / @image.width
         @scale_y = @options[:height].to_f / @image.height
-      elsif @options[:width].nonzero?
+      elsif @options[:width]
         @scale_x = @options[:width].to_f / @image.width
         @scale_y = @scale_x
-      elsif @options[:height].nonzero?
+      elsif @options[:height]
         @scale_y = @options[:height].to_f / @image.height
         @scale_x = @scale_y
       else

@@ -12,13 +12,8 @@ module CyberarmEngine
       @text.draw
     end
 
-    def button_up(id)
-      case id
-      when Gosu::MsLeft
-        if mouse_over?
-          @block.call(self) if @block
-        end
-      end
+    def clicked_left_mouse_button(sender, x, y)
+      @block.call(self) if @block
     end
 
     def recalculate

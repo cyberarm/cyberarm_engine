@@ -15,12 +15,21 @@ module CyberarmEngine
     end
 
     def enter(sender)
-      @background_canvas.background = default(:hover, :background)
-      @text.color = default(:hover, :color)
+      @focus = false unless window.button_down?(Gosu::MsLeft)
+
+      if @focus
+        @background_canvas.background = default(:active, :background)
+        @text.color = default(:active, :color)
+      else
+        @background_canvas.background = default(:hover, :background)
+        @text.color = default(:hover, :color)
+      end
     end
 
     def left_mouse_button(sender, x, y)
+      @focus = true
       @background_canvas.background = default(:active, :background)
+      window.current_state.focus = self
       @text.color = default(:active, :color)
     end
 
@@ -28,13 +37,17 @@ module CyberarmEngine
       enter(sender)
     end
 
+    def clicked_left_mouse_button(sender, x, y)
+      @block.call(self) if @block
+    end
+
     def leave(sender)
       @background_canvas.background = default(:background)
       @text.color = default(:color)
     end
 
-    def clicked_left_mouse_button(sender, x, y)
-      @block.call(self) if @block
+    def blur(sender)
+      @focus = false
     end
   end
 end

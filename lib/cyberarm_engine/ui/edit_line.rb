@@ -40,23 +40,37 @@ module CyberarmEngine
       end
     end
 
-    def clicked_left_mouse_button(sender, x, y)
-      @focus = true
-      window.current_state.focus=self
+    def left_mouse_button(sender, x, y)
+      super
       window.text_input = @text_input
-      @block.call(self) if @block
+    end
+
+    def enter(sender)
+      if @focus
+        @background_canvas.background = default(:active, :background)
+        @text.color = default(:active, :color)
+      else
+        @background_canvas.background = default(:hover, :background)
+        @text.color = default(:hover, :color)
+      end
+    end
+
+    def leave(sender)
     end
 
     def blur(sender)
       @focus = false
+      @background_canvas.background = default(:background)
+      @text.color = default(:color)
       window.text_input = nil
     end
 
+    # TODO: Fix caret rendering in wrong position unless caret_pos is at end of text
     def caret_position
       if @type == :password
-        @text.x + @text.textobject.text_width(default(:password_character) * @text_input.text[0..@text_input.caret_pos].length)
+        @text.x + @text.textobject.text_width(default(:password_character) * @text_input.text[0..@text_input.caret_pos-1].length)
       else
-        @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.caret_pos])
+        @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.caret_pos-1])
       end
     end
 
