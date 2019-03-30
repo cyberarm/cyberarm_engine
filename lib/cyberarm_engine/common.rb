@@ -28,6 +28,56 @@ module CyberarmEngine
       $window.draw_rect(x,y,width,height,color,z)
     end
 
+    def fill(color, z = 0)
+      draw_rect(0, 0, $window.width, $window.height, color, z)
+    end
+
+    def lighten(color, amount = 25)
+      if defined?(color.alpha)
+        return Gosu::Color.rgba(color.red+amount, color.green+amount, color.blue+amount, color.alpha)
+      else
+        return Gosu::Color.rgb(color.red+amount, color.green+amount, color.blue+amount)
+      end
+    end
+
+    def darken(color, amount = 25)
+      if defined?(color.alpha)
+        return Gosu::Color.rgba(color.red-amount, color.green-amount, color.blue-amount, color.alpha)
+      else
+        return Gosu::Color.rgb(color.red-amount, color.green-amount, color.blue-amount)
+      end
+    end
+
+    def get_asset(path, hash, klass)
+      asset = nil
+      hash.detect do |_asset, instance|
+        if _asset == path
+          asset = instance
+          true
+        end
+      end
+
+      unless asset
+        instance = klass.new(path)
+        hash[path] = instance
+        asset = instance
+      end
+
+      return asset
+    end
+
+    def get_image(path)
+      get_asset(path, Engine::IMAGES, Gosu::Image)
+    end
+
+    def get_sample(path)
+      get_asset(path, Engine::SAMPLES, Gosu::Sample)
+    end
+
+    def get_song(path)
+      get_asset(path, Engine::SONGS, Gosu::Song)
+    end
+
     def window
       $window
     end

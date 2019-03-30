@@ -28,6 +28,13 @@ module CyberarmEngine
     end
 
     def text=(text)
+
+      if text.lines.count < @texts.count
+        range = ((@texts.count - @text.lines.count)-1)..@texts.count-1
+        p range
+        @texts.slice!(range)
+      end
+
       text.split("\n").each_with_index do |line, i|
         if @texts[i]
           @texts[i].text = line
@@ -36,6 +43,7 @@ module CyberarmEngine
         end
       end
 
+      self.y = @y
       calculate_boundry
     end
 

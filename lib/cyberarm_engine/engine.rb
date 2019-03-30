@@ -1,5 +1,9 @@
 module CyberarmEngine
   class Engine < Gosu::Window
+    IMAGES = {}
+    SAMPLES= {}
+    SONGS  = {}
+
     attr_accessor :show_cursor
     attr_reader :current_state, :last_frame_time
 

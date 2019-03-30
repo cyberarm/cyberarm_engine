@@ -8,6 +8,8 @@ module CyberarmEngine
       @game_objects = []
       @global_pause = false
 
+      @down_keys = {}
+
       @root_container = Stack.new
       @game_objects << @root_container
       @containers     = [@root_container]
