@@ -48,10 +48,12 @@ module CyberarmEngine
     end
 
     def button_down(id)
+      super
       current_state.button_down(id) if current_state
     end
 
     def button_up(id)
+      super
       current_state.button_up(id) if current_state
     end
 

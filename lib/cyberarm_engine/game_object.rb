@@ -36,7 +36,7 @@ module CyberarmEngine
 
       setup
 
-      @debug_text = MultiLineText.new("", color: @debug_color, y: @position.y-(self.height*self.scale), z: 9999)
+      @debug_text = Text.new("", color: @debug_color, y: @position.y-(self.height*self.scale), z: 9999)
       @debug_text.x = @position.x
       if @radius == 0 || @radius == nil
         @radius = options[:radius] ? options[:radius] : defined?(@image.width) ? ((@image.width+@image.height)/4)*scale : 1
@@ -121,11 +121,11 @@ module CyberarmEngine
     end
 
     def width
-      @image ? @image.width : 0
+      @image ? @image.width * self.scale : 0
     end
 
     def height
-      @image ? @image.height : 0
+      @image ? @image.height * self.scale : 0
     end
 
     def pause

@@ -13,7 +13,6 @@ require_relative "cyberarm_engine/background"
 
 require_relative "cyberarm_engine/objects/text"
 require_relative "cyberarm_engine/objects/timer"
-require_relative "cyberarm_engine/objects/multi_line_text"
 
 require_relative "cyberarm_engine/ui/theme"
 require_relative "cyberarm_engine/ui/event"

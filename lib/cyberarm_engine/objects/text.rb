@@ -67,7 +67,7 @@ module CyberarmEngine
     end
 
     def height
-      textobject.height
+      @text.lines.count * textobject.height
     end
 
     def draw
@@ -89,6 +89,14 @@ module CyberarmEngine
       end
 
       @textobject.draw_markup(@text, @x, @y, @z, @factor_x, @factor_y, @color)
+    end
+
+    def alpha=(n)
+      @color = Gosu::Color.new(@color.red, @color.green, @color.blue, n)
+    end
+
+    def alpha
+      @color.alpha
     end
 
     def update; end

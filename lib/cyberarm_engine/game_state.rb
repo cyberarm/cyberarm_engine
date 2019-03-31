@@ -9,6 +9,7 @@ module CyberarmEngine
       @options = options
       @game_objects = []
       @global_pause = false
+      $window.text_input = nil unless options[:preserve_text_input]
 
       @down_keys = {}
 
