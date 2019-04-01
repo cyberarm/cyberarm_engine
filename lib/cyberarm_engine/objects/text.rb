@@ -2,8 +2,8 @@ module CyberarmEngine
   class Text
     CACHE = {}
 
-    attr_accessor :text, :x, :y, :z, :size, :factor_x, :factor_y, :color, :shadow, :shadow_size, :options
-    attr_reader :textobject
+    attr_accessor :x, :y, :z, :size, :factor_x, :factor_y, :color, :shadow, :shadow_size, :options
+    attr_reader :text, :textobject
 
     def initialize(text, options={})
       @text = text || ""
@@ -62,37 +62,49 @@ module CyberarmEngine
       return font
     end
 
+    def text=(string)
+      @rendered_shadow = nil
+      @text = string
+    end
+
     def width
       textobject.text_width(@text)
     end
 
     def height
-      @text.lines.count * textobject.height
+      (@text.lines.count+1) * textobject.height
     end
 
     def draw
       if @shadow && !ARGV.join.include?("--no-shadow")
-        _color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha) if @shadow_alpha <= @color.alpha
-        _color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @color.alpha) unless @shadow_alpha <= @color.alpha
+        @shadow_alpha = 30 if @color.alpha > 30
+        @shadow_alpha = @color.alpha if @color.alpha <= 30
+        shadow_color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha)
 
-        @textobject.draw_markup(@text, @x-@shadow_size, @y, @z, @factor_x, @factor_y, _color)
-        @textobject.draw_markup(@text, @x-@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, _color)
+        _x = @shadow_size
+        _y = @shadow_size
 
-        @textobject.draw_markup(@text, @x, @y-@shadow_size, @z, @factor_x, @factor_y, _color)
-        @textobject.draw_markup(@text, @x+@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, _color)
+        @rendered_shadow ||= Gosu.render((self.width+(shadow_size*2)).ceil, (self.height+(@shadow_size*2)).ceil) do
+          @textobject.draw_markup(@text, _x-@shadow_size, _y, @z)
+          @textobject.draw_markup(@text, _x-@shadow_size, _y-@shadow_size, @z)
 
-        @textobject.draw_markup(@text, @x, @y+@shadow_size, @z, @factor_x, @factor_y, _color)
-        @textobject.draw_markup(@text, @x-@shadow_size, @y+@shadow_size, @z, @factor_x, @factor_y, _color)
+          @textobject.draw_markup(@text, _x, _y-@shadow_size, @z, @factor_x)
+          @textobject.draw_markup(@text, _x+@shadow_size, _y-@shadow_size, @z)
 
-        @textobject.draw_markup(@text, @x+@shadow_size, @y, @z, @factor_x, @factor_y, _color)
-        @textobject.draw_markup(@text, @x+@shadow_size, @y+@shadow_size, @z, @factor_x, @factor_y, _color)
+          @textobject.draw_markup(@text, _x, _y+@shadow_size, @z)
+          @textobject.draw_markup(@text, _x-@shadow_size, _y+@shadow_size, @z)
+
+          @textobject.draw_markup(@text, _x+@shadow_size, _y, @z)
+          @textobject.draw_markup(@text, _x+@shadow_size, _y+@shadow_size, @z)
+        end
+        @rendered_shadow.draw(@x-@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, shadow_color)
       end
 
       @textobject.draw_markup(@text, @x, @y, @z, @factor_x, @factor_y, @color)
     end
 
     def alpha=(n)
-      @color = Gosu::Color.new(@color.red, @color.green, @color.blue, n)
+      @color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, n)
     end
 
     def alpha
