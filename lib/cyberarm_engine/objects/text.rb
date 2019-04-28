@@ -72,7 +72,7 @@ module CyberarmEngine
     end
 
     def height
-      (@text.lines.count+1) * textobject.height
+      (@text.lines.count) * textobject.height
     end
 
     def draw
