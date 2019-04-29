@@ -186,12 +186,32 @@ module CyberarmEngine
       @border_canvas.update
     end
 
+    def root
+      unless @root && @root.parent.nil?
+        @root = parent
+
+        loop do
+          if @root.parent.nil?
+            break
+          else
+            @root = @root.parent
+          end
+        end
+      end
+
+      @root
+    end
+
     def recalculate
       raise "#{self.class}#recalculate was not overridden!"
     end
 
     def value
       raise "#{self.class}#value was not overridden!"
+    end
+
+    def value=(value)
+      raise "#{self.class}#value= was not overridden!"
     end
   end
 end

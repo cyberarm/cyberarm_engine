@@ -30,5 +30,14 @@ module CyberarmEngine
     def value
       @text.text
     end
+
+    def value=(value)
+      @text.text = value
+
+      old_width, old_height = width, height
+      recalculate
+
+      root.recalculate if old_width != width || old_height != height
+    end
   end
 end
