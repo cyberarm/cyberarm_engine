@@ -31,7 +31,7 @@ module CyberarmEngine
     end
 
     # Performs math operation, excluding @weight
-    def operator(function, other)
+    private def operator(function, other)
       if other.is_a?(Numeric)
         Vector.new(
           @x.send(:"#{function}", other),

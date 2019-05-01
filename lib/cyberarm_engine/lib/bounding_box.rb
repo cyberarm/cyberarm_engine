@@ -2,9 +2,23 @@ module CyberarmEngine
   class BoundingBox
     attr_accessor :min, :max
 
-    def initialize(minx = 0, miny = 0, minz = 0, maxx = 0, maxy = 0, maxz = 0)
-      @min = Vector.new(minx, miny, minz)
-      @max = Vector.new(maxx, maxy, maxz)
+    def initialize(*args)
+      case args.size
+      when 0
+        @min = Vector.new(0, 0, 0)
+        @max = Vector.new(0, 0, 0)
+      when 2
+        @min = args.first.clone
+        @max = args.last.clone
+      when 4
+        @min = Vector.new(args[0], args[1], 0)
+        @max = Vector.new(args[2], args[3], 0)
+      when 6
+        @min = Vector.new(args[0], args[1], args[2])
+        @max = Vector.new(args[3], args[4], args[5])
+      else
+        raise "Invalid number of arguments! Got: #{args.size}, expected: 0, 2, 4, or 6."
+      end
     end
 
     def ==(other)

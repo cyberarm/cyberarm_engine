@@ -48,6 +48,12 @@ module CyberarmEngine
       end
     end
 
+    def opacity(color, ratio = 1.0)
+      alpha = 255 * ratio
+
+      return Gosu::Color.rgba(color.red, color.green, color.blue, alpha)
+    end
+
     def get_asset(path, hash, klass)
       asset = nil
       hash.detect do |_asset, instance|
