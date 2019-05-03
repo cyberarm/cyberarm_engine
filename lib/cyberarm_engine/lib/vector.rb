@@ -160,5 +160,9 @@ module CyberarmEngine
     def to_s
       "X: #{@x}, Y: #{@y}, Z: #{@z}, Weight: #{@weight}"
     end
+
+    def to_h
+      {x: @x, y: @y, z: @z, weight: @weight}
+    end
   end
 end

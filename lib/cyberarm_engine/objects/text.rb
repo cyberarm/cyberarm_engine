@@ -6,7 +6,7 @@ module CyberarmEngine
     attr_reader :text, :textobject
 
     def initialize(text, options={})
-      @text = text || ""
+      @text = text.to_s || ""
       @options = options
       @size = options[:size] || 18
       @font = options[:font] || "sans-serif"#Gosu.default_font_name
