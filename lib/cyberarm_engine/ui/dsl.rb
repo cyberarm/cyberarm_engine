@@ -2,6 +2,7 @@ module CyberarmEngine
   module DSL
     def flow(options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _container = Flow.new(options, block)
       @containers << _container
       _container.build
@@ -13,6 +14,7 @@ module CyberarmEngine
 
     def stack(options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _container = Stack.new(options, block)
       @containers << _container
       _container.build
@@ -24,6 +26,7 @@ module CyberarmEngine
 
     def label(text, options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _element = Label.new(text, options, block)
       @containers.last.add(_element)
 
@@ -32,6 +35,7 @@ module CyberarmEngine
 
     def button(text, options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _element = Button.new(text, options, block) { if block.is_a?(Proc); block.call; end }
       @containers.last.add(_element)
 
@@ -40,6 +44,7 @@ module CyberarmEngine
 
     def edit_line(text, options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _element = EditLine.new(text, options, block)
       @containers.last.add(_element)
 
@@ -48,6 +53,7 @@ module CyberarmEngine
 
     def toggle_button(options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _element = ToggleButton.new(options, block)
       @containers.last.add(_element)
 
@@ -56,6 +62,7 @@ module CyberarmEngine
 
     def check_box(text, options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _element = CheckBox.new(text, options, block)
       @containers.last.add(_element)
 
@@ -64,6 +71,7 @@ module CyberarmEngine
 
     def image(path, options = {}, &block)
       options[:parent] = @containers.last
+      options[:theme] = @current_theme
       _element = Image.new(path, options, block)
       @containers.last.add(_element)
 
@@ -77,6 +85,10 @@ module CyberarmEngine
     # Foreground color, e.g. Text
     def color(color)
       @containers.last.color(color)
+    end
+
+    def set_theme(theme)
+      @current_theme = theme
     end
   end
 end

@@ -15,7 +15,7 @@ module CyberarmEngine
 
     def initialize(options = {}, block = nil)
       @parent = options[:parent] # parent Container (i.e. flow/stack)
-      options = theme_defaults.merge(options)
+      options = theme_defaults(options)
       @options = options
       @block = block
 
@@ -204,6 +204,10 @@ module CyberarmEngine
 
     def recalculate
       raise "#{self.class}#recalculate was not overridden!"
+    end
+
+    def reposition
+      raise "#{self.class}#reposition was not overridden!"
     end
 
     def value

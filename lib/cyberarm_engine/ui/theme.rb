@@ -9,21 +9,24 @@ module CyberarmEngine
       value
     end
 
-    def theme_defaults
+    def theme_defaults(options)
       raise "Error" unless self.class.ancestors.include?(CyberarmEngine::Element)
+      _theme = THEME
+      _theme = _theme.merge(options[:theme]) if options[:theme]
+      options.delete(:theme)
 
       hash = {}
       class_names = self.class.ancestors
       class_names = class_names[0..class_names.index(CyberarmEngine::Element)].map! {|c| c.to_s.split("::").last.to_sym}.reverse!
 
       class_names.each do |klass|
-        next unless data = THEME.dig(klass)
+        next unless data = _theme.dig(klass)
         data.each do |key, value|
           hash.merge!(data)
         end
       end
 
-      hash
+      hash.merge(options)
     end
 
     THEME = {
@@ -86,6 +89,6 @@ module CyberarmEngine
       ToggleButton: { # < Button
         checkmark: "√"
       }
-    }
+    }.freeze
   end
 end
