@@ -53,6 +53,7 @@ module CyberarmEngine
       # raise "#{self.class} 'padding' must be a number" unless @padding.is_a?(Numeric)
 
       @enabled = true
+      @visible = true
 
       default_events
     end
@@ -122,7 +123,28 @@ module CyberarmEngine
       @enabled
     end
 
+    def visible?
+      @visible
+    end
+
+    def toggle
+      @visible = !@visible
+      root.recalculate
+    end
+
+    def show
+      @visible = true
+      root.recalculate
+    end
+
+    def hide
+      @visible = false
+      root.recalculate
+    end
+
     def draw
+      return unless @visible
+
       @background_canvas.draw
       @border_canvas.draw
       render

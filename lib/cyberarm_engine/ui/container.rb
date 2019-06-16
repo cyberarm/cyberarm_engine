@@ -65,6 +65,11 @@ module CyberarmEngine
 
     def recalculate
       @current_position = Vector.new(@margin_left, @margin_top)
+      unless @visible
+        @width = 0
+        @height= 0
+        return
+      end
 
       layout
 

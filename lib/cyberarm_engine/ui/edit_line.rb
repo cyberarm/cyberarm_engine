@@ -77,6 +77,12 @@ module CyberarmEngine
     def recalculate
       super
 
+      unless @visible
+        @width = 0
+        @height= 0
+        return
+      end
+
       @width = default(:width)
       update_background
     end

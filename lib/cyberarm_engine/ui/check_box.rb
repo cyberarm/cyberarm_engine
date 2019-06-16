@@ -21,6 +21,14 @@ module CyberarmEngine
       recalculate
     end
 
+    def value
+      @toggle_button.value
+    end
+
+    def value=(bool)
+      @toggle_button.vlaue = bool
+    end
+
     def define_label_singletons
       @label.define_singleton_method(:_toggle_button) do |button|
         @_toggle_button = button

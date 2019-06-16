@@ -17,6 +17,12 @@ module CyberarmEngine
     end
 
     def recalculate
+      unless @visible
+        @width = 0
+        @height= 0
+        return
+      end
+
       @width = @text.width.round
       @height= @text.height.round
 
