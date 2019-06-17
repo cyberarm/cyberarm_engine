@@ -56,6 +56,9 @@ module CyberarmEngine
     end
 
     def leave(sender)
+      unless @focus
+        super
+      end
     end
 
     def blur(sender)
