@@ -23,7 +23,11 @@ module CyberarmEngine
     end
 
     def render
-      @image.draw(@border_thickness_left + @padding_left + @x, @border_thickness_top + @padding_top + @y, @z + 2, @scale_x, @scale_y) # TODO: Add color support?
+      @image.draw(
+        @style.border_thickness_left + @style.padding_left + @x,
+        @style.border_thickness_top + @style.padding_top + @y,
+        @z + 2,
+        @scale_x, @scale_y) # TODO: Add color support?
     end
 
     def clicked_left_mouse_button(sender, x, y)

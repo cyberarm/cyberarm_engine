@@ -5,13 +5,7 @@ module CyberarmEngine
     include Common
 
     attr_accessor :x, :y, :z, :enabled
-    attr_reader :width, :height, :parent, :options, :event_handler, :background_canvas, :border_canvas
-
-    attr_reader :border_thickness, :border_thickness_left, :border_thickness_right, :border_thickness_top, :border_thickness_bottom
-    attr_reader :border_color, :border_color_left, :border_color_right, :border_color_top, :border_color_bottom
-
-    attr_reader :padding, :padding_left, :padding_right, :padding_top, :padding_bottom
-    attr_reader :margin, :margin_left, :margin_right, :margin_top, :margin_bottom
+    attr_reader :width, :height, :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
       @parent = options[:parent] # parent Container (i.e. flow/stack)
@@ -21,8 +15,8 @@ module CyberarmEngine
 
       @style             = Style.new(options)
       @focus             = false
-      @background_canvas = Background.new
-      @border_canvas     = BorderCanvas.new(element: self)
+      @style.background_canvas = Background.new
+      @style.border_canvas     = BorderCanvas.new(element: self)
 
       @x = default(:x)
       @y = default(:y)
@@ -59,46 +53,46 @@ module CyberarmEngine
     end
 
     def set_background(background)
-      @background = background
-      @background_canvas.background = background
+      @style.background = background
+      @style.background_canvas.background = background
     end
 
     def set_border_thickness(border_thickness)
-      @border_thickness = border_thickness
+      @style.border_thickness = border_thickness
 
-      @border_thickness_left   = default(:border_thickness_left)   || @border_thickness
-      @border_thickness_right  = default(:border_thickness_right)  || @border_thickness
-      @border_thickness_top    = default(:border_thickness_top)    || @border_thickness
-      @border_thickness_bottom = default(:border_thickness_bottom) || @border_thickness
+      @style.border_thickness_left   = default(:border_thickness_left)   || @style.border_thickness
+      @style.border_thickness_right  = default(:border_thickness_right)  || @style.border_thickness
+      @style.border_thickness_top    = default(:border_thickness_top)    || @style.border_thickness
+      @style.border_thickness_bottom = default(:border_thickness_bottom) || @style.border_thickness
     end
 
     def set_border_color(color)
-      @border_color = color
+      @style.border_color = color
 
-      @border_color_left   = default(:border_color_left)   || @border_color
-      @border_color_right  = default(:border_color_right)  || @border_color
-      @border_color_top    = default(:border_color_top)    || @border_color
-      @border_color_bottom = default(:border_color_bottom) || @border_color
+      @style.border_color_left   = default(:border_color_left)   || @style.border_color
+      @style.border_color_right  = default(:border_color_right)  || @style.border_color
+      @style.border_color_top    = default(:border_color_top)    || @style.border_color
+      @style.border_color_bottom = default(:border_color_bottom) || @style.border_color
 
-      @border_canvas.color = color
+      @style.border_canvas.color = color
     end
 
     def set_padding(padding)
-      @padding = padding
+      @style.padding = padding
 
-      @padding_left   = default(:padding_left)   || @padding
-      @padding_right  = default(:padding_right)  || @padding
-      @padding_top    = default(:padding_top)    || @padding
-      @padding_bottom = default(:padding_bottom) || @padding
+      @style.padding_left   = default(:padding_left)   || @style.padding
+      @style.padding_right  = default(:padding_right)  || @style.padding
+      @style.padding_top    = default(:padding_top)    || @style.padding
+      @style.padding_bottom = default(:padding_bottom) || @style.padding
     end
 
     def set_margin(margin)
-      @margin = margin
+      @style.margin = margin
 
-      @margin_left   = default(:margin_left)   || @margin
-      @margin_right  = default(:margin_right)  || @margin
-      @margin_top    = default(:margin_top)    || @margin
-      @margin_bottom = default(:margin_bottom) || @margin
+      @style.margin_left   = default(:margin_left)   || @style.margin
+      @style.margin_right  = default(:margin_right)  || @style.margin
+      @style.margin_top    = default(:margin_top)    || @style.margin
+      @style.margin_bottom = default(:margin_bottom) || @style.margin
     end
 
     def default_events
@@ -145,8 +139,8 @@ module CyberarmEngine
     def draw
       return unless @visible
 
-      @background_canvas.draw
-      @border_canvas.draw
+      @style.background_canvas.draw
+      @style.border_canvas.draw
       render
     end
 
@@ -168,44 +162,36 @@ module CyberarmEngine
     end
 
     def width
-      (@border_thickness_left + @padding_left) + @width + (@padding_right + @border_thickness_right)
+      (@style.border_thickness_left + @style.padding_left) + @width + (@style.padding_right + @style.border_thickness_right)
     end
 
     def outer_width
-      @margin_left + width + @margin_right
+      @style.margin_left + width + @style.margin_right
     end
 
     def height
-      (@border_thickness_top + @padding_top) + @height + (@padding_bottom + @border_thickness_bottom)
+      (@style.border_thickness_top + @style.padding_top) + @height + (@style.padding_bottom + @style.border_thickness_bottom)
     end
 
     def outer_height
-      @margin_top + height + @margin_bottom
-    end
-
-    def style(hash)
-      if hash
-        @style.set(hash)
-      else
-        @style.hash
-      end
+      @style.margin_top + height + @style.margin_bottom
     end
 
     def background=(_background)
-      @background_canvas.background=(_background)
+      @style.background_canvas.background=(_background)
       update_background
     end
 
     def update_background
-      @background_canvas.x = @x
-      @background_canvas.y = @y
-      @background_canvas.z = @z
-      @background_canvas.width  = width
-      @background_canvas.height = height
+      @style.background_canvas.x = @x
+      @style.background_canvas.y = @y
+      @style.background_canvas.z = @z
+      @style.background_canvas.width  = width
+      @style.background_canvas.height = height
 
-      @background_canvas.update
+      @style.background_canvas.update
 
-      @border_canvas.update
+      @style.border_canvas.update
     end
 
     def root

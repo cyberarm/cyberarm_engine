@@ -47,10 +47,10 @@ module CyberarmEngine
 
     def enter(sender)
       if @focus
-        @background_canvas.background = default(:active, :background)
+        @style.background_canvas.background = default(:active, :background)
         @text.color = default(:active, :color)
       else
-        @background_canvas.background = default(:hover, :background)
+        @style.background_canvas.background = default(:hover, :background)
         @text.color = default(:hover, :color)
       end
     end
@@ -63,7 +63,7 @@ module CyberarmEngine
 
     def blur(sender)
       @focus = false
-      @background_canvas.background = default(:background)
+      @style.background_canvas.background = default(:background)
       @text.color = default(:color)
       window.text_input = nil
     end

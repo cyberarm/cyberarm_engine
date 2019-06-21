@@ -26,8 +26,8 @@ module CyberarmEngine
       @width = @text.width.round
       @height= @text.height.round
 
-      @text.x = @border_thickness_left + @padding_left + @x
-      @text.y = @border_thickness_top + @padding_top  + @y
+      @text.x = @style.border_thickness_left + @style.padding_left + @x
+      @text.y = @style.border_thickness_top + @style.padding_top  + @y
       @text.z = @z + 3
 
       update_background

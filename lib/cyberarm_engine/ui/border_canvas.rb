@@ -66,31 +66,31 @@ module CyberarmEngine
       @top.z = @element.z
 
       @top.width  = @element.width
-      @top.height = @element.border_thickness_top
+      @top.height = @element.style.border_thickness_top
 
       # RIGHT
       @right.x = @element.x + @element.width
-      @right.y = @element.y + @element.border_thickness_top
+      @right.y = @element.y + @element.style.border_thickness_top
       @right.z = @element.z
 
-      @right.width  = -@element.border_thickness_right
-      @right.height = @element.height - @element.border_thickness_top
+      @right.width  = -@element.style.border_thickness_right
+      @right.height = @element.height - @element.style.border_thickness_top
 
       # BOTTOM
       @bottom.x = @element.x
       @bottom.y = @element.y + @element.height
       @bottom.z = @element.z
 
-      @bottom.width  = @element.width - @element.border_thickness_right
-      @bottom.height = -@element.border_thickness_bottom
+      @bottom.width  = @element.width - @element.style.border_thickness_right
+      @bottom.height = -@element.style.border_thickness_bottom
 
       # LEFT
       @left.x = @element.x
       @left.y = @element.y
       @left.z = @element.z
 
-      @left.width  = @element.border_thickness_left
-      @left.height = @element.height - @element.border_thickness_bottom
+      @left.width  = @element.style.border_thickness_left
+      @left.height = @element.height - @element.style.border_thickness_bottom
 
       @top.update
       @right.update

@@ -3,7 +3,7 @@ module CyberarmEngine
     def initialize(text, options = {}, block = nil)
       super(text, options, block)
 
-      @background_canvas.background = default(:background)
+      @style.background_canvas.background = default(:background)
     end
 
     def render
@@ -18,17 +18,17 @@ module CyberarmEngine
       @focus = false unless window.button_down?(Gosu::MsLeft)
 
       if @focus
-        @background_canvas.background = default(:active, :background)
+        @style.background_canvas.background = default(:active, :background)
         @text.color = default(:active, :color)
       else
-        @background_canvas.background = default(:hover, :background)
+        @style.background_canvas.background = default(:hover, :background)
         @text.color = default(:hover, :color)
       end
     end
 
     def left_mouse_button(sender, x, y)
       @focus = true
-      @background_canvas.background = default(:active, :background)
+      @style.background_canvas.background = default(:active, :background)
       window.current_state.focus = self
       @text.color = default(:active, :color)
     end
@@ -42,7 +42,7 @@ module CyberarmEngine
     end
 
     def leave(sender)
-      @background_canvas.background = default(:background)
+      @style.background_canvas.background = default(:background)
       @text.color = default(:color)
     end
 

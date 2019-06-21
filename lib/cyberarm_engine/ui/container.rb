@@ -64,7 +64,7 @@ module CyberarmEngine
     end
 
     def recalculate
-      @current_position = Vector.new(@margin_left + @padding_left, @margin_top + @padding_top)
+      @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
       unless @visible
         @width = 0
         @height= 0
@@ -93,7 +93,7 @@ module CyberarmEngine
     end
 
     def max_width
-      @max_width ? @max_width : window.width - (@parent ? @parent.margin_right + @margin_right : @margin_right)
+      @max_width ? @max_width : window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
     end
 
     def fits_on_line?(element) # Flow
@@ -102,13 +102,13 @@ module CyberarmEngine
     end
 
     def position_on_current_line(element) # Flow
-      element.x = element.margin_left + @current_position.x
-      element.y = element.margin_top  + @current_position.y
+      element.x = element.style.margin_left + @current_position.x
+      element.y = element.style.margin_top  + @current_position.y
 
       element.recalculate
 
       @current_position.x += element.outer_width
-      @current_position.x = @margin_left if @current_position.x >= max_width
+      @current_position.x = @style.margin_left if @current_position.x >= max_width
     end
 
     def tallest_neighbor(querier, y_position) # Flow
@@ -122,11 +122,11 @@ module CyberarmEngine
     end
 
     def position_on_next_line(child) # Flow
-      @current_position.x = @margin_left
+      @current_position.x = @style.margin_left
       @current_position.y += tallest_neighbor(child, @current_position.y).outer_height
 
-      child.x = child.margin_left + @current_position.x
-      child.y = child.margin_top  + @current_position.y
+      child.x = child.style.margin_left + @current_position.x
+      child.y = child.style.margin_top  + @current_position.y
 
       child.recalculate
 
@@ -134,8 +134,8 @@ module CyberarmEngine
     end
 
     def move_to_next_line(element) # Stack
-      element.x = element.margin_left + @current_position.x
-      element.y = element.margin_top  + @current_position.y
+      element.x = element.style.margin_left + @current_position.x
+      element.y = element.style.margin_top  + @current_position.y
 
       element.recalculate
 
