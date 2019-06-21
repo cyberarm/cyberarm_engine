@@ -13,41 +13,39 @@ module CyberarmEngine
       @options = options
       @block = block
 
-      @style             = Style.new(options)
-      @focus             = false
-      @style.background_canvas = Background.new
-      @style.border_canvas     = BorderCanvas.new(element: self)
+      @focus   = false
+      @enabled = true
+      @visible = true
 
-      @x = default(:x)
-      @y = default(:y)
-      @z = default(:z)
+      @style = Style.new(options)
+
+      @x = @style.x
+      @y = @style.y
+      @z = @style.z
 
       @fixed_x = @x if @x != 0
       @fixed_y = @y if @y != 0
 
-      @style.width  = default(:width)  || $window.width
-      @style.height = default(:height) || $window.height
-
-      set_border_thickness(default(:border_thickness))
-
-      set_padding(default(:padding))
-
-      set_margin(default(:margin))
-
-      set_background(default(:background))
-      set_border_color(default(:border_color))
-
-      raise "#{self.class} 'x' must be a number" unless @x.is_a?(Numeric)
-      raise "#{self.class} 'y' must be a number" unless @y.is_a?(Numeric)
-      raise "#{self.class} 'z' must be a number" unless @z.is_a?(Numeric)
-      raise "#{self.class} 'options' must be a Hash" unless @options.is_a?(Hash)
-
-      # raise "#{self.class} 'padding' must be a number" unless @padding.is_a?(Numeric)
-
-      @enabled = true
-      @visible = true
+      stylize
 
       default_events
+    end
+
+    def stylize
+      @style.width  = @style.width  || $window.width
+      @style.height = @style.height || $window.height
+
+      set_border_thickness(@style.border_thickness)
+
+      set_padding(@style.padding)
+
+      set_margin(@style.margin)
+
+      @style.background_canvas = Background.new
+      @style.border_canvas     = BorderCanvas.new(element: self)
+
+      set_background(@style.background)
+      set_border_color(@style.border_color)
     end
 
     def set_background(background)
@@ -221,7 +219,6 @@ module CyberarmEngine
     end
 
     def reposition
-      raise "#{self.class}#reposition was not overridden!"
     end
 
     def value

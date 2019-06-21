@@ -15,12 +15,9 @@ module CyberarmEngine
       @text_color = options[:color]
 
       @children = []
-
-      @theme = {}
     end
 
     def build
-      @theme.merge(@parent.theme) if @parent
       @block.call(self) if @block
 
       recalculate
@@ -38,14 +35,6 @@ module CyberarmEngine
 
     def update
       @children.each(&:update)
-    end
-
-    def theme
-      @theme
-    end
-
-    def color(color)
-      @theme[:color] = color
     end
 
     def hit_element?(x, y)
@@ -66,6 +55,7 @@ module CyberarmEngine
     def recalculate
       @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
       return unless visible?
+      stylize
 
       layout
 
@@ -76,9 +66,10 @@ module CyberarmEngine
       @children.each do |child|
         child.x += @x
         child.y += @y
-
-        # Fix child being displaced
+        
+        child.stylize
         child.recalculate
+        child.reposition # TODO: Implement top,bottom,left,center, and right positioning
       end
 
       update_background

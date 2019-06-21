@@ -2,7 +2,7 @@ module CyberarmEngine
   module DSL
     def flow(options = {}, &block)
       options[:parent] = @containers.last
-      options[:theme] = @current_theme
+      options[:theme] = current_theme
       _container = Flow.new(options, block)
       @containers << _container
       _container.build
@@ -14,7 +14,7 @@ module CyberarmEngine
 
     def stack(options = {}, &block)
       options[:parent] = @containers.last
-      options[:theme] = @current_theme
+      options[:theme] = current_theme
       _container = Stack.new(options, block)
       @containers << _container
       _container.build
@@ -79,16 +79,11 @@ module CyberarmEngine
     end
 
     def background(color = Gosu::Color::NONE)
-      @containers.last.background = color
-    end
-
-    # Foreground color, e.g. Text
-    def color(color)
-      @containers.last.color(color)
+      @containers.last.style.background = color
     end
 
     def theme(theme)
-      @current_theme = theme
+      @containers.last.options[:theme] = theme
     end
 
     def current_theme

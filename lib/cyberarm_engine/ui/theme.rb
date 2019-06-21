@@ -13,7 +13,7 @@ module CyberarmEngine
       raise "Error" unless self.class.ancestors.include?(CyberarmEngine::Element)
       _theme = THEME
       _theme = _theme.merge(options[:theme]) if options[:theme]
-      options.delete(:theme)
+      _theme.delete(:theme) if options[:theme]
 
       hash = {}
       class_names = self.class.ancestors

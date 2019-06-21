@@ -1,6 +1,6 @@
 module CyberarmEngine
   class Style
-    def initialize(hash)
+    def initialize(hash = {})
       @hash = hash
     end
 
