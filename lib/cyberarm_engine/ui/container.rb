@@ -65,16 +65,12 @@ module CyberarmEngine
 
     def recalculate
       @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
-      unless @visible
-        @width = 0
-        @height= 0
-        return
-      end
+      return unless visible?
 
       layout
 
-      @width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.outer_width }.max || 0).round
-      @height = @max_height ? @max_height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
+      @style.width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.outer_width }.max || 0).round
+      @style.height = @max_height ? @max_height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
 
       # Move child to parent after positioning
       @children.each do |child|

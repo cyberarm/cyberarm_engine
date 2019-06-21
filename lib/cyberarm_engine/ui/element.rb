@@ -5,7 +5,7 @@ module CyberarmEngine
     include Common
 
     attr_accessor :x, :y, :z, :enabled
-    attr_reader :width, :height, :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
+    attr_reader :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
       @parent = options[:parent] # parent Container (i.e. flow/stack)
@@ -25,8 +25,8 @@ module CyberarmEngine
       @fixed_x = @x if @x != 0
       @fixed_y = @y if @y != 0
 
-      @width  = default(:width)  || $window.width
-      @height = default(:height) || $window.height
+      @style.width  = default(:width)  || $window.width
+      @style.height = default(:height) || $window.height
 
       set_border_thickness(default(:border_thickness))
 
@@ -40,8 +40,6 @@ module CyberarmEngine
       raise "#{self.class} 'x' must be a number" unless @x.is_a?(Numeric)
       raise "#{self.class} 'y' must be a number" unless @y.is_a?(Numeric)
       raise "#{self.class} 'z' must be a number" unless @z.is_a?(Numeric)
-      raise "#{self.class} 'width' must be a number"  unless @width.is_a?(Numeric)  || @width.nil?
-      raise "#{self.class} 'height' must be a number" unless @height.is_a?(Numeric) || @height.nil?
       raise "#{self.class} 'options' must be a Hash" unless @options.is_a?(Hash)
 
       # raise "#{self.class} 'padding' must be a number" unless @padding.is_a?(Numeric)
@@ -162,7 +160,11 @@ module CyberarmEngine
     end
 
     def width
-      (@style.border_thickness_left + @style.padding_left) + @width + (@style.padding_right + @style.border_thickness_right)
+      if visible?
+        (@style.border_thickness_left + @style.padding_left) + @style.width + (@style.padding_right + @style.border_thickness_right)
+      else
+        0
+      end
     end
 
     def outer_width
@@ -170,7 +172,11 @@ module CyberarmEngine
     end
 
     def height
-      (@style.border_thickness_top + @style.padding_top) + @height + (@style.padding_bottom + @style.border_thickness_bottom)
+      if visible?
+        (@style.border_thickness_top + @style.padding_top) + @style.height + (@style.padding_bottom + @style.border_thickness_bottom)
+      else
+        0
+      end
     end
 
     def outer_height

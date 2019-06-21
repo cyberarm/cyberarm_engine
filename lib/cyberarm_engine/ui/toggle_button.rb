@@ -38,13 +38,7 @@ module CyberarmEngine
     def recalculate
       super
 
-      unless @visible
-        @width = 0
-        @height= 0
-        return
-      end
-
-      @width = @text.textobject.text_width(@options[:checkmark])
+      @style.width = @text.textobject.text_width(@options[:checkmark])
       update_background
     end
 

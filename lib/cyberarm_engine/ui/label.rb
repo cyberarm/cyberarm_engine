@@ -17,14 +17,8 @@ module CyberarmEngine
     end
 
     def recalculate
-      unless @visible
-        @width = 0
-        @height= 0
-        return
-      end
-
-      @width = @text.width.round
-      @height= @text.height.round
+      @style.width = @text.width.round
+      @style.height= @text.height.round
 
       @text.x = @style.border_thickness_left + @style.padding_left + @x
       @text.y = @style.border_thickness_top + @style.padding_top  + @y

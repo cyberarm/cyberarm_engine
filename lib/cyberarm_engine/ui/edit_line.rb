@@ -20,7 +20,7 @@ module CyberarmEngine
     end
 
     def render
-      Gosu.clip_to(@text.x, @text.y, @width, @text.height) do
+      Gosu.clip_to(@text.x, @text.y, @style.width, @text.height) do
         draw_text
         Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z + 40) if @focus && @show_caret
       end
@@ -80,13 +80,7 @@ module CyberarmEngine
     def recalculate
       super
 
-      unless @visible
-        @width = 0
-        @height= 0
-        return
-      end
-
-      @width = default(:width)
+      @style.width = default(:width)
       update_background
     end
 

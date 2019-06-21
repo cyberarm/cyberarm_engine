@@ -35,14 +35,8 @@ module CyberarmEngine
     end
 
     def recalculate
-      unless @visible
-        @width = 0
-        @height= 0
-        return
-      end
-
-      @width  = @image.width * @scale_x
-      @height = @image.height * @scale_y
+      @style.width  = @image.width * @scale_x
+      @style.height = @image.height * @scale_y
     end
 
     def value

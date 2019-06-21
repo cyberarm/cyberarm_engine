@@ -12,8 +12,8 @@ module CyberarmEngine
       add(@toggle_button)
       add(@label)
 
-      @width  = @toggle_button.width + @label.width
-      @height = @toggle_button.height + @label.height
+      @style.width  = @toggle_button.width + @label.width
+      @style.height = @toggle_button.height + @label.height
     end
 
     def text=(text)
