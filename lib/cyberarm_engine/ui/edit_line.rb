@@ -5,7 +5,6 @@ module CyberarmEngine
 
       @type = default(:type)
 
-
       @caret_width = default(:caret_width)
       @caret_height= @text.height
       @caret_color = default(:caret_color)

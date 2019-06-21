@@ -66,7 +66,7 @@ module CyberarmEngine
       @children.each do |child|
         child.x += @x
         child.y += @y
-        
+
         child.stylize
         child.recalculate
         child.reposition # TODO: Implement top,bottom,left,center, and right positioning

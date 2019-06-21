@@ -8,7 +8,7 @@ module CyberarmEngine
     attr_reader :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
-      @parent = options[:parent] # parent Container (i.e. flow/stack)
+      @parent = options.delete(:parent) # parent Container (i.e. flow/stack)
       options = theme_defaults(options)
       @options = options
       @block = block
@@ -26,15 +26,15 @@ module CyberarmEngine
       @fixed_x = @x if @x != 0
       @fixed_y = @y if @y != 0
 
+      @style.width  = default(:width)  || $window.width
+      @style.height = default(:height) || $window.height
+
       stylize
 
       default_events
     end
 
     def stylize
-      @style.width  = @style.width  || $window.width
-      @style.height = @style.height || $window.height
-
       set_border_thickness(@style.border_thickness)
 
       set_padding(@style.padding)

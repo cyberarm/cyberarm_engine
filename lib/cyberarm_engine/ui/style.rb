@@ -1,7 +1,24 @@
+module Gosu
+  class Color
+    def _dump(level)
+      [
+        "%02X" % self.alpha,
+        "%02X" % self.red,
+        "%02X" % self.green,
+        "%02X" % self.blue
+      ].join
+    end
+
+    def self._load(hex)
+      argb(hex.to_i(16))
+    end
+  end
+end
+
 module CyberarmEngine
   class Style
     def initialize(hash = {})
-      @hash = hash
+      @hash = Marshal.load(Marshal.dump(hash))
     end
 
     def method_missing(method, *args, &block)
