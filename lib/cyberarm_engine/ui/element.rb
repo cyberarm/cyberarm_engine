@@ -214,6 +214,10 @@ module CyberarmEngine
       @root
     end
 
+    def is_root?
+      @gui_state != nil
+    end
+
     def recalculate
       raise "#{self.class}#recalculate was not overridden!"
     end
