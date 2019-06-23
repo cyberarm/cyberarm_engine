@@ -158,9 +158,20 @@ module CyberarmEngine
         @top_right    = background[:top_right]
         @bottom_left  = background[:bottom_left]
         @bottom_right = background[:bottom_right]
+      elsif background.is_a?(Range)
+        set([background.begin, background.begin, background.end, background.end])
       else
         raise ArgumentError, "background '#{background}' of type '#{background.class}' was not able to be processed"
       end
     end
   end
+end
+
+# Add <=> method to support Range based gradients
+module Gosu
+ class Color
+   def <=>(other)
+     self
+   end
+ end
 end
