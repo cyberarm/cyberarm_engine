@@ -119,17 +119,17 @@ module CyberarmEngine
 
     def toggle
       @visible = !@visible
-      root.recalculate
+      root.gui_state.request_recalculate
     end
 
     def show
       @visible = true
-      root.recalculate
+      root.gui_state.request_recalculate
     end
 
     def hide
       @visible = false
-      root.recalculate
+      root.gui_state.request_recalculate
     end
 
     def draw

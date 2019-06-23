@@ -37,7 +37,7 @@ module CyberarmEngine
       old_width, old_height = width, height
       recalculate
 
-      root.recalculate if old_width != width || old_height != height
+      root.gui_state.request_recalculate if old_width != width || old_height != height
     end
   end
 end

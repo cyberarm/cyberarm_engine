@@ -10,15 +10,18 @@ module CyberarmEngine
 
       @down_keys = {}
 
-      @root_container = Stack.new
+      @root_container = Stack.new(gui_state: self)
       @game_objects << @root_container
       @containers     = [@root_container]
+
+      @active_width  = window.width
+      @active_height = window.height
 
       @focus = nil
       @mouse_over = nil
       @mouse_down_on = {}
       @mouse_down_position = {}
-
+      @pending_recalculate_request = false
 
       setup
     end
@@ -35,6 +38,11 @@ module CyberarmEngine
     end
 
     def update
+      if @pending_recalculate_request
+        @root_container.recalculate
+        @pending_recalculate_request = false
+      end
+
       super
 
       new_mouse_over = @root_container.hit_element?(window.mouse_x, window.mouse_y)
@@ -49,6 +57,11 @@ module CyberarmEngine
       redirect_holding_mouse_button(:left) if @mouse_over && Gosu.button_down?(Gosu::MsLeft)
       redirect_holding_mouse_button(:middle) if @mouse_over && Gosu.button_down?(Gosu::MsMiddle)
       redirect_holding_mouse_button(:right) if @mouse_over && Gosu.button_down?(Gosu::MsRight)
+
+      request_recalculate if @active_width != window.width || @active_height != window.height
+
+      @active_width  = window.width
+      @active_height = window.height
     end
 
     def button_down(id)
@@ -114,6 +127,11 @@ module CyberarmEngine
 
     def redirect_mouse_wheel(button)
       @mouse_over.publish(:"mouse_wheel_#{button}", window.mouse_x, window.mouse_y) if @mouse_over
+    end
+
+    # Schedule a full GUI recalculation on next update
+    def request_recalculate
+      @pending_recalculate_request = true
     end
   end
 end

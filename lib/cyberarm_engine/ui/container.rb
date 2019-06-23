@@ -3,10 +3,11 @@ module CyberarmEngine
     include Common
 
     attr_accessor :stroke_color, :fill_color
-    attr_reader :children
+    attr_reader :children, :gui_state
     attr_reader :scroll_x, :scroll_y
 
     def initialize(options = {}, block = nil)
+      @gui_state = options.delete(:gui_state)
       super
 
       @scroll_x, @scroll_y = 0, 0
