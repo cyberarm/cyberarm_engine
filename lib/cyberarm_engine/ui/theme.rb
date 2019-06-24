@@ -26,7 +26,23 @@ module CyberarmEngine
         end
       end
 
-      hash.merge(options)
+      deep_merge(hash, options)
+    end
+
+    # Derived from Rails Hash#deep_merge!
+    # Enables passing partial themes through Element options without issue
+    def deep_merge(original, intergrate, &block)
+      hash = original.merge(intergrate) do |key, this_val, other_val|
+        if this_val.is_a?(Hash) && other_val.is_a?(Hash)
+          deep_merge(this_val, other_val, &block)
+        elsif block_given?
+          block.call(key, this_val, other_val)
+        else
+          other_val
+        end
+      end
+
+      return hash
     end
 
     THEME = {
