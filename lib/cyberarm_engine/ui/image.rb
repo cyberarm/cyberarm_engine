@@ -5,21 +5,7 @@ module CyberarmEngine
       @path = path
 
       @image = Gosu::Image.new(path, retro: @options[:image_retro])
-      if @options[:width] && @options[:height]
-        @scale_x = @options[:width].to_f / @image.width
-        @scale_y = @options[:height].to_f / @image.height
-      elsif @options[:width]
-        @scale_x = @options[:width].to_f / @image.width
-        @scale_y = @scale_x
-      elsif @options[:height]
-        @scale_y = @options[:height].to_f / @image.height
-        @scale_x = @scale_y
-      else
-        @scale_x, @scale_y = 1, 1
-      end
-
-      raise "Scale X" unless @scale_x.is_a?(Numeric)
-      raise "Scale Y" unless @scale_y.is_a?(Numeric)
+      @scale_x, @scale_y = 1, 1
     end
 
     def render
@@ -35,8 +21,24 @@ module CyberarmEngine
     end
 
     def recalculate
-      @style.width  = @image.width * @scale_x
-      @style.height = @image.height * @scale_y
+      _width = dimensional_size(@style.width, :width)
+      _height= dimensional_size(@style.height,:height)
+
+      if _width && _height
+        @scale_x = _width.to_f / @image.width
+        @scale_y = _height.to_f / @image.height
+      elsif _width
+        @scale_x = _width.to_f / @image.width
+        @scale_y = @scale_x
+      elsif _height
+        @scale_y = _height.to_f / @image.height
+        @scale_x = @scale_y
+      else
+        @scale_x, @scale_y = 1, 1
+      end
+
+      @width = _width  ? _width  : @image.width.round * @scale_x
+      @height= _height ? _height : @image.height.round * @scale_y
     end
 
     def value

@@ -17,8 +17,10 @@ module CyberarmEngine
     end
 
     def recalculate
-      @style.width = @text.width.round
-      @style.height= @text.height.round
+      _width = dimensional_size(@style.width, :width)
+      _height= dimensional_size(@style.height,:height)
+      @width = _width  ? _width  : @text.width.round
+      @height= _height ? _height : @text.height.round
 
       @text.x = @style.border_thickness_left + @style.padding_left + @x
       @text.y = @style.border_thickness_top + @style.padding_top  + @y

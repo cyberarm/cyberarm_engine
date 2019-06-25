@@ -23,11 +23,14 @@ module CyberarmEngine
       @y = @style.y
       @z = @style.z
 
+      @width  = 0
+      @height = 0
+
       @fixed_x = @x if @x != 0
       @fixed_y = @y if @y != 0
 
-      @style.width  = default(:width)  || $window.width
-      @style.height = default(:height) || $window.height
+      @style.width  = default(:width)  || nil
+      @style.height = default(:height) || nil
 
       stylize
 
@@ -159,7 +162,7 @@ module CyberarmEngine
 
     def width
       if visible?
-        (@style.border_thickness_left + @style.padding_left) + @style.width + (@style.padding_right + @style.border_thickness_right)
+        (@style.border_thickness_left + @style.padding_left) + @width + (@style.padding_right + @style.border_thickness_right)
       else
         0
       end
@@ -171,7 +174,7 @@ module CyberarmEngine
 
     def height
       if visible?
-        (@style.border_thickness_top + @style.padding_top) + @style.height + (@style.padding_bottom + @style.border_thickness_bottom)
+        (@style.border_thickness_top + @style.padding_top) + @height + (@style.padding_bottom + @style.border_thickness_bottom)
       else
         0
       end
@@ -179,6 +182,19 @@ module CyberarmEngine
 
     def outer_height
       @style.margin_top + height + @style.margin_bottom
+    end
+
+    private def dimensional_size(size, dimension)
+      raise "dimension must be either :width or :height" unless dimension == :width || dimension == :height
+      if size && size.is_a?(Numeric)
+        if size.between?(0.0, 1.0)
+          @parent.send(:"#{dimension}") * size
+        else
+          size
+        end
+      else
+        nil
+      end
     end
 
     def background=(_background)

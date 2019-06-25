@@ -31,7 +31,9 @@ module CyberarmEngine
     end
 
     def render
+      Gosu.clip_to(@x, @y, width, height) do
         @children.each(&:draw)
+      end
     end
 
     def update
@@ -61,12 +63,15 @@ module CyberarmEngine
       layout
 
       if is_root?
-        @style.width  = window.width
-        @style.height = window.height
+        @width  = @style.width  = window.width
+        @height = @style.height = window.height
       else
-        @style.width  = @max_width  ? @max_width  : (@children.map {|c| c.x + c.outer_width }.max || 0).round
-        @style.height = @max_height ? @max_height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
+        _width = dimensional_size(@style.width, :width)
+        _height= dimensional_size(@style.height,:height)
+        @width  = _width  ? _width  : (@children.map {|c| c.x + c.outer_width }.max || 0).round
+        @height = _height ? _height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
       end
+
 
       # Move child to parent after positioning
       @children.each do |child|

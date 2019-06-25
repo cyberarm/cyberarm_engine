@@ -79,7 +79,7 @@ module CyberarmEngine
     def recalculate
       super
 
-      @style.width = default(:width)
+      @width = dimensional_size(@style.width, :width) || default(:width)
       update_background
     end
 
