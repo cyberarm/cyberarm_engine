@@ -38,7 +38,10 @@ module CyberarmEngine
     def recalculate
       super
 
-      @style.width = @text.textobject.text_width(@options[:checkmark])
+      _width = dimensional_size(@style.width, :width)
+      _height= dimensional_size(@style.height,:height)
+      @width  = _width  ? _width  : @text.textobject.text_width(@options[:checkmark])
+      @height = _height ? _height : @text.height
       update_background
     end
 
