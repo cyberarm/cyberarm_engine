@@ -10,7 +10,7 @@ module CyberarmEngine
 
       @down_keys = {}
 
-      @root_container = Stack.new(gui_state: self)
+      @root_container = Element::Stack.new(gui_state: self)
       @game_objects << @root_container
       @containers     = [@root_container]
 

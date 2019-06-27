@@ -62,7 +62,7 @@ module CyberarmEngine
         @states << klass
       else
         @states << klass.new(options) if child_of?(klass, GameState)
-        @states << klass.new if child_of?(klass, Container)
+        @states << klass.new if child_of?(klass, Element::Container)
       end
     end
 

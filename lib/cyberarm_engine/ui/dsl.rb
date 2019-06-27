@@ -3,7 +3,7 @@ module CyberarmEngine
     def flow(options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _container = Flow.new(options, block)
+      _container = Element::Flow.new(options, block)
       @containers << _container
       _container.build
       _container.parent.add(_container)
@@ -15,7 +15,7 @@ module CyberarmEngine
     def stack(options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _container = Stack.new(options, block)
+      _container = Element::Stack.new(options, block)
       @containers << _container
       _container.build
       _container.parent.add(_container)
@@ -27,7 +27,7 @@ module CyberarmEngine
     def label(text, options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _element = Label.new(text, options, block)
+      _element = Element::Label.new(text, options, block)
       @containers.last.add(_element)
 
       return _element
@@ -36,7 +36,7 @@ module CyberarmEngine
     def button(text, options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _element = Button.new(text, options, block) { if block.is_a?(Proc); block.call; end }
+      _element = Element::Button.new(text, options, block) { if block.is_a?(Proc); block.call; end }
       @containers.last.add(_element)
 
       return _element
@@ -45,7 +45,7 @@ module CyberarmEngine
     def edit_line(text, options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _element = EditLine.new(text, options, block)
+      _element = Element::EditLine.new(text, options, block)
       @containers.last.add(_element)
 
       return _element
@@ -54,7 +54,7 @@ module CyberarmEngine
     def toggle_button(options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _element = ToggleButton.new(options, block)
+      _element = Element::ToggleButton.new(options, block)
       @containers.last.add(_element)
 
       return _element
@@ -63,7 +63,7 @@ module CyberarmEngine
     def check_box(text, options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _element = CheckBox.new(text, options, block)
+      _element = Element::CheckBox.new(text, options, block)
       @containers.last.add(_element)
 
       return _element
@@ -72,7 +72,16 @@ module CyberarmEngine
     def image(path, options = {}, &block)
       options[:parent] = @containers.last
       options[:theme] = current_theme
-      _element = Image.new(path, options, block)
+      _element = Element::Image.new(path, options, block)
+      @containers.last.add(_element)
+
+      return _element
+    end
+
+    def progress(options = {}, &block)
+      options[:parent] = @containers.last
+      options[:theme] = current_theme
+      _element = Element::Progress.new(options, block)
       @containers.last.add(_element)
 
       return _element
