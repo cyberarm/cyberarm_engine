@@ -43,6 +43,9 @@ module CyberarmEngine
       def left_mouse_button(sender, x, y)
         super
         window.text_input = @text_input
+
+        @caret_last_interval = Gosu.milliseconds
+        @show_caret = true
       end
 
       def enter(sender)

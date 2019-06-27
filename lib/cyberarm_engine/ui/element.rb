@@ -162,7 +162,7 @@ module CyberarmEngine
 
     def width
       if visible?
-        (@style.border_thickness_left + @style.padding_left) + @width + (@style.padding_right + @style.border_thickness_right)
+        inner_width + @width
       else
         0
       end
@@ -172,9 +172,13 @@ module CyberarmEngine
       @style.margin_left + width + @style.margin_right
     end
 
+    def inner_width
+      (@style.border_thickness_left + @style.padding_left) + (@style.padding_right + @style.border_thickness_right)
+    end
+
     def height
       if visible?
-        (@style.border_thickness_top + @style.padding_top) + @height + (@style.padding_bottom + @style.border_thickness_bottom)
+        inner_height + @height
       else
         0
       end
@@ -182,6 +186,10 @@ module CyberarmEngine
 
     def outer_height
       @style.margin_top + height + @style.margin_bottom
+    end
+
+    def inner_height
+      (@style.border_thickness_top + @style.padding_top) + (@style.padding_bottom + @style.border_thickness_bottom)
     end
 
     private def dimensional_size(size, dimension)
