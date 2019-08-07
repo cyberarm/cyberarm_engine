@@ -2,8 +2,8 @@ module CyberarmEngine
   class Text
     CACHE = {}
 
-    attr_accessor :x, :y, :z, :size, :factor_x, :factor_y, :color, :shadow, :shadow_size, :options
-    attr_reader :text, :textobject
+    attr_accessor :x, :y, :z, :size, :options
+    attr_reader :text, :textobject, :factor_x, :factor_y, :color, :shadow, :shadow_size, :shadow_alpha, :shadow_color
 
     def initialize(text, options={})
       @text = text.to_s || ""
@@ -22,6 +22,8 @@ module CyberarmEngine
       @shadow   = true if options[:shadow] == nil
       @shadow_size = options[:shadow_size] ? options[:shadow_size] : 1
       @shadow_alpha= options[:shadow_alpha] ? options[:shadow_alpha] : 30
+      @shadow_alpha= options[:shadow_alpha] ? options[:shadow_alpha] : 30
+      @shadow_color= options[:shadow_color]
       @textobject = check_cache(@size, @font)
 
       if @alignment
@@ -67,6 +69,35 @@ module CyberarmEngine
       @text = string
     end
 
+    def factor_x=(n)
+      @rendered_shadow = nil
+      @factor_x = n
+    end
+    def factor_y=(n)
+      @rendered_shadow = nil
+      @factor_y = n
+    end
+    def color=(color)
+      @rendered_shadow = nil
+      @color = color
+    end
+    def shadow=(boolean)
+      @rendered_shadow = nil
+      @shadow = boolean
+    end
+    def shadow_size=(n)
+      @rendered_shadow = nil
+      @shadow_size = n
+    end
+    def shadow_alpha=(n)
+      @rendered_shadow = nil
+      @shadow_alpha = n
+    end
+    def shadow_color=(n)
+      @rendered_shadow = nil
+      @shadow_color = n
+    end
+
     def width
       textobject.text_width(@text)
     end
@@ -77,9 +108,8 @@ module CyberarmEngine
 
     def draw
       if @shadow && !ARGV.join.include?("--no-shadow")
-        @shadow_alpha = 30 if @color.alpha > 30
-        @shadow_alpha = @color.alpha if @color.alpha <= 30
-        shadow_color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha)
+        shadow_alpha = @color.alpha <= 30 ? @color.alpha : @shadow_alpha
+        shadow_color = @shadow_color ? @shadow_color : Gosu::Color.rgba(@color.red, @color.green, @color.blue, shadow_alpha)
 
         _x = @shadow_size
         _y = @shadow_size

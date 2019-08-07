@@ -9,6 +9,7 @@ require_relative "cyberarm_engine/engine"
 
 require_relative "cyberarm_engine/lib/bounding_box"
 require_relative "cyberarm_engine/lib/vector"
+require_relative "cyberarm_engine/lib/shader" if defined?(OpenGL)
 require_relative "cyberarm_engine/background"
 
 require_relative "cyberarm_engine/objects/text"
