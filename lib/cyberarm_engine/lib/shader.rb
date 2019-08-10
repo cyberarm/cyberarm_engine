@@ -2,19 +2,23 @@ module CyberarmEngine
   # Ref: https://github.com/vaiorabbit/ruby-opengl/blob/master/sample/OrangeBook/brick.rb
   class Shader
     include OpenGL
+    @@shaders = {}
 
     def self.add(name, instance)
-      @shaders ||= {}
-      @shaders[name] = instance
+      @@shaders[name] = instance
     end
 
     def self.use(name, &block)
-      shader = @shaders.dig(name)
+      shader = @@shaders.dig(name)
       if shader
         shader.use(&block)
       else
         raise ArgumentError, "Shader '#{name}' not found!"
       end
+    end
+
+    def self.available?(name)
+      @@shaders.dig(name).is_a?(Shader)
     end
 
     def self.active_shader
