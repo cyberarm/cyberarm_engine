@@ -5,7 +5,7 @@ module CyberarmEngine
     SONGS  = {}
 
     attr_accessor :show_cursor
-    attr_reader :current_state, :last_frame_time
+    attr_reader :last_frame_time
 
     def self.now
       Gosu.milliseconds

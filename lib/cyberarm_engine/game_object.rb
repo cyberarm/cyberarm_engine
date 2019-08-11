@@ -3,7 +3,8 @@ module CyberarmEngine
     include Common
 
     attr_accessor :image, :angle, :position, :velocity, :center_x, :center_y, :scale_x, :scale_y,
-                  :color, :alpha, :mode, :options, :paused, :radius, :last_position
+                  :color, :mode, :options, :paused, :radius, :last_position
+    attr_reader :alpha
     def initialize(options={})
       if options[:auto_manage] || options[:auto_manage] == nil
         $window.current_state.add_game_object(self)
@@ -141,7 +142,7 @@ module CyberarmEngine
       self.angle%=360
     end
 
-    def alpha=int # 0-255
+    def alpha=(int) # 0-255
       @alpha = int
       @alpha = 255 if @alpha > 255
       @color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, int)
