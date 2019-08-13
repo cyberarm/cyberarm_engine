@@ -21,6 +21,10 @@ module CyberarmEngine
       @@shaders.dig(name).is_a?(Shader)
     end
 
+    def self.get(name)
+      @@shaders.dig(name)
+    end
+
     def self.active_shader
       @active_shader
     end
