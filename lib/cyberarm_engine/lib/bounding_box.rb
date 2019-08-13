@@ -49,11 +49,17 @@ module CyberarmEngine
       return temp
     end
 
-    # returns whether both bounding boxes intersect
+    # returns whether bounding box intersects other
     def intersect?(other)
-      (@min.x <= other.max.x && @max.x >= other.min.x) &&
-      (@min.y <= other.max.y && @max.y >= other.min.y) &&
-      (@min.z <= other.max.z && @max.z >= other.min.z)
+      if other.is_a?(Ray)
+        other.intersect?(self)
+      elsif other.is_a?(BoundingBox)
+        (@min.x <= other.max.x && @max.x >= other.min.x) &&
+        (@min.y <= other.max.y && @max.y >= other.min.y) &&
+        (@min.z <= other.max.z && @max.z >= other.min.z)
+      else
+        raise "Unknown collider: #{other.class}"
+      end
     end
 
     # does this bounding box envelop other bounding box? (inclusive of border)
