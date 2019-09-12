@@ -1,5 +1,3 @@
-require "gosu"
-
 module CyberarmEngine
   class Background
     attr_accessor :x, :y, :z, :width, :height, :angle, :debug
