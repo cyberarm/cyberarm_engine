@@ -22,8 +22,6 @@ module CyberarmEngine
       @mouse_down_on = {}
       @mouse_down_position = {}
       @pending_recalculate_request = false
-
-      setup
     end
 
     # throws :blur event to focused element and sets GuiState focused element

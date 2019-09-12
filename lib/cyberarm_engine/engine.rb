@@ -58,11 +58,15 @@ module CyberarmEngine
     end
 
     def push_state(klass, options={})
+      options = {setup: true}.merge(options)
+
       if klass.instance_of?(klass.class) && defined?(klass.options)
         @states << klass
+        klass.setup if options[:setup]
       else
         @states << klass.new(options) if child_of?(klass, GameState)
         @states << klass.new if child_of?(klass, Element::Container)
+        current_state.setup if current_state.class == klass && options[:setup]
       end
     end
 

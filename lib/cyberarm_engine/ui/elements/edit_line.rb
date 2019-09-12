@@ -46,6 +46,8 @@ module CyberarmEngine
 
         @caret_last_interval = Gosu.milliseconds
         @show_caret = true
+
+        return :handled
       end
 
       def enter(sender)
@@ -56,12 +58,16 @@ module CyberarmEngine
           @style.background_canvas.background = default(:hover, :background)
           @text.color = default(:hover, :color)
         end
+
+        return :handled
       end
 
       def leave(sender)
         unless @focus
           super
         end
+
+        return :handled
       end
 
       def blur(sender)
@@ -69,6 +75,8 @@ module CyberarmEngine
         @style.background_canvas.background = default(:background)
         @text.color = default(:color)
         window.text_input = nil
+
+        return :handled
       end
 
       # TODO: Fix caret rendering in wrong position unless caret_pos is at end of text

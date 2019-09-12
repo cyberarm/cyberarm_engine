@@ -19,6 +19,8 @@ module CyberarmEngine
 
       def clicked_left_mouse_button(sender, x, y)
         @block.call(self) if @block
+
+        return :handled
       end
 
       def recalculate

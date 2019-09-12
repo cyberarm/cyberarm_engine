@@ -1,50 +1,50 @@
 module CyberarmEngine
   module Common
     def push_state(klass, options={})
-      $window.push_state(klass, options)
+      window.push_state(klass, options)
     end
 
     def current_state
-      $window.current_state
+      window.current_state
     end
 
     def previous_state
-      $window.previous_state
+      window.previous_state
     end
 
     def pop_state
-      $window.pop_state
+      window.pop_state
     end
 
     def show_cursor
-      $window.show_cursor
+      window.show_cursor
     end
 
     def show_cursor=boolean
-      $window.show_cursor = boolean
+      window.show_cursor = boolean
     end
 
     def draw_rect(x, y, width, height, color, z = 0)
-      $window.draw_rect(x,y,width,height,color,z)
+      Gosu.draw_rect(x, y, width, height, color, z)
     end
 
     def fill(color, z = 0)
-      draw_rect(0, 0, $window.width, $window.height, color, z)
+      draw_rect(0, 0, window.width, window.height, color, z)
     end
 
     def lighten(color, amount = 25)
       if defined?(color.alpha)
-        return Gosu::Color.rgba(color.red+amount, color.green+amount, color.blue+amount, color.alpha)
+        return Gosu::Color.rgba(color.red + amount, color.green + amount, color.blue + amount, color.alpha)
       else
-        return Gosu::Color.rgb(color.red+amount, color.green+amount, color.blue+amount)
+        return Gosu::Color.rgb(color.red + amount, color.green + amount, color.blue + amount)
       end
     end
 
     def darken(color, amount = 25)
       if defined?(color.alpha)
-        return Gosu::Color.rgba(color.red-amount, color.green-amount, color.blue-amount, color.alpha)
+        return Gosu::Color.rgba(color.red - amount, color.green - amount, color.blue - amount, color.alpha)
       else
-        return Gosu::Color.rgb(color.red-amount, color.green-amount, color.blue-amount)
+        return Gosu::Color.rgb(color.red - amount, color.green - amount, color.blue - amount)
       end
     end
 

@@ -24,6 +24,8 @@ module CyberarmEngine
         toggle
 
         @block.call(self) if @block
+
+        return :handled
       end
 
       def toggle

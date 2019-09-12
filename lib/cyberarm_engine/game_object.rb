@@ -155,7 +155,7 @@ module CyberarmEngine
     def button_up(id)
     end
 
-    def button_down?(id)
+    def button_down(id)
     end
 
     def find_closest(game_object_class)

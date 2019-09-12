@@ -12,8 +12,6 @@ module CyberarmEngine
       $window.text_input = nil unless options[:preserve_text_input]
 
       @down_keys = {}
-
-      setup
     end
 
     def setup
