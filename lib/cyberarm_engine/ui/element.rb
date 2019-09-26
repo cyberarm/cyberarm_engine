@@ -32,6 +32,9 @@ module CyberarmEngine
       @style.width  = default(:width)  || nil
       @style.height = default(:height) || nil
 
+      @style.background_canvas = Background.new
+      @style.border_canvas     = BorderCanvas.new(element: self)
+
       stylize
 
       default_events
@@ -43,9 +46,6 @@ module CyberarmEngine
       set_padding(@style.padding)
 
       set_margin(@style.margin)
-
-      @style.background_canvas = Background.new
-      @style.border_canvas     = BorderCanvas.new(element: self)
 
       set_background(@style.background)
       set_border_color(@style.border_color)

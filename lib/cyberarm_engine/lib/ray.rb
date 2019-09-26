@@ -1,11 +1,12 @@
 module CyberarmEngine
   class Ray
-    def initialize(origin, direction)
+    def initialize(origin, direction, range = Float::INFINITY)
       raise "Origin must be a Vector!" unless origin.is_a?(Vector)
       raise "Direction must be a Vector!" unless direction.is_a?(Vector)
 
       @origin  = origin
       @direction = direction
+      @range = range
 
       @inverse_direction = @direction.inverse
     end
@@ -20,8 +21,8 @@ module CyberarmEngine
 
     # Based on: https://tavianator.com/fast-branchless-raybounding-box-intersections/
     def intersect_bounding_box?(box)
-      tmin = -Float::INFINITY
-      tmax = Float::INFINITY
+      tmin = -@range
+      tmax = @range
 
       tx1 = (box.min.x - @origin.x) * @inverse_direction.x
       tx2 = (box.max.x - @origin.x) * @inverse_direction.x

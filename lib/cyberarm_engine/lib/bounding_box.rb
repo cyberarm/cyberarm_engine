@@ -93,26 +93,26 @@ module CyberarmEngine
 
     def normalize(entity)
       temp = BoundingBox.new
-      temp.min.x = @min.x.to_f * entity.scale
-      temp.min.y = @min.y.to_f * entity.scale
-      temp.min.z = @min.z.to_f * entity.scale
+      temp.min.x = @min.x.to_f * entity.scale.x
+      temp.min.y = @min.y.to_f * entity.scale.y
+      temp.min.z = @min.z.to_f * entity.scale.z
 
-      temp.max.x = @max.x.to_f * entity.scale
-      temp.max.y = @max.y.to_f * entity.scale
-      temp.max.z = @max.z.to_f * entity.scale
+      temp.max.x = @max.x.to_f * entity.scale.x
+      temp.max.y = @max.y.to_f * entity.scale.y
+      temp.max.z = @max.z.to_f * entity.scale.z
 
       return temp
     end
 
     def normalize_with_offset(entity)
       temp = BoundingBox.new
-      temp.min.x = @min.x.to_f * entity.scale + entity.position.x
-      temp.min.y = @min.y.to_f * entity.scale + entity.position.y
-      temp.min.z = @min.z.to_f * entity.scale + entity.position.z
+      temp.min.x = @min.x.to_f * entity.scale.x + entity.position.x
+      temp.min.y = @min.y.to_f * entity.scale.y + entity.position.y
+      temp.min.z = @min.z.to_f * entity.scale.z + entity.position.z
 
-      temp.max.x = @max.x.to_f * entity.scale + entity.position.x
-      temp.max.y = @max.y.to_f * entity.scale + entity.position.y
-      temp.max.z = @max.z.to_f * entity.scale + entity.position.z
+      temp.max.x = @max.x.to_f * entity.scale.x + entity.position.x
+      temp.max.y = @max.y.to_f * entity.scale.y + entity.position.y
+      temp.max.z = @max.z.to_f * entity.scale.z + entity.position.z
 
       return temp
     end

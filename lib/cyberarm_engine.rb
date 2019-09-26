@@ -1,4 +1,10 @@
-require "gosu"
+begin
+  require "../ffi-gosu/lib/gosu"
+rescue LoadError => e
+  pp e
+  require "gosu"
+end
+
 
 require_relative "cyberarm_engine/version"
 

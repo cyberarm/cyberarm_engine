@@ -67,8 +67,11 @@ module CyberarmEngine
           @width  = @style.width  = window.width
           @height = @style.height = window.height
         else
+          @width, @height = 0, 0
+
           _width = dimensional_size(@style.width, :width)
           _height= dimensional_size(@style.height,:height)
+
           @width  = _width  ? _width  : (@children.map {|c| c.x + c.outer_width }.max || 0).round
           @height = _height ? _height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
         end
