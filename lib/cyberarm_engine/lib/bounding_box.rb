@@ -68,11 +68,17 @@ module CyberarmEngine
       other.max.x <= max.x && other.max.y <= max.y && other.max.z <= max.z
     end
 
-    # returns whether the vector is inside of the bounding box
+    # returns whether the 3D vector is inside of the bounding box
+    def inside?(vector)
+      (vector.x.between?(@min.x, @max.x) || vector.x.between?(@max.x, @min.x)) &&
+      (vector.y.between?(@min.y, @max.y) || vector.y.between?(@max.y, @min.y)) &&
+      (vector.z.between?(@min.z, @max.z) || vector.z.between?(@max.z, @min.z))
+    end
+
+    # returns whether the 2D vector is inside of the bounding box
     def point?(vector)
-      vector.x.between?(@min.x, @max.x) &&
-      vector.y.between?(@min.y, @max.y) &&
-      vector.z.between?(@min.z, @max.z)
+      (vector.x.between?(@min.x, @max.x) || vector.x.between?(@max.x, @min.x)) &&
+      (vector.y.between?(@min.y, @max.y) || vector.y.between?(@max.y, @min.y))
     end
 
     def volume

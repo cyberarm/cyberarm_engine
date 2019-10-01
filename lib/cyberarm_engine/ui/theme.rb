@@ -65,7 +65,7 @@ module CyberarmEngine
       Button: { # < Label
         margin:   1,
         padding:  4,
-        border_thickness: 4,
+        border_thickness: 1,
         border_color: ["ffd59674".hex, "ffff8746".hex],
         border_radius: 0,
         background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
