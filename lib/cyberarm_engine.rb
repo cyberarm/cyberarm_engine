@@ -1,5 +1,5 @@
 begin
-  require "../ffi-gosu/lib/gosu"
+  require File.expand_path("../../ffi-gosu/lib/gosu", File.dirname(__FILE__))
 rescue LoadError => e
   pp e
   require "gosu"

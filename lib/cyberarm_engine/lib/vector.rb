@@ -162,6 +162,10 @@ module CyberarmEngine
       @x + @y + @z
     end
 
+    def lerp(other, factor)
+      (self - other) * factor.clamp(0.0, 1.0)
+    end
+
     # 2D distance using X and Y
     def distance(other)
       Math.sqrt((@x-other.x)**2 + (@y-other.y)**2)
