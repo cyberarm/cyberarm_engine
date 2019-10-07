@@ -1,41 +1,15 @@
 module CyberarmEngine
-  class Matrix
-    attr_reader :elements, :rows, :columns
-    def initialize(matrix, rows:, columns:)
+  class Transform
+    attr_reader :elements
+    def initialize(matrix)
       @elements = matrix
-      @rows = rows
-      @columns = columns
 
-      raise "Matrix is wrong size! Got #{@elements.size}, expected #{@rows * @columns}" if @rows * @columns != @elements.size
+      raise "Transform is wrong size! Got #{@elements.size}, expected 16" if 16 != @elements.size
     end
 
-    def +(other)
-    end
-
-    def -(other)
-    end
-
-    def *(other)
-    end
-
-    def cofactor
-    end
-
-    def adjoint
-      sign = 1
-      matrix = @elements.clone
-
-      @rows.times do |row|
-        @columns.times do |columns|
-        end
-      end
-    end
-
-    def determinant
-    end
-
-    # https://www.geeksforgeeks.org/adjoint-inverse-matrix/
-    def inverse
+    def error(pos)
+      p @elements
+      Vector.new(@elements[3], @elements[7]) - pos
     end
 
     def self.rotate(angle, rotate_around = nil)
@@ -48,7 +22,7 @@ module CyberarmEngine
           0,  0,  0, 1,
       ]
 
-      rotate_matrix = Matrix.new(matrix, rows: 4, columns: 4)
+      rotate_matrix = Transform.new(matrix, rows: 4, columns: 4)
 
       if rotate_around && (rotate_around.x != 0.0 || rotate_around.y != 0.0)
         negative_rotate_around = Vector.new(-rotate_around.x, -rotate_around.y, -rotate_around.z)
@@ -71,7 +45,7 @@ module CyberarmEngine
         x, y, z, 1,
       ]
 
-      Matrix.new(matrix, rows: 4, columns: 4)
+      Transform.new(matrix)
     end
 
     def self.scale(vector, center_around = nil)
@@ -83,7 +57,7 @@ module CyberarmEngine
         0,       0,       0,       1,
       ]
 
-      scale_matrix = Matrix.new(matrix, rows: 4, columns: 4)
+      scale_matrix = Transform.new(matrix)
 
       if center_around && (center_around.x != 0.0 || center_around.y != 0.0)
         negative_center_around = Vector.new(-center_around.x, -center_around.y, -center_around.z)
@@ -99,7 +73,7 @@ module CyberarmEngine
 
     def self.concat(left, right)
       matrix = Array.new(left.elements.size)
-      rows = left.rows
+      rows = 4
 
       matrix.size.times do |i|
         matrix[i] = 0
@@ -109,7 +83,7 @@ module CyberarmEngine
         end
       end
 
-      Matrix.new(matrix, rows: 4, columns: 4)
+      Transform.new(matrix)
     end
   end
 end

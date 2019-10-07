@@ -5,7 +5,6 @@ rescue LoadError => e
   require "gosu"
 end
 
-
 require_relative "cyberarm_engine/version"
 
 require_relative "cyberarm_engine/common"
@@ -13,15 +12,15 @@ require_relative "cyberarm_engine/common"
 require_relative "cyberarm_engine/game_object"
 require_relative "cyberarm_engine/engine"
 
-require_relative "cyberarm_engine/lib/bounding_box"
-require_relative "cyberarm_engine/lib/vector"
-require_relative "cyberarm_engine/lib/matrix"
-require_relative "cyberarm_engine/lib/ray"
-require_relative "cyberarm_engine/lib/shader" if defined?(OpenGL)
+require_relative "cyberarm_engine/bounding_box"
+require_relative "cyberarm_engine/vector"
+require_relative "cyberarm_engine/transform"
+require_relative "cyberarm_engine/ray"
+require_relative "cyberarm_engine/shader" if defined?(OpenGL)
 require_relative "cyberarm_engine/background"
 
-require_relative "cyberarm_engine/objects/text"
-require_relative "cyberarm_engine/objects/timer"
+require_relative "cyberarm_engine/text"
+require_relative "cyberarm_engine/timer"
 
 require_relative "cyberarm_engine/ui/theme"
 require_relative "cyberarm_engine/ui/event"
