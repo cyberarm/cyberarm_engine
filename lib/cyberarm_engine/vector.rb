@@ -40,6 +40,9 @@ module CyberarmEngine
     def weight; @weight; end
     def weight=(n); @weight = n; end
 
+    alias w weight
+    alias w= weight=
+
     def ==(other)
       if other.is_a?(Numeric)
         @x      == other &&

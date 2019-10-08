@@ -7,11 +7,6 @@ module CyberarmEngine
       raise "Transform is wrong size! Got #{@elements.size}, expected 16" if 16 != @elements.size
     end
 
-    def error(pos)
-      p @elements
-      Vector.new(@elements[3], @elements[7]) - pos
-    end
-
     def self.rotate(angle, rotate_around = nil)
       double c = Math.cos(angle).degrees_to_radians
       double s = Math.sin(angle).degrees_to_radians

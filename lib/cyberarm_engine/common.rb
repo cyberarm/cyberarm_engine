@@ -54,7 +54,7 @@ module CyberarmEngine
       return Gosu::Color.rgba(color.red, color.green, color.blue, alpha)
     end
 
-    def get_asset(path, hash, klass)
+    def get_asset(path, hash, klass, retro = false, tileable = false)
       asset = nil
       hash.detect do |_asset, instance|
         if _asset == path
@@ -64,7 +64,12 @@ module CyberarmEngine
       end
 
       unless asset
-        instance = klass.new(path)
+        instance = nil
+        if klass == Gosu::Image
+          instance = klass.new(path, retro: retro, tileable: tileable)
+        else
+          instance = klass.new(path)
+        end
         hash[path] = instance
         asset = instance
       end
@@ -72,8 +77,8 @@ module CyberarmEngine
       return asset
     end
 
-    def get_image(path)
-      get_asset(path, Engine::IMAGES, Gosu::Image)
+    def get_image(path, retro: false, tileable: false)
+      get_asset(path, Engine::IMAGES, Gosu::Image, retro, tileable)
     end
 
     def get_sample(path)
