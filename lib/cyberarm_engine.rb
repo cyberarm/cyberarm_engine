@@ -9,6 +9,8 @@ require_relative "cyberarm_engine/version"
 
 require_relative "cyberarm_engine/common"
 
+require_relative "cyberarm_engine/gosu_ext/circle"
+
 require_relative "cyberarm_engine/game_object"
 require_relative "cyberarm_engine/engine"
 
