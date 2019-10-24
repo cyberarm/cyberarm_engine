@@ -168,6 +168,14 @@ module CyberarmEngine
       end
     end
 
+    def content_width
+      @width
+    end
+
+    def noncontent_width
+      (inner_width + outer_width) - width
+    end
+
     def outer_width
       @style.margin_left + width + @style.margin_right
     end
@@ -184,6 +192,14 @@ module CyberarmEngine
       end
     end
 
+    def content_height
+      @height
+    end
+
+    def noncontent_height
+      (inner_height + outer_height) - height
+    end
+
     def outer_height
       @style.margin_top + height + @style.margin_bottom
     end
@@ -196,7 +212,7 @@ module CyberarmEngine
       raise "dimension must be either :width or :height" unless dimension == :width || dimension == :height
       if size && size.is_a?(Numeric)
         if size.between?(0.0, 1.0)
-          @parent.send(:"#{dimension}") * size
+          (@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}") - 1) * size
         else
           size
         end
