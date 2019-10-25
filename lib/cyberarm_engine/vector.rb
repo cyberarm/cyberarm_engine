@@ -57,6 +57,10 @@ module CyberarmEngine
       end
     end
 
+    def xy
+      Vector.new(@x, @y)
+    end
+
     # Performs math operation, excluding @weight
     private def operator(function, other)
       if other.is_a?(Numeric)
