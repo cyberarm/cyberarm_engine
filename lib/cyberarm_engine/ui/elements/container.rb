@@ -36,6 +36,9 @@ module CyberarmEngine
         @children.clear
 
         block.call(self) if block
+
+        recalculate
+        root.gui_state.request_recalculate
       end
 
       def render
