@@ -2,6 +2,7 @@ module CyberarmEngine
   class Element
     class Container < Element
       include Common
+      include CyberarmEngine::DSL
 
       attr_accessor :stroke_color, :fill_color
       attr_reader :children, :gui_state
@@ -29,6 +30,12 @@ module CyberarmEngine
         @children << element
 
         recalculate
+      end
+
+      def clear(&block)
+        @children.clear
+
+        block.call(self) if block
       end
 
       def render

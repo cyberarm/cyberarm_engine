@@ -25,66 +25,52 @@ module CyberarmEngine
     end
 
     def label(text, options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::Label.new(text, options, block)
-      @containers.last.add(_element)
 
-      return _element
+      add_element( Element::Label.new(text, options, block) )
     end
 
     def button(text, options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::Button.new(text, options, block) { if block.is_a?(Proc); block.call; end }
-      @containers.last.add(_element)
 
-      return _element
+      add_element( Element::Button.new(text, options, block) { if block.is_a?(Proc); block.call; end } )
     end
 
     def edit_line(text, options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::EditLine.new(text, options, block)
-      @containers.last.add(_element)
 
-      return _element
+      add_element( Element::EditLine.new(text, options, block) )
     end
 
     def toggle_button(options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::ToggleButton.new(options, block)
-      @containers.last.add(_element)
 
-      return _element
+      add_element( Element::ToggleButton.new(options, block) )
     end
 
     def check_box(text, options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::CheckBox.new(text, options, block)
-      @containers.last.add(_element)
 
-      return _element
+      add_element( Element::CheckBox.new(text, options, block) )
     end
 
     def image(path, options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::Image.new(path, options, block)
-      @containers.last.add(_element)
 
-      return _element
+      add_element( Element::Image.new(path, options, block) )
     end
 
     def progress(options = {}, &block)
-      options[:parent] = @containers.last
+      options[:parent] = element_parent
       options[:theme] = current_theme
-      _element = Element::Progress.new(options, block)
-      @containers.last.add(_element)
 
-      return _element
+      element_parent( Element::Progress.new(options, block) )
     end
 
     def background(color = Gosu::Color::NONE)
@@ -92,11 +78,23 @@ module CyberarmEngine
     end
 
     def theme(theme)
-      @containers.last.options[:theme] = theme
+      self.is_a?(CyberarmEngine::Element::Container) ? self : @containers.last
+
+      element_parent.options[:theme] = theme
     end
 
     def current_theme
-      @containers.last.options[:theme]
+      element_parent.options[:theme]
+    end
+
+    private def add_element(element)
+      element_parent.add(element)
+
+      return element
+    end
+
+    private def element_parent
+      self.is_a?(CyberarmEngine::Element::Container) ? self : @containers.last
     end
   end
 end

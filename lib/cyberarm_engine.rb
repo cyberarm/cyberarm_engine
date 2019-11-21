@@ -24,6 +24,8 @@ require_relative "cyberarm_engine/background"
 require_relative "cyberarm_engine/text"
 require_relative "cyberarm_engine/timer"
 
+require_relative "cyberarm_engine/ui/dsl"
+
 require_relative "cyberarm_engine/ui/theme"
 require_relative "cyberarm_engine/ui/event"
 require_relative "cyberarm_engine/ui/style"
@@ -39,8 +41,6 @@ require_relative "cyberarm_engine/ui/elements/flow"
 require_relative "cyberarm_engine/ui/elements/stack"
 require_relative "cyberarm_engine/ui/elements/check_box"
 require_relative "cyberarm_engine/ui/elements/progress"
-
-require_relative "cyberarm_engine/ui/dsl"
 
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"
