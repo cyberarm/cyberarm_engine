@@ -70,16 +70,14 @@ module CyberarmEngine
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      element_parent( Element::Progress.new(options, block) )
+      add_element( Element::Progress.new(options, block) )
     end
 
     def background(color = Gosu::Color::NONE)
-      @containers.last.style.background = color
+      element_parent.style.background = color
     end
 
     def theme(theme)
-      self.is_a?(CyberarmEngine::Element::Container) ? self : @containers.last
-
       element_parent.options[:theme] = theme
     end
 
