@@ -188,18 +188,19 @@ module CyberarmEngine
     def set_uniform(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
-      case value.class.to_s.downcase.to_sym
+      case value.class.to_s.split("::").last.downcase.to_sym
       when :integer
         glUniform1i(attr_loc, value)
       when :float
         glUniform1f(attr_loc, value)
       when :string
-      when :array
+      when :transform
+        glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.elements.pack("F16"))
+      when :vector
+        glUniformVec4f(attr_loc, *value.to_a)
       else
         raise NotImplementedError, "Shader support for #{value.class.inspect} not implemented."
       end
-
-      Window.handle_gl_error
     end
   end
 end
