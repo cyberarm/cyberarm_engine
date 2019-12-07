@@ -114,7 +114,7 @@ module CyberarmEngine
     end
 
     def self.rotate_3d(vector, order = "xyz")
-      x, y, z = vector.to_a[0..2]
+      x, y, z = vector.to_a[0..2].map { |axis| axis.degrees_to_radians }
 
       rotation_x = Transform.new(
         [
@@ -146,15 +146,64 @@ module CyberarmEngine
       rotation_x * rotation_y * rotation_z
     end
 
+    def self.scale_3d(vector)
+      x, y, z = vector.to_a[0..2]
+
+      Transform.new(
+        [
+          x, 0, 0, 0,
+          0, y, 0, 0,
+          0, 0, z, 0,
+          0, 0, 0, 1
+        ]
+      )
+    end
+
+    def self.perspective(fov_y, aspect_ratio, near, far)
+      f = 1.0 / Math.tan(fov_y.degrees_to_radians / 2.0) # cotangent
+      zn = (far + near.to_f) / (near - far.to_f)
+      zf = (2.0 * far * near.to_f) / (near - far.to_f)
+
+      Transform.new(
+        [
+          f / aspect_ratio, 0.0,    0.0, 0.0,
+          0.0,                f,    0.0, 0.0,
+          0.0,                0.0,   zn, zf,
+          0.0,                0.0, -1.0, 0.0
+        ]
+      )
+    end
+
+    def self.view(eye, orientation)
+      # https://www.3dgep.com/understanding-the-view-matrix/#The_View_Matrix
+      cosPitch = Math.cos(orientation.z.degrees_to_radians)
+      sinPitch = Math.sin(orientation.z.degrees_to_radians)
+      cosYaw = Math.cos(orientation.y.degrees_to_radians)
+      sinYaw = Math.sin(orientation.y.degrees_to_radians)
+
+      x_axis = Vector.new(cosYaw, 0, -sinYaw)
+      y_axis = Vector.new(sinYaw * sinPitch, cosPitch, cosYaw * sinPitch)
+      z_axis = Vector.new(sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw)
+
+      Transform.new(
+        [
+                  x_axis.x,         y_axis.y,         z_axis.z, 0,
+                  x_axis.x,         y_axis.y,         z_axis.z, 0,
+                  x_axis.x,         y_axis.y,         z_axis.z, 0,
+          -x_axis.dot(eye), -y_axis.dot(eye), -z_axis.dot(eye), 1
+        ]
+      )
+    end
+
     def *(other)
 
       case other
       when CyberarmEngine::Vector
-        matrix = Array.new(@elements.size)
+        matrix = @elements.clone
         list = other.to_a
 
         @elements.each_with_index do |e, i|
-          matrix[i] = e + list[i]
+          matrix[i] = e + list[i % 4]
         end
 
         Transform.new(matrix)

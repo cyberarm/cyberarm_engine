@@ -189,7 +189,8 @@ module CyberarmEngine
       attr_loc = location ? location : attribute_location(variable)
 
       case value.class.to_s.split("::").last.downcase.to_sym
-      when :integer
+      when :integer, :falseclass, :trueclass
+        value = value ? 1 : 0 if value.is_a?(TrueClass) or value.is_a?(FalseClass)
         glUniform1i(attr_loc, value)
       when :float
         glUniform1f(attr_loc, value)
@@ -197,7 +198,7 @@ module CyberarmEngine
       when :transform
         glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.elements.pack("F16"))
       when :vector
-        glUniformVec4f(attr_loc, *value.to_a)
+        glUniform4f(attr_loc, *value.to_a)
       else
         raise NotImplementedError, "Shader support for #{value.class.inspect} not implemented."
       end
