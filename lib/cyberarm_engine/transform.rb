@@ -113,24 +113,24 @@ module CyberarmEngine
       Transform.new(matrix)
     end
 
-    def self.rotate_3d(vector, order = "xyz")
-      x, y, z = vector.to_a[0..2].map { |axis| axis.degrees_to_radians }
+    def self.rotate_3d(vector, order = "zyx")
+      x, y, z = vector.to_a[0..2].map { |axis| axis * Math::PI / 180.0 }
 
       rotation_x = Transform.new(
         [
-          1, 0, 0, 0,
+          1, 0,           0,            0,
           0, Math.cos(x), -Math.sin(x), 0,
-          0, Math.sin(x), Math.cos(x), 0,
-          0, 0, 0, 1,
+          0, Math.sin(x), Math.cos(x),  0,
+          0, 0,           0,            1
         ]
       )
 
       rotation_y = Transform.new(
         [
-          Math.cos(y), 0, -Math.sin(y), 0,
-          0,           1,            0, 0,
-          Math.sin(y), 1, Math.cos(y),  0,
-          0,           0,           1,  1
+          Math.cos(y),  0, Math.sin(y), 0,
+          0,            1, 0,           0,
+          -Math.sin(y), 0, Math.cos(y), 0,
+          0,            0, 0,           1
         ]
       )
 
@@ -138,12 +138,34 @@ module CyberarmEngine
         [
           Math.cos(z), -Math.sin(z), 0, 0,
           Math.sin(z), Math.cos(z),  0, 0,
-          0,           0,           1,  0,
-          0,           0,           0,  1
+          0,           0,            1, 0,
+          0,           0,            0, 1
         ]
       )
 
-      rotation_x * rotation_y * rotation_z
+      rotation_z * rotation_y * rotation_x
+    end
+
+    # Implements glRotatef
+    # https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glRotate.xml
+    def self.rotate_gl(angle, axis)
+      radians = angle * Math::PI / 180.0
+      s = Math.sin(radians)
+      c = Math.cos(radians)
+
+      axis = axis.normalized
+      x, y, z = axis.to_a[0..2]
+
+      n = (1.0 - c)
+
+      Transform.new(
+        [
+          x * x * n + c,     x * y * n - z * s, x * z * n + y * s, 0,
+          y * x * n + z * s, y * y * n + c,     y * z * n - x * s, 0,
+          x * z * n - y * s, y * z * n + x * s, z * z * n + c,     0,
+          0,                 0,                 0,               1.0
+        ]
+      )
     end
 
     def self.scale_3d(vector)
@@ -176,10 +198,10 @@ module CyberarmEngine
 
     def self.view(eye, orientation)
       # https://www.3dgep.com/understanding-the-view-matrix/#The_View_Matrix
-      cosPitch = Math.cos(orientation.z.degrees_to_radians)
-      sinPitch = Math.sin(orientation.z.degrees_to_radians)
-      cosYaw = Math.cos(orientation.y.degrees_to_radians)
-      sinYaw = Math.sin(orientation.y.degrees_to_radians)
+      cosPitch = Math.cos(orientation.z * Math::PI / 180.0)
+      sinPitch = Math.sin(orientation.z * Math::PI / 180.0)
+      cosYaw = Math.cos(orientation.y * Math::PI / 180.0)
+      sinYaw = Math.sin(orientation.y * Math::PI / 180.0)
 
       x_axis = Vector.new(cosYaw, 0, -sinYaw)
       y_axis = Vector.new(sinYaw * sinPitch, cosPitch, cosYaw * sinPitch)
@@ -235,6 +257,17 @@ module CyberarmEngine
       end
 
       return Transform.new(matrix)
+    end
+
+    # arranges Matrix in column major form
+    def to_gl
+      e = @elements
+      [
+        e[0], e[4], e[8],  e[12],
+        e[1], e[5], e[9],  e[13],
+        e[2], e[6], e[10], e[14],
+        e[3], e[7], e[11], e[15]
+      ]
     end
   end
 end

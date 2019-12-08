@@ -196,7 +196,7 @@ module CyberarmEngine
         glUniform1f(attr_loc, value)
       when :string
       when :transform
-        glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.elements.pack("F16"))
+        glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.to_gl.pack("F16"))
       when :vector
         glUniform4f(attr_loc, *value.to_a)
       else
