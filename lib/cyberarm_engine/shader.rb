@@ -198,7 +198,9 @@ module CyberarmEngine
       when :transform
         glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.to_gl.pack("F16"))
       when :vector
-        glUniform4f(attr_loc, *value.to_a)
+        # TODO: add support for passing vec4
+        # glUniform4f(attr_loc, *value.to_a[0..3])
+        glUniform3f(attr_loc, *value.to_a[0..2])
       else
         raise NotImplementedError, "Shader support for #{value.class.inspect} not implemented."
       end
