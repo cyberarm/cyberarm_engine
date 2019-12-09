@@ -125,7 +125,7 @@ module CyberarmEngine
         puts "Shader Error: Program \"#{@name}\""
         puts "  Fragment Shader InfoLog:", "  #{log.strip.split("\n").join("\n  ")}\n\n"
         puts "  Shader Compiled status: #{compiled}"
-        puts "    NOTE: assignment of uniforms in shader is illegal!"
+        puts "    NOTE: assignment of uniforms in shader is not allowed."
         puts
         return
       end
@@ -185,25 +185,40 @@ module CyberarmEngine
       glGetUniformLocation(@program, variable)
     end
 
-    def set_uniform(variable, value, location = nil)
+    def uniform_transform(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
-      case value.class.to_s.split("::").last.downcase.to_sym
-      when :integer, :falseclass, :trueclass
-        value = value ? 1 : 0 if value.is_a?(TrueClass) or value.is_a?(FalseClass)
-        glUniform1i(attr_loc, value)
-      when :float
-        glUniform1f(attr_loc, value)
-      when :string
-      when :transform
-        glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.to_gl.pack("F16"))
-      when :vector
-        # TODO: add support for passing vec4
-        # glUniform4f(attr_loc, *value.to_a[0..3])
-        glUniform3f(attr_loc, *value.to_a[0..2])
-      else
-        raise NotImplementedError, "Shader support for #{value.class.inspect} not implemented."
-      end
+      glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.to_gl.pack("F16"))
+    end
+
+    def uniform_boolean(variable, value, location = nil)
+      attr_loc = location ? location : attribute_location(variable)
+
+      glUniform1i(attr_loc, value ? 1 : 0)
+    end
+
+    def uniform_integer(variable, value, location = nil)
+      attr_loc = location ? location : attribute_location(variable)
+
+      glUniform1i(attr_loc, value)
+    end
+
+    def uniform_float(variable, value, location = nil)
+      attr_loc = location ? location : attribute_location(variable)
+
+      glUniform1f(attr_loc, value)
+    end
+
+    def uniform_vec3(variable, value, location = nil)
+      attr_loc = location ? location : attribute_location(variable)
+
+      glUniform3f(attr_loc, *value.to_a[0..2])
+    end
+
+    def uniform_vec4(variable, value, location = nil)
+      attr_loc = location ? location : attribute_location(variable)
+
+      glUniform4f(attr_loc, *value.to_a)
     end
   end
 end
