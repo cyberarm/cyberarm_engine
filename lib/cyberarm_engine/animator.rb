@@ -1,13 +1,14 @@
 module CyberarmEngine
   class Animator
     DEFAULT_TWEEN = :linear
-    def initialize(start_time:, duration:, &block)
+    def initialize(start_time:, duration:, from:, to:, &block)
       @start_time, @duration = start_time, duration
+      @from, @to = from.dup, to.dup
       @block = block
     end
 
     def update
-      @block.call(self) if @block
+      @block.call(self, @from, @to) if @block
     end
 
     def progress
@@ -40,7 +41,7 @@ module CyberarmEngine
       Gosu::Color.from_ahsv(alpha, hue, saturation, value)
     end
 
-    # NOTE: maybe use this for future reference? https://github.com/danro/easing-js/blob/master/easing.js
+    # NOTE: Use this for future reference? https://github.com/danro/easing-js/blob/master/easing.js
 
     def tween_linear(t)
       t
