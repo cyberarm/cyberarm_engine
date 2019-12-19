@@ -212,7 +212,7 @@ module CyberarmEngine
       raise "dimension must be either :width or :height" unless dimension == :width || dimension == :height
       if size && size.is_a?(Numeric)
         if size.between?(0.0, 1.0)
-          (@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}") - 1) * size
+          ((@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}") - 1) * size).round
         else
           size
         end
