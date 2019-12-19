@@ -20,6 +20,7 @@ require_relative "cyberarm_engine/transform"
 require_relative "cyberarm_engine/ray"
 require_relative "cyberarm_engine/shader" if defined?(OpenGL)
 require_relative "cyberarm_engine/background"
+require_relative "cyberarm_engine/animator"
 
 require_relative "cyberarm_engine/text"
 require_relative "cyberarm_engine/timer"
