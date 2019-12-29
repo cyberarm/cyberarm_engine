@@ -1,27 +1,11 @@
 module CyberarmEngine
   module DSL
     def flow(options = {}, &block)
-      options[:parent] = @containers.last
-      options[:theme] = current_theme
-      _container = Element::Flow.new(options, block)
-      @containers << _container
-      _container.build
-      _container.parent.add(_container)
-      @containers.pop
-
-      return _container
+      container(CyberarmEngine::Element::Flow, options, &block)
     end
 
     def stack(options = {}, &block)
-      options[:parent] = @containers.last
-      options[:theme] = current_theme
-      _container = Element::Stack.new(options, block)
-      @containers << _container
-      _container.build
-      _container.parent.add(_container)
-      @containers.pop
-
-      return _container
+      container(CyberarmEngine::Element::Stack, options, &block)
     end
 
     def label(text, options = {}, &block)
@@ -93,6 +77,20 @@ module CyberarmEngine
 
     private def element_parent
       self.is_a?(CyberarmEngine::Element::Container) ? self : @containers.last
+    end
+
+    private def container(klass, options = {}, &block)
+      options[:parent] = element_parent
+      options[:theme] = current_theme
+
+      _container = klass.new(options, block)
+
+      @containers << _container
+      _container.build
+      _container.parent.add(_container)
+      @containers.pop
+
+      return _container
     end
   end
 end
