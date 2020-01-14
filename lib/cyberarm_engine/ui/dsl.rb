@@ -76,7 +76,7 @@ module CyberarmEngine
     end
 
     private def element_parent
-      self.is_a?(CyberarmEngine::Element::Container) ? self : @containers.last
+      $__current_container__
     end
 
     private def container(klass, options = {}, &block)
@@ -85,10 +85,13 @@ module CyberarmEngine
 
       _container = klass.new(options, block)
 
-      @containers << _container
+      old_parent = element_parent
+      $__current_container__ = _container
+
       _container.build
       _container.parent.add(_container)
-      @containers.pop
+
+      $__current_container__ = old_parent
 
       return _container
     end

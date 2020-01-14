@@ -12,7 +12,7 @@ module CyberarmEngine
 
       @root_container = Element::Stack.new(gui_state: self)
       @game_objects << @root_container
-      @containers     = [@root_container]
+      $__current_container__ = @root_container
 
       @active_width  = window.width
       @active_height = window.height
