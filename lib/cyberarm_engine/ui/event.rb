@@ -23,6 +23,7 @@ module CyberarmEngine
         return :handled if handler.call(self, *args) == :handled
       end
 
+      parent.publish(event, *args) if parent
       return nil
     end
 
