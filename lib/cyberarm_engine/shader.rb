@@ -3,6 +3,7 @@ module CyberarmEngine
   class Shader
     include OpenGL
     @@shaders = {}
+    PREPROCESSOR_CHARACTER = "@"
 
     def self.add(name, instance)
       @@shaders[name] = instance
@@ -54,10 +55,11 @@ module CyberarmEngine
     end
 
     attr_reader :name, :program
-    def initialize(name:, vertex: "shaders/default.vert", fragment:)
+    def initialize(name:, includes_dir: nil, vertex: "shaders/default.vert", fragment:)
+      raise "Shader name can not be blank" if name.length == 0
+
       @name = name
-      @vertex_file   = vertex
-      @fragment_file = fragment
+      @includes_dir = includes_dir
       @compiled = false
 
       @program = nil
@@ -65,74 +67,110 @@ module CyberarmEngine
       @error_buffer_size = 1024
       @variable_missing = {}
 
-      raise ArgumentError, "Shader files not found: #{@vertex_file} or #{@fragment_file}" unless shader_files_exist?
+      @data = {shaders: {}}
 
-      create_shaders
-      compile_shaders
+      unless shader_files_exist?(vertex: vertex, fragment: fragment)
+        raise ArgumentError, "Shader files not found: #{vertex} or #{fragment}"
+      end
+
+      create_shader(type: :vertex, source: File.read(vertex))
+      create_shader(type: :fragment, source: File.read(fragment))
+
+      compile_shader(type: :vertex)
+      compile_shader(type: :fragment)
+      link_shaders
 
       # Only add shader if it successfully compiles
       if @compiled
+        puts "compiled!"
+        puts "Compiled shader: #{@name}"
         Shader.add(@name, self)
       else
-        puts "FAILED to compile shader: #{@name}", ""
+        warn "FAILED to compile shader: #{@name}", ""
       end
     end
 
-    def shader_files_exist?
-      File.exist?(@vertex_file) && File.exist?(@fragment_file)
+    def shader_files_exist?(vertex:, fragment:)
+      File.exist?(vertex) && File.exist?(fragment)
     end
 
-    def create_shaders
-      @vertex   = glCreateShader(GL_VERTEX_SHADER)
-      @fragment = glCreateShader(GL_FRAGMENT_SHADER)
+    def create_shader(type:, source:)
+      _shader = nil
 
-      source = [File.read(@vertex_file)].pack('p')
-      size   = [File.size(@vertex_file)].pack('I')
-      glShaderSource(@vertex, 1, source, size)
+      case type
+      when :vertex
+        _shader = glCreateShader(GL_VERTEX_SHADER)
+      when :fragment
+        _shader = glCreateShader(GL_FRAGMENT_SHADER)
+      else
+        warn "Unsupported shader type: #{type.inspect}"
+      end
 
-      source = [File.read(@fragment_file)].pack('p')
-      size   = [File.size(@fragment_file)].pack('I')
-      glShaderSource(@fragment, 1, source, size)
+      processed_source = preprocess_source(source: source)
+
+      _source = [processed_source].pack("p")
+      _size = [processed_source.length].pack("I")
+      glShaderSource(_shader, 1, _source, _size)
+
+      @data[:shaders][type] =_shader
     end
 
-    def compile_shaders
-      return unless shader_files_exist?
+    def preprocess_source(source:)
+      lines = source.lines
 
-      glCompileShader(@vertex)
+      lines.each_with_index do |line, i|
+        if line.start_with?(PREPROCESSOR_CHARACTER)
+          preprocessor = line.strip.split(" ")
+          lines.delete(line)
+
+          case preprocessor.first
+          when "@include"
+            raise ArgumentError, "Shader preprocessor include directory was not given for shader #{@name}" unless @includes_dir
+
+            preprocessor[1..preprocessor.length - 1].join.scan(/"([^"]*)"/).flatten.each do |file|
+              source = File.read("#{@includes_dir}/#{file}.glsl")
+
+              lines.insert(i, source)
+            end
+          else
+            warn "Unsupported preprocessor #{preprocessor.first} for #{@name}"
+          end
+        end
+      end
+
+      lines.join
+    end
+
+    def compile_shader(type:)
+      _compiled = false
+      _shader = @data[:shaders][type]
+      raise ArgumentError, "No shader for #{type.inspect}" unless _shader
+
+      glCompileShader(_shader)
       buffer = '    '
-      glGetShaderiv(@vertex, GL_COMPILE_STATUS, buffer)
+      glGetShaderiv(_shader, GL_COMPILE_STATUS, buffer)
       compiled = buffer.unpack('L')[0]
 
       if compiled == 0
         log = ' ' * @error_buffer_size
-        glGetShaderInfoLog(@vertex, @error_buffer_size, nil, log)
+        glGetShaderInfoLog(_shader, @error_buffer_size, nil, log)
         puts "Shader Error: Program \"#{@name}\""
-        puts "  Vectex Shader InfoLog:", "  #{log.strip.split("\n").join("\n  ")}\n\n"
+        puts "  #{type.to_s.capitalize} Shader InfoLog:", "  #{log.strip.split("\n").join("\n  ")}\n\n"
         puts "  Shader Compiled status: #{compiled}"
         puts "    NOTE: assignment of uniforms in shaders is illegal!"
         puts
-        return
+      else
+        _compiled = true
       end
 
-      glCompileShader(@fragment)
-      buffer = '    '
-      glGetShaderiv(@fragment, GL_COMPILE_STATUS, buffer)
-      compiled = buffer.unpack('L')[0]
+      return _compiled
+    end
 
-      if compiled == 0
-        log = ' ' * @error_buffer_size
-        glGetShaderInfoLog(@fragment, @error_buffer_size, nil, log)
-        puts "Shader Error: Program \"#{@name}\""
-        puts "  Fragment Shader InfoLog:", "  #{log.strip.split("\n").join("\n  ")}\n\n"
-        puts "  Shader Compiled status: #{compiled}"
-        puts "    NOTE: assignment of uniforms in shader is not allowed."
-        puts
-        return
-      end
-
+    def link_shaders
       @program = glCreateProgram
-      glAttachShader(@program, @vertex)
-      glAttachShader(@program, @fragment)
+      @data[:shaders].values.each do |_shader|
+        glAttachShader(@program, _shader)
+      end
       glLinkProgram(@program)
 
       buffer = '    '
