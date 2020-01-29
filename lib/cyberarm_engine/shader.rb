@@ -2,13 +2,29 @@ module CyberarmEngine
   # Ref: https://github.com/vaiorabbit/ruby-opengl/blob/master/sample/OrangeBook/brick.rb
   class Shader
     include OpenGL
-    @@shaders = {}
-    PREPROCESSOR_CHARACTER = "@"
+    @@shaders = {} # Cache for {Shader} instances
+    PREPROCESSOR_CHARACTER = "@".freeze # magic character for preprocessor phase of {Shader} compilation
 
+    # add instance of {Shader} to cache
+    #
+    # @param name [String]
+    # @param instance [Shader]
     def self.add(name, instance)
       @@shaders[name] = instance
     end
 
+    ##
+    # runs _block_ using {Shader} with _name_
+    #
+    # @example
+    #
+    #   CyberarmEngine::Shader.use("blur") do |shader|
+    #     shader.uniform_float("radius", 20.0)
+    #     # OpenGL Code that uses shader
+    #   end
+    #
+    # @param name [String] name of {Shader} to use
+    # @return [void]
     def self.use(name, &block)
       shader = @@shaders.dig(name)
       if shader
@@ -18,22 +34,37 @@ module CyberarmEngine
       end
     end
 
+    # returns whether {Shader} with _name_ is in cache
+    #
+    # @param name [String]
+    # @return [Boolean]
     def self.available?(name)
       @@shaders.dig(name).is_a?(Shader)
     end
 
+    # returns instance of {Shader}, if it exists
+    #
+    # @param name [String]
+    # @return [Shader?]
     def self.get(name)
       @@shaders.dig(name)
     end
 
+    # returns currently active {Shader}, if one is active
+    #
+    # @return [Shader?]
     def self.active_shader
       @active_shader
     end
 
+    # sets currently active {Shader}
+    #
+    # @param instance [Shader] instance of {Shader} to set as active
     def self.active_shader=(instance)
       @active_shader = instance
     end
 
+    # stops using currently active {Shader}
     def self.stop
       shader = Shader.active_shader
 
@@ -44,11 +75,18 @@ module CyberarmEngine
       end
     end
 
+    # returns location of OpenGL Shader uniform
+    #
+    # @param variable [String]
     def self.attribute_location(variable)
       raise RuntimeError, "No active shader!" unless Shader.active_shader
       Shader.active_shader.attribute_location(variable)
     end
 
+    # sets _variable_ to _value_
+    #
+    # @param variable [String]
+    # @param value
     def self.set_uniform(variable, value)
       raise RuntimeError, "No active shader!" unless Shader.active_shader
       Shader.active_shader.set_uniform(variable, value)
@@ -90,10 +128,17 @@ module CyberarmEngine
       end
     end
 
+    # whether vertex and fragment files exist on disk
+    #
+    # @return [Boolean]
     def shader_files_exist?(vertex:, fragment:)
       File.exist?(vertex) && File.exist?(fragment)
     end
 
+    # creates an OpenGL Shader of _type_ using _source_
+    #
+    # @param type [Symbol] valid values are: :vertex, :fragment
+    # @param source [String] source code for shader
     def create_shader(type:, source:)
       _shader = nil
 
@@ -103,7 +148,7 @@ module CyberarmEngine
       when :fragment
         _shader = glCreateShader(GL_FRAGMENT_SHADER)
       else
-        warn "Unsupported shader type: #{type.inspect}"
+        raise ArgumentError, "Unsupported shader type: #{type.inspect}"
       end
 
       processed_source = preprocess_source(source: source)
@@ -115,6 +160,23 @@ module CyberarmEngine
       @data[:shaders][type] =_shader
     end
 
+    # evaluates shader preprocessors
+    #
+    # currently supported preprocessors:
+    #
+    #   @include "file/path" "another/file/path" # => Replace line with contents of file; Shader includes_dir must be specified in constructor
+    #
+    # @example
+    #   # Example Vertex Shader #
+    #   # #version 330 core
+    #   # @include "material_struct"
+    #   # void main() {
+    #   #   gl_Position = vec4(1, 1, 1, 1);
+    #   # }
+    #
+    #   Shader.new(name: "model_renderer", includes_dir: "path/to/includes", vertex: "path/to/vertex_shader.glsl")
+    #
+    # @param source shader source code
     def preprocess_source(source:)
       lines = source.lines
 
@@ -141,6 +203,9 @@ module CyberarmEngine
       lines.join
     end
 
+    # compile OpenGL Shader of _type_
+    #
+    # @return [Boolean] whether compilation succeeded
     def compile_shader(type:)
       _compiled = false
       _shader = @data[:shaders][type]
@@ -166,6 +231,11 @@ module CyberarmEngine
       return _compiled
     end
 
+    # link compiled OpenGL Shaders in to a OpenGL Program
+    #
+    # @note linking must succeed or shader cannot be used
+    #
+    # @return [Boolean] whether linking succeeded
     def link_shaders
       @program = glCreateProgram
       @data[:shaders].values.each do |_shader|
@@ -187,7 +257,10 @@ module CyberarmEngine
       @compiled = linked == 0 ? false : true
     end
 
-    # Returns the location of a uniform variable
+    # Returns the location of a uniform _variable_
+    #
+    # @param variable [String]
+    # @return [Integer] location of uniform
     def variable(variable)
       loc = glGetUniformLocation(@program, variable)
       if (loc == -1)
@@ -197,6 +270,7 @@ module CyberarmEngine
       return loc
     end
 
+    # @see Shader.use Shader.use
     def use(&block)
       return unless compiled?
       raise "Another shader is already in use! #{Shader.active_shader.name.inspect}" if Shader.active_shader
@@ -210,49 +284,93 @@ module CyberarmEngine
       end
     end
 
+    # stop using shader, if shader is active
     def stop
       Shader.active_shader = nil if Shader.active_shader == self
       glUseProgram(0)
     end
 
+    # @return [Boolean] whether {Shader} successfully compiled
     def compiled?
       @compiled
     end
 
+    # returns location of a uniform _variable_
+    #
+    # @note Use {#variable} for friendly error handling
+    # @see #variable Shader#variable
+    #
+    # @param variable [String]
+    # @return [Integer]
     def attribute_location(variable)
       glGetUniformLocation(@program, variable)
     end
 
+    # send {Transform} to {Shader}
+    #
+    # @param variable [String]
+    # @param value [Transform]
+    # @param location [Integer]
+    # @return [void]
     def uniform_transform(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
       glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.to_gl.pack("F16"))
     end
 
+    # send Boolean to {Shader}
+    #
+    # @param variable [String]
+    # @param value [Boolean]
+    # @param location [Integer]
+    # @return [void]
     def uniform_boolean(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
       glUniform1i(attr_loc, value ? 1 : 0)
     end
 
+    # send Integer to {Shader}
+    # @param variable [String]
+    # @param value [Integer]
+    # @param location [Integer]
+    # @return [void]
     def uniform_integer(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
       glUniform1i(attr_loc, value)
     end
 
+    # send Float to {Shader}
+    #
+    # @param variable [String]
+    # @param value [Float]
+    # @param location [Integer]
+    # @return [void]
     def uniform_float(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
       glUniform1f(attr_loc, value)
     end
 
+    # send {Vector} (x, y, z) to {Shader}
+    #
+    # @param variable [String]
+    # @param value [Vector]
+    # @param location [Integer]
+    # @return [void]
     def uniform_vec3(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
       glUniform3f(attr_loc, *value.to_a[0..2])
     end
 
+    # send {Vector} to {Shader}
+    #
+    # @param variable [String]
+    # @param value [Vector]
+    # @param location [Integer]
+    # @return [void]
     def uniform_vec4(variable, value, location = nil)
       attr_loc = location ? location : attribute_location(variable)
 
