@@ -1,8 +1,13 @@
 # CyberarmEngine
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cyberarm_engine`. To experiment with that code, run `bin/console` for an interactive prompt.
+Yet Another Game Engine On Top Of Gosu
 
-TODO: Delete this and the text above, and describe your gem
+## Features
+* [Shoes-like](http://shoesrb.com) GUI support
+* OpenGL Shader support (requires [opengl-bindings](https://github.com/vaiorabbit/ruby-opengl) gem)
+* Includes classes for handling Vectors, Rays, Bounding Boxes, and Transforms
+* GameState system
+* Monolithic GameObjects
 
 ## Installation
 
@@ -22,7 +27,32 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require "cyberarm_engine"
+
+class Hello < CyberarmEngine::GuiState
+  def setup
+    stack do
+      label "Hello World!"
+
+      button "close" do
+        window.close
+      end
+    end
+  end
+end
+
+class Window < CyberarmEngine::Engine
+  def initialize
+    super
+    self.show_cursor = true
+
+    push_state(Hello)
+  end
+end
+
+Window.new.show
+```
 
 ## Development
 

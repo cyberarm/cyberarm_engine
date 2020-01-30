@@ -3,7 +3,7 @@ module CyberarmEngine
     include Common
 
     attr_accessor :options, :global_pause
-    attr_reader :game_objects, :containers
+    attr_reader :game_objects
 
     def initialize(options={})
       @options = options
