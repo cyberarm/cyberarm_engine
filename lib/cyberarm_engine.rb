@@ -4,6 +4,7 @@ rescue LoadError => e
   pp e
   require "gosu"
 end
+require "json"
 
 require_relative "cyberarm_engine/version"
 
@@ -24,6 +25,7 @@ require_relative "cyberarm_engine/animator"
 
 require_relative "cyberarm_engine/text"
 require_relative "cyberarm_engine/timer"
+require_relative "cyberarm_engine/config_file"
 
 require_relative "cyberarm_engine/ui/dsl"
 
