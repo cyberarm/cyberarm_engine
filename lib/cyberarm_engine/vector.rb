@@ -86,11 +86,13 @@ module CyberarmEngine
         @y      == other &&
         @z      == other &&
         @weight == other
-      else
+      elsif other.is_a?(Vector)
         @x      == other.x &&
         @y      == other.y &&
         @z      == other.z &&
         @weight == other.weight
+      else
+        other == self
       end
     end
 
