@@ -102,7 +102,7 @@ module CyberarmEngine
 
       @program = nil
 
-      @error_buffer_size = 1024
+      @error_buffer_size = 1024 * 8
       @variable_missing = {}
 
       @data = {shaders: {}}
