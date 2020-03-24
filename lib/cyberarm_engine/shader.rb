@@ -13,6 +13,21 @@ module CyberarmEngine
       @@shaders[name] = instance
     end
 
+    # removes {Shader} from cache and cleans up
+    #
+    # @param name [String]
+    def self.delete(name)
+      shader = @@shaders.dig(name)
+
+      if shader
+        @@shaders.delete(name)
+
+        if shader.compiled?
+          glDeleteProgram(shader.program)
+        end
+      end
+    end
+
     ##
     # runs _block_ using {Shader} with _name_
     #
@@ -118,12 +133,15 @@ module CyberarmEngine
       compile_shader(type: :fragment)
       link_shaders
 
+      @data[:shaders].each { |key, id| glDeleteShader(id) }
+
       # Only add shader if it successfully compiles
       if @compiled
         puts "compiled!"
         puts "Compiled shader: #{@name}"
         Shader.add(@name, self)
       else
+        glDeleteProgram(@program)
         warn "FAILED to compile shader: #{@name}", ""
       end
     end
