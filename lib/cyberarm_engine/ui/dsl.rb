@@ -57,6 +57,13 @@ module CyberarmEngine
       add_element( Element::Progress.new(options, block) )
     end
 
+    def slider(options = {}, &block)
+      options[:parent] = element_parent
+      options[:theme] = current_theme
+
+      add_element( Element::Slider.new(options, block) )
+    end
+
     def background(color = Gosu::Color::NONE)
       element_parent.style.background = color
     end

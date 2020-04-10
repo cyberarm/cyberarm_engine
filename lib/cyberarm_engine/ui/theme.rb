@@ -114,6 +114,15 @@ module CyberarmEngine
         fraction_background: [0xffc75e61, 0xffe26623],
         border_thickness: 1,
         border_color: [0xffd59674, 0xffff8746]
+      },
+
+      Slider: { # < Element
+        width: 250,
+        height: 36,
+        background: 0xff111111,
+        fraction_background: [0xffc75e61, 0xffe26623],
+        border_thickness: 1,
+        border_color: [0xffd59674, 0xffff8746]
       }
     }.freeze
   end

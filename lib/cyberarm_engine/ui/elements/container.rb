@@ -93,8 +93,8 @@ module CyberarmEngine
 
         # Move child to parent after positioning
         @children.each do |child|
-          child.x += @x - style.margin_left
-          child.y += @y - style.margin_top
+          child.x += (@x + @style.border_thickness_left) - style.margin_left
+          child.y += (@y + @style.border_thickness_top) - style.margin_top
 
           child.stylize
           child.recalculate

@@ -5,6 +5,7 @@ rescue LoadError => e
   require "gosu"
 end
 require "json"
+require "gosu_more_drawables"
 
 require_relative "cyberarm_engine/version"
 
@@ -35,15 +36,19 @@ require_relative "cyberarm_engine/ui/style"
 require_relative "cyberarm_engine/ui/border_canvas"
 require_relative "cyberarm_engine/ui/element"
 require_relative "cyberarm_engine/ui/elements/label"
+require_relative "cyberarm_engine/ui/elements/list_box"
 require_relative "cyberarm_engine/ui/elements/button"
 require_relative "cyberarm_engine/ui/elements/toggle_button"
 require_relative "cyberarm_engine/ui/elements/edit_line"
+require_relative "cyberarm_engine/ui/elements/edit_box"
 require_relative "cyberarm_engine/ui/elements/image"
 require_relative "cyberarm_engine/ui/elements/container"
 require_relative "cyberarm_engine/ui/elements/flow"
 require_relative "cyberarm_engine/ui/elements/stack"
 require_relative "cyberarm_engine/ui/elements/check_box"
+require_relative "cyberarm_engine/ui/elements/radio"
 require_relative "cyberarm_engine/ui/elements/progress"
+require_relative "cyberarm_engine/ui/elements/slider"
 
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"

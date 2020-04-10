@@ -4,7 +4,7 @@ module CyberarmEngine
     include Event
     include Common
 
-    attr_accessor :x, :y, :z, :enabled
+    attr_accessor :x, :y, :z, :enabled, :tip
     attr_reader :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
@@ -16,6 +16,7 @@ module CyberarmEngine
       @focus   = false
       @enabled = true
       @visible = true
+      @tip = @options[:tip] ? @options[:tip] : ""
 
       @style = Style.new(options)
 
@@ -150,6 +151,10 @@ module CyberarmEngine
     end
 
     def button_up(id)
+    end
+
+    def draggable?(button)
+      false
     end
 
     def render
