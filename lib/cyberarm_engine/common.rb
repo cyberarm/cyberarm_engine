@@ -78,15 +78,15 @@ module CyberarmEngine
     end
 
     def get_image(path, retro: false, tileable: false)
-      get_asset(path, Engine::IMAGES, Gosu::Image, retro, tileable)
+      get_asset(path, Window::IMAGES, Gosu::Image, retro, tileable)
     end
 
     def get_sample(path)
-      get_asset(path, Engine::SAMPLES, Gosu::Sample)
+      get_asset(path, Window::SAMPLES, Gosu::Sample)
     end
 
     def get_song(path)
-      get_asset(path, Engine::SONGS, Gosu::Song)
+      get_asset(path, Window::SONGS, Gosu::Song)
     end
 
     def window

@@ -1,5 +1,5 @@
 module CyberarmEngine
-  class Engine < Gosu::Window
+  class Window < Gosu::Window
     IMAGES = {}
     SAMPLES= {}
     SONGS  = {}

@@ -42,7 +42,7 @@ class Hello < CyberarmEngine::GuiState
   end
 end
 
-class Window < CyberarmEngine::Engine
+class Window < CyberarmEngine::Window
   def initialize
     super
     self.show_cursor = true

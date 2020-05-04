@@ -43,6 +43,7 @@ module CyberarmEngine
         @fraction = decimal.clamp(0.0, 1.0)
         update_background
 
+        publish(:changed, @fraction)
         return @fraction
       end
     end

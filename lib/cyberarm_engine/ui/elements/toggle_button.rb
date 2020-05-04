@@ -5,8 +5,8 @@ module CyberarmEngine
 
       def initialize(options, block = nil)
         super(options[:checkmark], options, block)
-        @toggled = options[:toggled] || false
-        if @toggled
+        @value = options[:checked] || false
+        if @value
           @text.text = @options[:checkmark]
         else
           @text.text = ""
@@ -15,27 +15,12 @@ module CyberarmEngine
         return self
       end
 
-      def toggled=(boolean)
-        @toggled = !boolean
-        toggle
-      end
-
       def clicked_left_mouse_button(sender, x, y)
-        toggle
+        self.value = !@value
 
         @block.call(self) if @block
 
         return :handled
-      end
-
-      def toggle
-        if @toggled
-          @toggled = false
-          @text.text = ""
-        else
-          @toggled = true
-          @text.text = @options[:checkmark]
-        end
       end
 
       def recalculate
@@ -51,7 +36,21 @@ module CyberarmEngine
       end
 
       def value
-        @toggled
+        @value
+      end
+
+      def value=(boolean)
+        @value = boolean
+
+        if boolean
+          @text.text = @options[:checkmark]
+        else
+          @text.text = ""
+        end
+
+        recalculate
+
+        publish(:changed, @value)
       end
     end
   end

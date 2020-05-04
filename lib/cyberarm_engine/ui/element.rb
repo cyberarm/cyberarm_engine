@@ -111,6 +111,8 @@ module CyberarmEngine
       event(:leave)
 
       event(:blur)
+
+      event(:changed)
     end
 
     def enabled?

@@ -8,30 +8,28 @@ module CyberarmEngine
           event(:begin_drag)
           event(:drag_update)
           event(:end_drag)
+
+          subscribe :begin_drag do |sender, x, y, button|
+            @drag_start_pos = Vector.new(x, y)
+
+            :handled
+          end
+
+          subscribe :drag_update do |sender, x, y, button|
+            @parent.handle_dragged_to(x, y)
+
+            :handled
+          end
+
+          subscribe :end_drag do
+            @drag_start_pos = nil
+
+            :handled
+          end
         end
 
         def draggable?(button)
           button == :left
-        end
-
-        def begin_drag(sender, x, y, button)
-          @drag_start_pos = Vector.new(x, y)
-
-          :handled
-        end
-
-        def drag_update(sender, x, y, button)
-          # ratio = (@parent.x - (x - @drag_start_pos.x) / (@parent.width - width) * -1).clamp(0.0, 1.0)
-          # @x = @parent.x + width + ((@parent.width * ratio) - width * 2)
-          @parent.handle_dragged_to(x, y)
-
-          :handled
-        end
-
-        def end_drag(sender, x, y, button)
-          @drag_start_pos = nil
-
-          :handled
         end
       end
 
@@ -43,7 +41,7 @@ module CyberarmEngine
         @step_size = @options[:step] ? @options[:step] : 0.1
         @value     = @options[:value] ? @options[:value] : 0.5
 
-        @handle = Handle.new("", parent: self, width: 8) { close }
+        @handle = Handle.new("", parent: self, width: 8, height: 1.0) { close }
         self.add(@handle)
       end
 
@@ -55,8 +53,11 @@ module CyberarmEngine
         @height = _height
 
         @handle.x = @x + @style.border_thickness_left + @style.padding_left
-        @handle.y = @y + @style.border_thickness_top + @style.padding_left
+        @handle.y = @y + @style.border_thickness_top + @style.padding_top
         @handle.recalculate
+        @handle.update_background
+
+        pp @handle.height
 
         update_background
       end
@@ -76,9 +77,13 @@ module CyberarmEngine
 
       def holding_left_mouse_button(sender, x, y)
         handle_dragged_to(x, y)
+
+        :handled
       end
 
       def handle_dragged_to(x, y)
+        puts
+        pp x, y, @handle.width, content_width
         @ratio = ((x - @handle.width) - @x) / content_width
 
         # p [@ratio, @value]
@@ -94,7 +99,10 @@ module CyberarmEngine
         @value = n
         @handle.x = @x + @style.padding_left + @style.border_thickness_left +
                     (content_width * (@value - @range.min) / (@range.max - @range.min).to_f)
+
         @handle.recalculate
+
+        publish(:changed, @value)
       end
     end
   end
