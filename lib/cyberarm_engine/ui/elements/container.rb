@@ -57,6 +57,8 @@ module CyberarmEngine
 
       def hit_element?(x, y)
         @children.reverse_each do |child|
+          next unless child.visible?
+
           case child
           when Container
             if element = child.hit_element?(x, y)
@@ -108,10 +110,12 @@ module CyberarmEngine
         raise "Not overridden"
       end
 
+      # TODO: Fix @max_width no longer exists
       def max_width
         @max_width ? @max_width : window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
       end
 
+      # TODO: Fix container automatic width (0.0..1.0) not considered
       def fits_on_line?(element) # Flow
         @current_position.x + element.outer_width <= max_width &&
         @current_position.x + element.outer_width <= window.width

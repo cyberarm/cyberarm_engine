@@ -57,7 +57,7 @@ module CyberarmEngine
         @handle.recalculate
         @handle.update_background
 
-        pp @handle.height
+        # pp @handle.height
 
         update_background
       end

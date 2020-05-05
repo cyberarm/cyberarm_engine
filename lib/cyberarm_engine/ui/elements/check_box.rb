@@ -18,6 +18,7 @@ module CyberarmEngine
 
         @label.subscribe(:clicked_left_mouse_button) do |sender, x, y|
           @toggle_button.clicked_left_mouse_button(sender, x, y)
+          publish(:changed, @toggle_button.value)
         end
 
         @label.subscribe(:enter) do |sender|
@@ -42,7 +43,8 @@ module CyberarmEngine
       end
 
       def value=(bool)
-        @toggle_button.vlaue = bool
+        @toggle_button.value = bool
+        publish(:changed, @toggle_button.value)
       end
     end
   end
