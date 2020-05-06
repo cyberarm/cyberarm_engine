@@ -39,7 +39,7 @@ module CyberarmEngine
 
         @range     = @options[:range] ? @options[:range] : 0.0..1.0
         @step_size = @options[:step] ? @options[:step] : 0.1
-        @value     = @options[:value] ? @options[:value] : 0.5
+        @value     = @options[:value] ? @options[:value] : (@range.first + @range.last) / 2
 
         @handle = Handle.new("", parent: self, width: 8, height: 1.0) { close }
         self.add(@handle)
