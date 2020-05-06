@@ -1,8 +1,6 @@
 module CyberarmEngine
   class Element
     class Flow < Container
-      include Common
-
       def layout
         @children.each do |child|
           if fits_on_line?(child)

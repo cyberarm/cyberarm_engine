@@ -100,6 +100,22 @@ module CyberarmEngine
         end
       end
 
+      def caret_position
+        text_input_position_for(:caret_pos)
+      end
+
+      def selection_start_position
+        text_input_position_for(:selection_start)
+      end
+
+      def text_input_position_for(method)
+        if @type == :password
+          @text.x + @text.width(default(:password_character) * @text_input.text[0..@text_input.send(method)].length)
+        else
+          @text.x + @text.width(@text_input.text[0..@text_input.send(method)])
+        end
+      end
+
       def left_mouse_button(sender, x, y)
         super
         window.text_input = @text_input
@@ -139,22 +155,6 @@ module CyberarmEngine
         window.text_input = nil
 
         return :handled
-      end
-
-      def caret_position
-        text_input_position_for(:caret_pos)
-      end
-
-      def selection_start_position
-        text_input_position_for(:selection_start)
-      end
-
-      def text_input_position_for(method)
-        if @type == :password
-          @text.x + @text.textobject.text_width(default(:password_character) * @text_input.text[0..@text_input.send(method)].length)
-        else
-          @text.x + @text.textobject.text_width(@text_input.text[0..@text_input.send(method)])
-        end
       end
 
       def recalculate

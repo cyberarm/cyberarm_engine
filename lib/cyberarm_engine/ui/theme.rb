@@ -88,7 +88,7 @@ module CyberarmEngine
         caret_width: 2,
         caret_color: Gosu::Color::WHITE,
         caret_interval: 500,
-        selection_color: Gosu::Color::GREEN,
+        selection_color: Gosu::Color.rgba(255, 128, 50, 200),
       },
 
       Image: { # < Element

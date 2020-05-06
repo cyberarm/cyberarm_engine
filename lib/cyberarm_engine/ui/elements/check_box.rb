@@ -2,7 +2,7 @@ module CyberarmEngine
   class Element
     class CheckBox < Flow
       def initialize(text, options, block = nil)
-        super({}, block = nil)
+        super(options, block)
         options[:toggled] = options[:checked]
 
         @toggle_button = ToggleButton.new(options)

@@ -8,6 +8,7 @@ require "json"
 require "gosu_more_drawables"
 
 require_relative "cyberarm_engine/version"
+require_relative "cyberarm_engine/stats"
 
 require_relative "cyberarm_engine/common"
 

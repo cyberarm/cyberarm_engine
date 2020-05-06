@@ -22,13 +22,13 @@ module CyberarmEngine
       def build
         @block.call(self) if @block
 
-        recalculate
+        root.gui_state.request_recalculate
       end
 
       def add(element)
         @children << element
 
-        recalculate
+        root.gui_state.request_recalculate
       end
 
       def clear(&block)
@@ -41,7 +41,6 @@ module CyberarmEngine
 
         $__current_container__ = old_container
 
-        recalculate
         root.gui_state.request_recalculate
       end
 
@@ -75,6 +74,9 @@ module CyberarmEngine
       def recalculate
         @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
         return unless visible?
+
+        Stats.increment(:gui_recalculations_last_frame, 1)
+
         stylize
 
         layout
@@ -92,7 +94,6 @@ module CyberarmEngine
           @height = _height ? _height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
         end
 
-
         # Move child to parent after positioning
         @children.each do |child|
           child.x += (@x + @style.border_thickness_left) - style.margin_left
@@ -101,6 +102,8 @@ module CyberarmEngine
           child.stylize
           child.recalculate
           child.reposition # TODO: Implement top,bottom,left,center, and right positioning
+
+          Stats.increment(:gui_recalculations_last_frame, 1)
         end
 
         update_background
@@ -110,13 +113,13 @@ module CyberarmEngine
         raise "Not overridden"
       end
 
-      # TODO: Fix @max_width no longer exists
       def max_width
-        @max_width ? @max_width : window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
+        _width = dimensional_size(@style.width, :width)
+        _width ? outer_width : window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
       end
 
-      # TODO: Fix container automatic width (0.0..1.0) not considered
       def fits_on_line?(element) # Flow
+        p [@options[:id], @width] if @options[:id]
         @current_position.x + element.outer_width <= max_width &&
         @current_position.x + element.outer_width <= window.width
       end
@@ -174,6 +177,25 @@ module CyberarmEngine
 
       def value
         @children.map {|c| c.class}.join(", ")
+      end
+
+      def to_s
+        "#{self.class} x=#{x} y=#{y} width=#{width} height=#{height} children=#{@children.size}"
+      end
+
+      def write_tree(indent = "", index = 0)
+        puts self
+
+        indent = indent + "  "
+        @children.each_with_index do |child, i|
+          print "#{indent}#{i}: "
+
+          if child.is_a?(Container)
+            child.write_tree(indent)
+          else
+            puts child
+          end
+        end
       end
     end
   end

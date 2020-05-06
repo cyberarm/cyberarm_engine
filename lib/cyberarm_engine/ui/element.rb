@@ -219,7 +219,7 @@ module CyberarmEngine
       raise "dimension must be either :width or :height" unless dimension == :width || dimension == :height
       if size && size.is_a?(Numeric)
         if size.between?(0.0, 1.0)
-          ((@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}") - 1) * size).round
+          ((@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}")) * size).round
         else
           size
         end
@@ -246,6 +246,8 @@ module CyberarmEngine
     end
 
     def root
+      return self if is_root?
+
       unless @root && @root.parent.nil?
         @root = parent
 
@@ -278,6 +280,10 @@ module CyberarmEngine
 
     def value=(value)
       raise "#{self.class}#value= was not overridden!"
+    end
+
+    def to_s
+      "#{self.class} x=#{x} y=#{y} width=#{width} height=#{height} value=#{ value.is_a?(String) ? "\"#{value}\"" : value }"
     end
   end
 end

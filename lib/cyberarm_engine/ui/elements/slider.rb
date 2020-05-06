@@ -52,14 +52,18 @@ module CyberarmEngine
         @width  = _width
         @height = _height
 
-        @handle.x = @x + @style.border_thickness_left + @style.padding_left
-        @handle.y = @y + @style.border_thickness_top + @style.padding_top
+        position_handle
         @handle.recalculate
         @handle.update_background
 
-        # pp @handle.height
-
         update_background
+      end
+
+      def position_handle
+        @handle.x = @x + @style.padding_left + @style.border_thickness_left +
+          ((content_width - @handle.outer_width) * (@value - @range.min) / (@range.max - @range.min).to_f)
+
+        @handle.y = @y + @style.border_thickness_top + @style.padding_top
       end
 
       def draw
@@ -82,13 +86,9 @@ module CyberarmEngine
       end
 
       def handle_dragged_to(x, y)
-        puts
-        pp x, y, @handle.width, content_width
-        @ratio = ((x - @handle.width) - @x) / content_width
+        @ratio = ((x - @handle.width / 2) - @x) / (content_width - @handle.outer_width)
 
-        # p [@ratio, @value]
         self.value = @ratio.clamp(0.0, 1.0) * (@range.max - @range.min) + @range.min
-
       end
 
       def value
@@ -97,9 +97,7 @@ module CyberarmEngine
 
       def value=(n)
         @value = n
-        @handle.x = @x + @style.padding_left + @style.border_thickness_left +
-                    (content_width * (@value - @range.min) / (@range.max - @range.min).to_f)
-
+        position_handle
         @handle.recalculate
 
         publish(:changed, @value)

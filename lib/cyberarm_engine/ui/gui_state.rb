@@ -52,6 +52,7 @@ module CyberarmEngine
     def update
       if @pending_recalculate_request
         @root_container.recalculate
+        @root_container.recalculate
         @pending_recalculate_request = false
       end
 
@@ -104,6 +105,8 @@ module CyberarmEngine
         redirect_mouse_button(:middle)
       when Gosu::MsRight
         redirect_mouse_button(:right)
+      when Gosu::KbF5
+        request_recalculate
       end
     end
 

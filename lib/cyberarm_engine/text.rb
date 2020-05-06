@@ -9,7 +9,7 @@ module CyberarmEngine
       @text = text.to_s || ""
       @options = options
       @size = options[:size] || 18
-      @font = options[:font] || "sans-serif"#Gosu.default_font_name
+      @font = options[:font] || Gosu.default_font_name
       @x = options[:x] || 0
       @y = options[:y] || 0
       @z = options[:z] || 1025
@@ -98,12 +98,12 @@ module CyberarmEngine
       @shadow_color = n
     end
 
-    def width
-      textobject.text_width(@text)
+    def width(text = @text)
+      textobject.text_width(text)
     end
 
-    def height
-      @text.lines.count > 0 ? (@text.lines.count) * textobject.height : @textobject.height
+    def height(text = @text)
+      text.lines.count > 0 ? (text.lines.count) * textobject.height : @textobject.height
     end
 
     def draw

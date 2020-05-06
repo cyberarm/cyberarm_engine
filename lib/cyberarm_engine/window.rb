@@ -34,6 +34,8 @@ module CyberarmEngine
     end
 
     def update
+      Stats.clear
+
       current_state.update if current_state
       @last_frame_time = Gosu.milliseconds-@current_frame_time
       @current_frame_time = Gosu.milliseconds
