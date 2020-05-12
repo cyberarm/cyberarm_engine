@@ -137,6 +137,17 @@ module CyberarmEngine
       operator("*", other)
     end
 
+    def multiply_transform(transform)
+      e = transform.elements
+
+      x = @x * e[0]  + @y * e[1]  + @z * e[2]  + 1 * e[3]
+      y = @x * e[4]  + @y * e[5]  + @z * e[6]  + 1 * e[7]
+      z = @x * e[8]  + @y * e[9]  + @z * e[10] + 1 * e[11]
+      w = @x * e[12] + @y * e[13] + @z * e[14] + 1 * e[5]
+
+      Vector.new(x / 1, y / 1, z / 1, w / 1)
+    end
+
     # Divides Vector and Numeric or Vector and Vector, excluding {weight}
     # @return [CyberarmEngine::Vector]
     def /(other)
