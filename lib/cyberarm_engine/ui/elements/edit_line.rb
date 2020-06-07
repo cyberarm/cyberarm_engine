@@ -22,7 +22,7 @@ module CyberarmEngine
       end
 
       def render
-        Gosu.clip_to(@text.x, @text.y, @style.width, @text.height) do
+        Gosu.clip_to(@text.x, @text.y, @width, @height) do
           Gosu.translate(-@offset_x, 0) do
             draw_selection
             draw_caret if @focus && @show_caret
@@ -110,9 +110,9 @@ module CyberarmEngine
 
       def text_input_position_for(method)
         if @type == :password
-          @text.x + @text.width(default(:password_character) * @text_input.text[0..@text_input.send(method)].length)
+          @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length)
         else
-          @text.x + @text.width(@text_input.text[0..@text_input.send(method)])
+          @text.x + @text.width(@text_input.text[0...@text_input.send(method)])
         end
       end
 
