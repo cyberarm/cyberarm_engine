@@ -12,7 +12,7 @@ module CyberarmEngine
     def theme_defaults(options)
       raise "Error" unless self.class.ancestors.include?(CyberarmEngine::Element)
       _theme = THEME
-      _theme = _theme.merge(options[:theme]) if options[:theme]
+      _theme = deep_merge(_theme, options[:theme]) if options[:theme]
       _theme.delete(:theme) if options[:theme]
 
       hash = {}

@@ -27,9 +27,6 @@ module CyberarmEngine
       @width  = 0
       @height = 0
 
-      @fixed_x = @x if @x != 0
-      @fixed_y = @y if @y != 0
-
       @style.width  = default(:width)  || nil
       @style.height = default(:height) || nil
 
@@ -42,6 +39,7 @@ module CyberarmEngine
     end
 
     def stylize
+      set_static_position
       set_border_thickness(@style.border_thickness)
 
       set_padding(@style.padding)
@@ -50,6 +48,11 @@ module CyberarmEngine
 
       set_background(@style.background)
       set_border_color(@style.border_color)
+    end
+
+    def set_static_position
+      @x = @style.x if @style.x != 0
+      @y = @style.y if @style.y != 0
     end
 
     def set_background(background)
