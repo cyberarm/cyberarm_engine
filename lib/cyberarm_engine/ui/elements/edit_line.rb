@@ -74,8 +74,6 @@ module CyberarmEngine
         @last_text ||= "/\\"
         @last_pos ||= -1
 
-        puts "caret pos: #{caret_pos}, width: #{@width}, offset: #{@offset_x}" if (@last_text != @text.text) || (@last_pos != caret_pos)
-
         @last_text = @text.text
         @last_pos = caret_pos
 
@@ -92,7 +90,6 @@ module CyberarmEngine
 
         elsif caret_pos > @width
           @offset_x = caret_pos - @width
-          puts "triggered"
 
         else
           # Reset to Zero
