@@ -53,6 +53,8 @@ module CyberarmEngine
       if @pending_recalculate_request
         @root_container.recalculate
         @root_container.recalculate
+        @root_container.recalculate
+
         @pending_recalculate_request = false
       end
 

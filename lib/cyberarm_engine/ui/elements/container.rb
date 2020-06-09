@@ -128,8 +128,6 @@ module CyberarmEngine
         element.x = element.style.margin_left + @current_position.x
         element.y = element.style.margin_top  + @current_position.y
 
-        element.recalculate
-
         @current_position.x += element.outer_width
         @current_position.x = @style.margin_left if @current_position.x >= max_width
       end
@@ -151,16 +149,12 @@ module CyberarmEngine
         child.x = child.style.margin_left + @current_position.x
         child.y = child.style.margin_top  + @current_position.y
 
-        child.recalculate
-
         @current_position.x += child.outer_width
       end
 
       def move_to_next_line(element) # Stack
         element.x = element.style.margin_left + @current_position.x
         element.y = element.style.margin_top  + @current_position.y
-
-        element.recalculate
 
         @current_position.y += element.outer_height
       end
