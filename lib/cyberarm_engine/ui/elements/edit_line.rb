@@ -59,7 +59,7 @@ module CyberarmEngine
 
       def move_caret_to_mouse(mouse_x)
         1.upto(@text.text.length) do |i|
-          if mouse_x < @text.x + @text.textobject.text_width(@text.text[0...i])
+          if mouse_x < @text.x - @offset_x + @text.textobject.text_width(@text.text[0...i])
             @text_input.caret_pos = @text_input.selection_start = i - 1;
             return
           end
