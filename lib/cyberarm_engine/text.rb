@@ -106,7 +106,7 @@ module CyberarmEngine
       text.lines.count > 0 ? (text.lines.count) * textobject.height : @textobject.height
     end
 
-    def draw
+    def draw(method = :draw_markup)
       if @shadow && !ARGV.join.include?("--no-shadow")
         shadow_alpha = @color.alpha <= 30 ? @color.alpha : @shadow_alpha
         shadow_color = @shadow_color ? @shadow_color : Gosu::Color.rgba(@color.red, @color.green, @color.blue, shadow_alpha)
@@ -115,22 +115,22 @@ module CyberarmEngine
         _y = @shadow_size
 
         @rendered_shadow ||= Gosu.render((self.width+(shadow_size*2)).ceil, (self.height+(@shadow_size*2)).ceil) do
-          @textobject.draw_markup(@text, _x-@shadow_size, _y, @z)
-          @textobject.draw_markup(@text, _x-@shadow_size, _y-@shadow_size, @z)
+          @textobject.send(method, @text, _x-@shadow_size, _y, @z)
+          @textobject.send(method, @text, _x-@shadow_size, _y-@shadow_size, @z)
 
-          @textobject.draw_markup(@text, _x, _y-@shadow_size, @z, @factor_x)
-          @textobject.draw_markup(@text, _x+@shadow_size, _y-@shadow_size, @z)
+          @textobject.send(method, @text, _x, _y-@shadow_size, @z, @factor_x)
+          @textobject.send(method, @text, _x+@shadow_size, _y-@shadow_size, @z)
 
-          @textobject.draw_markup(@text, _x, _y+@shadow_size, @z)
-          @textobject.draw_markup(@text, _x-@shadow_size, _y+@shadow_size, @z)
+          @textobject.send(method, @text, _x, _y+@shadow_size, @z)
+          @textobject.send(method, @text, _x-@shadow_size, _y+@shadow_size, @z)
 
-          @textobject.draw_markup(@text, _x+@shadow_size, _y, @z)
-          @textobject.draw_markup(@text, _x+@shadow_size, _y+@shadow_size, @z)
+          @textobject.send(method, @text, _x+@shadow_size, _y, @z)
+          @textobject.send(method, @text, _x+@shadow_size, _y+@shadow_size, @z)
         end
         @rendered_shadow.draw(@x-@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, shadow_color)
       end
 
-      @textobject.draw_markup(@text, @x, @y, @z, @factor_x, @factor_y, @color)
+      @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color)
     end
 
     def alpha=(n)

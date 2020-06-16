@@ -34,6 +34,10 @@ module CyberarmEngine
         end
       end
 
+      def draw_text
+        @text.draw(:draw_text)
+      end
+
       def draw_caret
         Gosu.draw_rect(caret_position, @text.y, @caret_width, @caret_height, @caret_color, @z)
       end
@@ -110,8 +114,8 @@ module CyberarmEngine
 
       def caret_position_under_mouse(mouse_x)
         1.upto(@text.text.length) do |i|
-          if mouse_x < @text.x - @offset_x + @text.textobject.text_width(@text.text[0...i])
-            return i - 1;
+          if mouse_x < @text.x - @offset_x + @text.width(@text.text[0...i])
+            return i - 1
           end
         end
 
