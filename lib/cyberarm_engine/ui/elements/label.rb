@@ -4,7 +4,12 @@ module CyberarmEngine
       def initialize(text, options = {}, block = nil)
         super(options, block)
 
-        @text = Text.new(text, font: @options[:font], z: @z, color: @options[:color], size: @options[:text_size], shadow: @options[:text_shadow])
+        @text = Text.new(
+                        text, font: @options[:font], z: @z, color: @options[:color],
+                        size: @options[:text_size], shadow: @options[:text_shadow],
+                        shadow_size: @options[:text_shadow_size],
+                        shadow_color: @options[:text_shadow_color]
+                      )
       end
 
       def render

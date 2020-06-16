@@ -2,9 +2,10 @@ module CyberarmEngine
   class Element
     class Button < Label
       def initialize(text_or_image, options = {}, block = nil)
+        @image, @scale_x, @scale_y = nil, 1, 1
+
         if text_or_image.is_a?(Gosu::Image)
           @image = text_or_image
-          @scale_x, @scale_y = 1, 1
         end
 
         super(text_or_image, options, block)

@@ -6,6 +6,7 @@ rescue LoadError => e
 end
 require "json"
 require "gosu_more_drawables"
+require "clipboard"
 
 require_relative "cyberarm_engine/version"
 require_relative "cyberarm_engine/stats"

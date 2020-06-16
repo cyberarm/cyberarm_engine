@@ -20,6 +20,9 @@ module CyberarmEngine
 
       @style = Style.new(options)
 
+      @root ||= nil
+      @gui_state ||= nil
+
       @x = @style.x
       @y = @style.y
       @z = @style.z

@@ -30,6 +30,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "gosu", "~> 0.15.0"
   spec.add_dependency "gosu_more_drawables", "~> 0.3"
+  spec.add_dependency "clipboard", "~> 1.3.4"
+  # spec.add_dependency "ffi", :platforms => [:mswin, :mingw] # Required by Clipboard on Windows
 
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 13.0"

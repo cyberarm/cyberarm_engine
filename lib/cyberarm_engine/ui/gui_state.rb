@@ -21,6 +21,8 @@ module CyberarmEngine
       @mouse_over = nil
       @mouse_down_on = {}
       @mouse_down_position = {}
+      @last_mouse_pos = nil
+      @dragging_element = nil
       @pending_recalculate_request = false
 
       @tip = CyberarmEngine::Text.new("", size: 22, z: Float::INFINITY)
@@ -110,6 +112,8 @@ module CyberarmEngine
       when Gosu::KbF5
         request_recalculate
       end
+
+      @focus.button_down(id) if @focus.respond_to?(:button_down)
     end
 
     def button_up(id)
@@ -127,6 +131,8 @@ module CyberarmEngine
       when Gosu::MsWheelDown
         redirect_mouse_wheel(:down)
       end
+
+      @focus.button_up(id) if @focus.respond_to?(:button_up)
     end
 
     def redirect_mouse_button(button)

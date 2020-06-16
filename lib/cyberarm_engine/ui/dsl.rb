@@ -29,6 +29,13 @@ module CyberarmEngine
       add_element( Element::EditLine.new(text, options, block) )
     end
 
+    def edit_box(text, options = {}, &block)
+      options[:parent] = element_parent
+      options[:theme] = current_theme
+
+      add_element( Element::EditBox.new(text, options, block) )
+    end
+
     def toggle_button(options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
