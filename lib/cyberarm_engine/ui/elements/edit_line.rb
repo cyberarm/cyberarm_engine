@@ -2,6 +2,7 @@ module CyberarmEngine
   class Element
     class EditLine < Button
       def initialize(text, options = {}, block = nil)
+        @filter = options.delete(:filter)
         super(text, options, block)
 
         @type = default(:type)
@@ -16,6 +17,14 @@ module CyberarmEngine
         @text_input = Gosu::TextInput.new
         @text_input.text = text
         @last_text_value = text
+
+        if @filter && @filter.respond_to?(:call)
+          @text_input.instance_variable_set(:@filter, @filter)
+
+          def @text_input.filter(text_in)
+            @filter.call(text_in)
+          end
+        end
 
         @offset_x, @offset_y = 0, 0
 
