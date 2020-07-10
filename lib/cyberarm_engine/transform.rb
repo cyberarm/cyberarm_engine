@@ -196,6 +196,29 @@ module CyberarmEngine
       )
     end
 
+    def self.orthographic(left, right, top, bottom, near, far)
+      s = Vector.new(
+        2 / (right - left.to_f),
+        2 / (top - bottom.to_f),
+        -2 / (far - near.to_f),
+      )
+
+      t = Vector.new(
+        (right + left.to_f)   / (right - left.to_f),
+        (top   + bottom.to_f) / (top   - bottom.to_f),
+        (far   + near.to_f)   / (far   - near.to_f),
+      )
+
+      Transform.new(
+        [
+          s.x, 0.0, 0.0, t.x,
+          0.0, s.y, 0.0, t.y,
+          0.0, 0.0, s.z, t.z,
+          0.0, 0.0, 0.0, 1.0
+        ]
+      )
+    end
+
     def self.view(eye, orientation)
       # https://www.3dgep.com/understanding-the-view-matrix/#The_View_Matrix
       cosPitch = Math.cos(orientation.z * Math::PI / 180.0)
