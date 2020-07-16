@@ -5,6 +5,7 @@ module CyberarmEngine
     SONGS  = {}
 
     attr_accessor :show_cursor
+    attr_writer :exit_on_opengl_error
     attr_reader :last_frame_time
 
     def self.now
@@ -25,6 +26,7 @@ module CyberarmEngine
       self.caption = "CyberarmEngine #{CyberarmEngine::VERSION} #{Gosu.language}"
 
       @states = []
+      @exit_on_opengl_error = false
 
       setup if defined?(setup)
     end
@@ -47,6 +49,14 @@ module CyberarmEngine
 
     def dt
       @last_frame_time/1000.0
+    end
+
+    def aspect_ratio
+      width / height.to_f
+    end
+
+    def exit_on_opengl_error?
+      @exit_on_opengl_error
     end
 
     def button_down(id)

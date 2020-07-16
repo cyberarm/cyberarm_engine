@@ -1,3 +1,5 @@
+CYBERARM_ENGINE_ROOT_PATH = File.expand_path("../..", __FILE__)
+
 begin
   require File.expand_path("../../ffi-gosu/lib/gosu", File.dirname(__FILE__))
 rescue LoadError => e
@@ -20,7 +22,6 @@ require_relative "cyberarm_engine/bounding_box"
 require_relative "cyberarm_engine/vector"
 require_relative "cyberarm_engine/transform"
 require_relative "cyberarm_engine/ray"
-require_relative "cyberarm_engine/shader" if defined?(OpenGL)
 require_relative "cyberarm_engine/background"
 require_relative "cyberarm_engine/animator"
 
@@ -52,3 +53,11 @@ require_relative "cyberarm_engine/ui/elements/slider"
 
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"
+
+require_relative "cyberarm_engine/model"
+require_relative "cyberarm_engine/model_cache"
+require_relative "cyberarm_engine/model/material"
+require_relative "cyberarm_engine/model/model_object"
+require_relative "cyberarm_engine/model/parser"
+require_relative "cyberarm_engine/model/parsers/wavefront_parser"
+require_relative "cyberarm_engine/model/parsers/collada_parser" if defined?(Nokogiri)

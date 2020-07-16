@@ -196,7 +196,7 @@ module CyberarmEngine
       )
     end
 
-    def self.orthographic(left, right, top, bottom, near, far)
+    def self.orthographic(left, right, bottom, top, near, far)
       s = Vector.new(
         2 / (right - left.to_f),
         2 / (top - bottom.to_f),
