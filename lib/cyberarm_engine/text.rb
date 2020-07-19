@@ -16,6 +16,7 @@ module CyberarmEngine
       @factor_x = options[:factor_x]  || 1
       @factor_y = options[:factor_y]  || 1
       @color    = options[:color]     || Gosu::Color::WHITE
+      @mode     = options[:mode]      || :default
       @alignment= options[:alignment] || nil
       @shadow   = true  if options[:shadow] == true
       @shadow   = false if options[:shadow] == false
@@ -130,7 +131,7 @@ module CyberarmEngine
         @rendered_shadow.draw(@x-@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, shadow_color)
       end
 
-      @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color)
+      @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color, @mode)
     end
 
     def alpha=(n)
