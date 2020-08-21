@@ -22,6 +22,13 @@ module CyberarmEngine
       add_element( Element::Button.new(text, options, block) { if block.is_a?(Proc); block.call; end } )
     end
 
+    def list_box(options = {}, &block)
+      options[:parent] = element_parent
+      options[:theme] = current_theme
+
+      add_element( Element::ListBox.new(options, block) { if block.is_a?(Proc); block.call; end } )
+    end
+
     def edit_line(text, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme

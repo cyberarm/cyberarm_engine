@@ -17,6 +17,7 @@ module CyberarmEngine
       @active_width  = window.width
       @active_height = window.height
 
+      @menu = nil
       @focus = nil
       @mouse_over = nil
       @mouse_down_on = {}
@@ -45,6 +46,11 @@ module CyberarmEngine
     def draw
       super
 
+      if @menu
+        Gosu.flush
+        @menu.draw
+      end
+
       if @tip.text.length > 0
         Gosu.draw_rect(@tip.x - 2, @tip.y - 2, @tip.width + 4, @tip.height + 4, 0xff020202, Float::INFINITY)
         @tip.draw
@@ -60,9 +66,12 @@ module CyberarmEngine
         @pending_recalculate_request = false
       end
 
+      @menu.update if @menu
       super
 
-      new_mouse_over = @root_container.hit_element?(window.mouse_x, window.mouse_y)
+      new_mouse_over = @menu.hit_element?(window.mouse_x, window.mouse_y) if @menu
+      new_mouse_over = @root_container.hit_element?(window.mouse_x, window.mouse_y) unless new_mouse_over
+
       if new_mouse_over
         new_mouse_over.publish(:enter) if new_mouse_over != @mouse_over
         new_mouse_over.publish(:hover)
@@ -136,6 +145,8 @@ module CyberarmEngine
     end
 
     def redirect_mouse_button(button)
+      hide_menu unless @menu and (@menu == @mouse_over) or (@mouse_over.parent == @menu)
+
       if @focus && @mouse_over != @focus
         @focus.publish(:blur)
         @focus = nil
@@ -153,6 +164,8 @@ module CyberarmEngine
     end
 
     def redirect_released_mouse_button(button)
+      hide_menu if @menu and (@menu == @mouse_over) or (@mouse_over.parent == @menu)
+
       if @mouse_over
         @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y)
         @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over == @mouse_down_on[button]
@@ -187,6 +200,14 @@ module CyberarmEngine
     # Schedule a full GUI recalculation on next update
     def request_recalculate
       @pending_recalculate_request = true
+    end
+
+    def show_menu(list_box)
+      @menu = list_box
+    end
+
+    def hide_menu
+      @menu = nil
     end
   end
 end
