@@ -145,7 +145,7 @@ module CyberarmEngine
     end
 
     def redirect_mouse_button(button)
-      hide_menu unless @menu and (@menu == @mouse_over) or (@mouse_over.parent == @menu)
+      hide_menu unless @menu and (@menu == @mouse_over) or (@mouse_over&.parent == @menu)
 
       if @focus && @mouse_over != @focus
         @focus.publish(:blur)
@@ -164,7 +164,7 @@ module CyberarmEngine
     end
 
     def redirect_released_mouse_button(button)
-      hide_menu if @menu and (@menu == @mouse_over) or (@mouse_over.parent == @menu)
+      hide_menu if @menu and (@menu == @mouse_over) or (@mouse_over&.parent == @menu)
 
       if @mouse_over
         @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y)
