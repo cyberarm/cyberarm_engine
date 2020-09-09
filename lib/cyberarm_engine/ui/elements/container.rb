@@ -48,6 +48,31 @@ module CyberarmEngine
         Gosu.clip_to(@x, @y, width, height) do
           @children.each(&:draw)
         end
+
+        if false#DEBUG
+          Gosu.flush
+
+          Gosu.draw_line(
+            self.x, self.y, Gosu::Color::RED,
+            self.x + outer_width, self.y, Gosu::Color::RED,
+            Float::INFINITY
+          )
+          Gosu.draw_line(
+            self.x + outer_width, self.y, Gosu::Color::RED,
+            self.x + outer_width, self.y + outer_height, Gosu::Color::RED,
+            Float::INFINITY
+          )
+          Gosu.draw_line(
+            self.x + outer_width, self.y + outer_height, Gosu::Color::RED,
+            self.x, self.y + outer_height, Gosu::Color::RED,
+            Float::INFINITY
+          )
+          Gosu.draw_line(
+            self.x, outer_height, Gosu::Color::RED,
+            self.x, self.y, Gosu::Color::RED,
+            Float::INFINITY
+          )
+        end
       end
 
       def update

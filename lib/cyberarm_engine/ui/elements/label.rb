@@ -31,9 +31,23 @@ module CyberarmEngine
         @width = _width  ? _width  : @text.width.round
         @height= _height ? _height : @text.height.round
 
-        @text.x = @style.border_thickness_left + @style.padding_left + @x
         @text.y = @style.border_thickness_top + @style.padding_top  + @y
         @text.z = @z + 3
+
+        if text_alignment = @options[:text_align]
+          case text_alignment
+          when :left
+            @text.x = @style.border_thickness_left + @style.padding_left + @x
+          when :center
+            if @text.width <= outer_width
+              @text.x = @x + outer_width / 2 - @text.width / 2
+            else # Act as left aligned
+              @text.x = @style.border_thickness_left + @style.padding_left + @x
+            end
+          when :right
+            @text.x = @x + outer_width - (@text.width + @style.border_thickness_right + @style.padding_right)
+          end
+        end
 
         update_background
       end

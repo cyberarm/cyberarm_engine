@@ -69,6 +69,7 @@ module CyberarmEngine
         border_color: ["ffd59674".hex, "ffff8746".hex],
         border_radius: 0,
         background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
+        text_align: :center,
 
         hover: {
           color: Gosu::Color.rgb(200,200,200),
@@ -89,6 +90,7 @@ module CyberarmEngine
         caret_color: Gosu::Color::WHITE,
         caret_interval: 500,
         selection_color: Gosu::Color.rgba(255, 128, 50, 200),
+        text_align: :left,
       },
 
       Image: { # < Element
@@ -98,6 +100,7 @@ module CyberarmEngine
       Label: { # < Element
       text_size: 28,
       text_shadow: false,
+      text_align: :left,
       font: "Arial",
       margin: 0,
       padding: 2

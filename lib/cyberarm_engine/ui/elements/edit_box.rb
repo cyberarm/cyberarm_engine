@@ -51,10 +51,13 @@ module CyberarmEngine
       end
 
       def text_input_position_for(method)
+        line = @text_input.text[0...@text_input.caret_pos].lines.last
+        _x = @text.x + @offset_x
+
         if @type == :password
-          @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length)
+          _x + @text.width(default(:password_character) * line.length)
         else
-          @text.x + @text.width(@text_input.text[0...@text_input.send(method)])
+          _x + @text.width(line)
         end
       end
 
@@ -75,32 +78,45 @@ module CyberarmEngine
       end
 
       def caret_position_under_mouse(mouse_x, mouse_y)
-        active_line = ((mouse_y - @text.y) / @text.textobject.height).round
-        active_line = 0 if @active_line < 0
-        active_line = @text.text.strip.lines.size if @active_line > @text.text.strip.lines.size
+        active_line = row_at(mouse_y)
+        right_offset = column_at(mouse_x, mouse_y)
 
-        # 1.upto(@text.text.length) do |i|
-        #   if mouse_x < @text.x - @offset_x + @text.width(@text.text[0...i])
-        #     return i - 1
-        #   end
-        # end
-        buffer = ""
-        @text.text.strip.lines.each do |line|
-          buffer.length.upto(line.length) do |i|
-            if mouse_x < @text.x - @offset_x + @text.width(@text.text[buffer.length...i])
-              puts "#{i}"
-              return i - 1
-            end
-          end
+        buffer = @text_input.text.lines[0..active_line].join if active_line != 0
+        buffer = @text_input.text.lines.first if active_line == 0
+        line = buffer.lines.last
 
-          buffer += line
+        if buffer.chars.last == "\n"
+          (buffer.length - line.length) + right_offset - 1
+        else
+          (buffer.length - line.length) + right_offset
         end
-
-        @text_input.text.length
       end
 
       def move_caret_to_mouse(mouse_x, mouse_y)
-        @text_input.caret_pos = @text_input.selection_start = caret_position_under_mouse(mouse_x, mouse_y)
+        set_position( caret_position_under_mouse(mouse_x, mouse_y) )
+      end
+
+      def row_at(y)
+        ((y - @text.y) / @text.textobject.height).round
+      end
+
+      def column_at(x, y)
+        row = row_at(y)
+
+        buffer = @text_input.text.lines[0..row].join if row != 0
+        buffer = @text_input.text.lines.first if row == 0
+
+        line = @text_input.text.lines[row]
+        line = "" unless line
+        column = 0
+
+        line.length.times do |i|
+          break if @text.textobject.text_width(line[0...column]) >= (x - @text.x).clamp(0.0, Float::INFINITY)
+
+          column += 1
+        end
+
+        return column
       end
 
       def button_down(id)
