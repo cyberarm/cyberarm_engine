@@ -20,7 +20,7 @@ module CyberarmEngine
         hash = @data[keys.shift] ||= {}
 
         keys.each do |key|
-          hash[key] ||= {}
+          hash = hash[key] ||= {}
         end
       end
 
