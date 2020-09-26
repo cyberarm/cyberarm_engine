@@ -7,6 +7,7 @@ rescue LoadError => e
   require "gosu"
 end
 require "json"
+require "excon"
 require "gosu_more_drawables"
 require "clipboard"
 

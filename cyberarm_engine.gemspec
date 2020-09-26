@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib", "assets"]
 
+  spec.add_dependency "excon", "~> 0.76.0"
   spec.add_dependency "gosu", "~> 0.15.0"
   spec.add_dependency "gosu_more_drawables", "~> 0.3"
   spec.add_dependency "clipboard", "~> 1.3.4"
