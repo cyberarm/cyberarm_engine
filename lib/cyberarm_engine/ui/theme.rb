@@ -94,6 +94,7 @@ module CyberarmEngine
       },
 
       Image: { # < Element
+        color: Gosu::Color::WHITE,
         retro: false
       },
 

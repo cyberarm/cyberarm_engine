@@ -14,7 +14,7 @@ module CyberarmEngine
           @style.border_thickness_left + @style.padding_left + @x,
           @style.border_thickness_top + @style.padding_top + @y,
           @z + 2,
-          @scale_x, @scale_y) # TODO: Add color support?
+          @scale_x, @scale_y, @style.color)
       end
 
       def clicked_left_mouse_button(sender, x, y)
