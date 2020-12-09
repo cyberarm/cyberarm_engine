@@ -62,6 +62,7 @@ module CyberarmEngine
       end
 
       def set_position(int)
+        int = 0 if int < 0
         @text_input.selection_start = @text_input.caret_pos = int
       end
 
@@ -166,7 +167,9 @@ module CyberarmEngine
       end
 
       def drag_update(sender, x, y, button)
-        @text_input.caret_pos = caret_position_under_mouse(x, y)
+        int = caret_position_under_mouse(x, y)
+        int = 0 if int < 0
+        @text_input.caret_pos = int
 
         :handled
       end
