@@ -135,17 +135,19 @@ module CyberarmEngine
     end
 
     def show
+      bool = visible?
       @visible = true
-      root.gui_state.request_recalculate
+      root.gui_state.request_recalculate unless bool
     end
 
     def hide
+      bool = visible?
       @visible = false
-      root.gui_state.request_recalculate
+      root.gui_state.request_recalculate if bool
     end
 
     def draw
-      return unless @visible
+      return unless visible?
 
       @style.background_canvas.draw
       @style.border_canvas.draw
