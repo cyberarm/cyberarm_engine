@@ -51,7 +51,8 @@ module CyberarmEngine
         @menu.draw
       end
 
-      if @tip.text.length > 0
+      if @tip.text.length.positive?
+        Gosu.flush
         Gosu.draw_rect(@tip.x - 2, @tip.y - 2, @tip.width + 4, @tip.height + 4, 0xff020202, Float::INFINITY)
         @tip.draw
       end
@@ -66,11 +67,11 @@ module CyberarmEngine
         @pending_recalculate_request = false
       end
 
-      @menu.update if @menu
+      @menu&.update
       super
 
       new_mouse_over = @menu.hit_element?(window.mouse_x, window.mouse_y) if @menu
-      new_mouse_over = @root_container.hit_element?(window.mouse_x, window.mouse_y) unless new_mouse_over
+      new_mouse_over ||= @root_container.hit_element?(window.mouse_x, window.mouse_y)
 
       if new_mouse_over
         new_mouse_over.publish(:enter) if new_mouse_over != @mouse_over

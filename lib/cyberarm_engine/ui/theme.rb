@@ -51,29 +51,30 @@ module CyberarmEngine
         y: 0,
         z: 30,
 
-        width:  nil,
+        width: nil,
         height: nil,
-        color:     Gosu::Color::WHITE,
+        color: Gosu::Color::WHITE,
         background: Gosu::Color::NONE,
-        margin:   0,
-        padding:  0,
+        margin: 0,
+        padding: 0,
         border_thickness: 0,
         border_color: Gosu::Color::NONE,
-        border_radius: 0,
+        border_radius: 0
       },
 
       Button: { # < Label
-        margin:   1,
-        padding:  4,
+        margin: 1,
+        padding: 4,
         border_thickness: 1,
         border_color: ["ffd59674".hex, "ffff8746".hex],
         border_radius: 0,
         background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
         text_align: :center,
+        text_wrap: :none,
 
         hover: {
           color: Gosu::Color.rgb(200,200,200),
-          background:  ["ffB23E41".to_i(16), "ffFF7C00".to_i(16)],
+          background:  ["ffB23E41".to_i(16), "ffFF7C00".to_i(16)]
         },
 
         active: {
@@ -90,7 +91,7 @@ module CyberarmEngine
         caret_color: Gosu::Color::WHITE,
         caret_interval: 500,
         selection_color: Gosu::Color.rgba(255, 128, 50, 200),
-        text_align: :left,
+        text_align: :left
       },
 
       Image: { # < Element
@@ -99,12 +100,13 @@ module CyberarmEngine
       },
 
       Label: { # < Element
-      text_size: 28,
-      text_shadow: false,
-      text_align: :left,
-      font: "Arial",
-      margin: 0,
-      padding: 2
+        text_size: 28,
+        text_wrap: :none, # :word_wrap, :break_word, :none
+        text_shadow: false,
+        text_align: :left,
+        font: "Arial",
+        margin: 0,
+        padding: 2
       },
 
       ToggleButton: { # < Button

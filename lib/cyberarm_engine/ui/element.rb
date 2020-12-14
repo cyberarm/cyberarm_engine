@@ -226,16 +226,15 @@ module CyberarmEngine
       (@style.border_thickness_top + @style.padding_top) + (@style.padding_bottom + @style.border_thickness_bottom)
     end
 
-    private def dimensional_size(size, dimension)
+    def dimensional_size(size, dimension)
       raise "dimension must be either :width or :height" unless dimension == :width || dimension == :height
+
       if size && size.is_a?(Numeric)
         if size.between?(0.0, 1.0)
           ((@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}")) * size).round
         else
           size
         end
-      else
-        nil
       end
     end
 

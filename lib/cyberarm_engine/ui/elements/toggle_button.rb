@@ -17,13 +17,11 @@ module CyberarmEngine
 
         if @value
           @image = @_image if @_image
-          @text.text = @options[:checkmark]
+          @raw_text = @options[:checkmark]
         else
           @image = nil
-          @text.text = ""
+          @raw_text = ""
         end
-
-        return self
       end
 
       def clicked_left_mouse_button(sender, x, y)
@@ -35,19 +33,16 @@ module CyberarmEngine
       end
 
       def recalculate
-        if @image
-          super
-        else
-          super
+        super
+        return if @image
 
-          _width = dimensional_size(@style.width, :width)
-          _height= dimensional_size(@style.height,:height)
+        _width  = dimensional_size(@style.width,  :width)
+        _height = dimensional_size(@style.height, :height)
 
-          @width  = _width  ? _width  : @text.textobject.text_width(@options[:checkmark])
-          @height = _height ? _height : @text.height
+        @width  = _width  || @text.textobject.text_width(@options[:checkmark])
+        @height = _height || @text.height
 
-          update_background
-        end
+        update_background
       end
 
       def value
@@ -59,10 +54,10 @@ module CyberarmEngine
 
         if boolean
           @image = @_image if @_image
-          @text.text = @options[:checkmark]
+          @raw_text = @options[:checkmark]
         else
           @image = nil
-          @text.text = ""
+          @raw_text = ""
         end
 
         recalculate
