@@ -2,17 +2,21 @@ module CyberarmEngine
   class OrthographicCamera
     attr_accessor :position, :orientation, :zoom, :left, :right, :bottom, :top,
                   :min_view_distance, :max_view_distance
+
     def initialize(
-                    position:, orientation: Vector.new(0, 0, 0),
-                    zoom: 1, left: 0, right:, bottom: 0, top:,
-                    min_view_distance: 0.1, max_view_distance: 200.0
-                  )
+      position:, right:, top:, orientation: Vector.new(0, 0, 0),
+      zoom: 1, left: 0, bottom: 0,
+      min_view_distance: 0.1, max_view_distance: 200.0
+    )
       @position = position
       @orientation = orientation
 
       @zoom = zoom
 
-      @left, @right, @bottom, @top = left, right, bottom, top
+      @left = left
+      @right = right
+      @bottom = bottom
+      @top = top
 
       @min_view_distance = min_view_distance
       @max_view_distance = max_view_distance

@@ -12,14 +12,14 @@ module CyberarmEngine
             down: false,
             repeat_delay: 50,
             last_repeat: 0,
-            action: proc {move(:up)}
+            action: proc { move(:up) }
           },
           {
             key: Gosu::KB_DOWN,
             down: false,
             repeat_delay: 50,
             last_repeat: 0,
-            action: proc {move(:down)}
+            action: proc { move(:down) }
           }
         ]
       end
@@ -31,26 +31,26 @@ module CyberarmEngine
         calculate_active_line
 
         @repeatable_keys.each do |key|
-          if key[:down]
-            if Gosu.milliseconds > key[:last_repeat] + key[:repeat_delay]
-              key[:action].call
-              key[:last_repeat] = Gosu.milliseconds
-            end
+          if key[:down] && (Gosu.milliseconds > key[:last_repeat] + key[:repeat_delay])
+            key[:action].call
+            key[:last_repeat] = Gosu.milliseconds
           end
         end
       end
 
       def draw_caret
-        Gosu.draw_rect(caret_position, @text.y + @active_line * @text.textobject.height, @caret_width, @caret_height, @caret_color, @z)
+        Gosu.draw_rect(caret_position, @text.y + @active_line * @text.textobject.height, @caret_width, @caret_height,
+                       @caret_color, @z)
       end
 
       def draw_selection
         selection_width = caret_position - selection_start_position
 
-        Gosu.draw_rect(selection_start_position, @text.y, selection_width, @text.textobject.height, default(:selection_color), @z)
+        Gosu.draw_rect(selection_start_position, @text.y, selection_width, @text.textobject.height,
+                       default(:selection_color), @z)
       end
 
-      def text_input_position_for(method)
+      def text_input_position_for(_method)
         line = @text_input.text[0...@text_input.caret_pos].lines.last
         _x = @text.x + @offset_x
 
@@ -68,11 +68,11 @@ module CyberarmEngine
 
       def calculate_active_line
         sub_text = @text_input.text[0...@text_input.caret_pos]
-        @active_line = sub_text.lines.size-1
+        @active_line = sub_text.lines.size - 1
       end
 
       def caret_stay_left_of_last_newline
-        @text_input.text+="\n" unless @text_input.text.end_with?("\n")
+        @text_input.text += "\n" unless @text_input.text.end_with?("\n")
 
         eof = @text_input.text.chomp.length
         set_position(eof) if @text_input.caret_pos > eof
@@ -94,7 +94,7 @@ module CyberarmEngine
       end
 
       def move_caret_to_mouse(mouse_x, mouse_y)
-        set_position( caret_position_under_mouse(mouse_x, mouse_y) )
+        set_position(caret_position_under_mouse(mouse_x, mouse_y))
       end
 
       def row_at(y)
@@ -108,27 +108,27 @@ module CyberarmEngine
         buffer = @text_input.text.lines.first if row == 0
 
         line = @text_input.text.lines[row]
-        line = "" unless line
+        line ||= ""
         column = 0
 
-        line.length.times do |i|
+        line.length.times do |_i|
           break if @text.textobject.text_width(line[0...column]) >= (x - @text.x).clamp(0.0, Float::INFINITY)
 
           column += 1
         end
 
-        return column
+        column
       end
 
       def button_down(id)
         super
 
         @repeatable_keys.detect do |key|
-          if key[:key] == id
-            key[:down] = true
-            key[:last_repeat] = Gosu.milliseconds + key[:repeat_delay]
-            return true
-          end
+          next unless key[:key] == id
+
+          key[:down] = true
+          key[:last_repeat] = Gosu.milliseconds + key[:repeat_delay]
+          return true
         end
 
         case id
@@ -159,6 +159,7 @@ module CyberarmEngine
           return if @active_line == 0
         when :down
           return if @active_line == @text_input.text.chomp.lines
+
           text = @text_input.text.chomp.lines[0..@active_line].join("\n")
           pos = text.length
         end
@@ -166,7 +167,7 @@ module CyberarmEngine
         set_position(pos)
       end
 
-      def drag_update(sender, x, y, button)
+      def drag_update(_sender, x, y, _button)
         int = caret_position_under_mouse(x, y)
         int = 0 if int < 0
         @text_input.caret_pos = int

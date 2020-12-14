@@ -6,7 +6,8 @@ module CyberarmEngine
         @path = path
 
         @image = Gosu::Image.new(path, retro: @options[:image_retro])
-        @scale_x, @scale_y = 1, 1
+        @scale_x = 1
+        @scale_y = 1
       end
 
       def render
@@ -14,18 +15,19 @@ module CyberarmEngine
           @style.border_thickness_left + @style.padding_left + @x,
           @style.border_thickness_top + @style.padding_top + @y,
           @z + 2,
-          @scale_x, @scale_y, @style.color)
+          @scale_x, @scale_y, @style.color
+        )
       end
 
-      def clicked_left_mouse_button(sender, x, y)
+      def clicked_left_mouse_button(_sender, _x, _y)
         @block.call(self) if @block
 
-        return :handled
+        :handled
       end
 
       def recalculate
         _width = dimensional_size(@style.width, :width)
-        _height= dimensional_size(@style.height,:height)
+        _height = dimensional_size(@style.height, :height)
 
         if _width && _height
           @scale_x = _width.to_f / @image.width
@@ -37,11 +39,12 @@ module CyberarmEngine
           @scale_y = _height.to_f / @image.height
           @scale_x = @scale_y
         else
-          @scale_x, @scale_y = 1, 1
+          @scale_x = 1
+          @scale_y = 1
         end
 
-        @width = _width  ? _width  : @image.width.round * @scale_x
-        @height= _height ? _height : @image.height.round * @scale_y
+        @width = _width || @image.width.round * @scale_x
+        @height = _height || @image.height.round * @scale_y
       end
 
       def value

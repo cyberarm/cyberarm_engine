@@ -10,7 +10,7 @@ module CyberarmEngine
       end
     end
 
-    def []= *keys, value
+    def []=(*keys, value)
       last_key = keys.last
 
       if keys.size == 1

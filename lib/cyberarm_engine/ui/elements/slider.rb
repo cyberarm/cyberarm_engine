@@ -9,13 +9,13 @@ module CyberarmEngine
           event(:drag_update)
           event(:end_drag)
 
-          subscribe :begin_drag do |sender, x, y, button|
+          subscribe :begin_drag do |_sender, x, y, _button|
             @drag_start_pos = Vector.new(x, y)
 
             :handled
           end
 
-          subscribe :drag_update do |sender, x, y, button|
+          subscribe :drag_update do |_sender, x, y, _button|
             @parent.handle_dragged_to(x, y)
 
             :handled
@@ -33,21 +33,22 @@ module CyberarmEngine
         end
       end
 
-      attr_reader :range, :step_size
+      attr_reader :range, :step_size, :value
+
       def initialize(options = {}, block = nil)
         super(options, block)
 
-        @range     = @options[:range] ? @options[:range] : 0.0..1.0
-        @step_size = @options[:step] ? @options[:step] : 0.1
-        @value     = @options[:value] ? @options[:value] : (@range.first + @range.last) / 2
+        @range     = @options[:range] || (0.0..1.0)
+        @step_size = @options[:step] || 0.1
+        @value     = @options[:value] || (@range.first + @range.last) / 2
 
         @handle = Handle.new("", parent: self, width: 8, height: 1.0) { close }
-        self.add(@handle)
+        add(@handle)
       end
 
       def recalculate
         _width = dimensional_size(@style.width, :width)
-        _height= dimensional_size(@style.height,:height)
+        _height = dimensional_size(@style.height, :height)
 
         @width  = _width
         @height = _height
@@ -61,7 +62,7 @@ module CyberarmEngine
 
       def position_handle
         @handle.x = @x + @style.padding_left + @style.border_thickness_left +
-          ((content_width - @handle.outer_width) * (@value - @range.min) / (@range.max - @range.min).to_f)
+                    ((content_width - @handle.outer_width) * (@value - @range.min) / (@range.max - @range.min).to_f)
 
         @handle.y = @y + @style.border_thickness_top + @style.padding_top
       end
@@ -79,20 +80,16 @@ module CyberarmEngine
         @handle.tip = @tip
       end
 
-      def holding_left_mouse_button(sender, x, y)
+      def holding_left_mouse_button(_sender, x, y)
         handle_dragged_to(x, y)
 
         :handled
       end
 
-      def handle_dragged_to(x, y)
+      def handle_dragged_to(x, _y)
         @ratio = ((x - @handle.width / 2) - @x) / (content_width - @handle.outer_width)
 
         self.value = @ratio.clamp(0.0, 1.0) * (@range.max - @range.min) + @range.min
-      end
-
-      def value
-        @value
       end
 
       def value=(n)

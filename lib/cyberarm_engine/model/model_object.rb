@@ -13,7 +13,7 @@ module CyberarmEngine
         @faces    = []
         @materials = []
         @bounding_box = BoundingBox.new
-        @debug_color = Color.new(1.0,1.0,1.0)
+        @debug_color = Color.new(1.0, 1.0, 1.0)
 
         @scale = 1.0
 
@@ -46,9 +46,10 @@ module CyberarmEngine
           @faces.each do |face|
             face.vertices.each do |v|
               next unless v
-              list << v.x*@scale
-              list << v.y*@scale
-              list << v.z*@scale
+
+              list << v.x * @scale
+              list << v.y * @scale
+              list << v.z * @scale
               list << v.weight
             end
           end
@@ -57,7 +58,7 @@ module CyberarmEngine
           @vertices_list = list.pack("f*")
         end
 
-        return @vertices_list
+        @vertices_list
       end
 
       def flattened_vertices_size
@@ -70,6 +71,7 @@ module CyberarmEngine
           @faces.each do |face|
             face.uvs.each do |v|
               next unless v
+
               list << v.x
               list << v.y
               list << v.z
@@ -80,7 +82,7 @@ module CyberarmEngine
           @uvs_list = list.pack("f*")
         end
 
-        return @uvs_list
+        @uvs_list
       end
 
       def flattened_normals
@@ -89,6 +91,7 @@ module CyberarmEngine
           @faces.each do |face|
             face.normals.each do |n|
               next unless n
+
               list << n.x
               list << n.y
               list << n.z
@@ -99,7 +102,7 @@ module CyberarmEngine
           @normals_list = list.pack("f*")
         end
 
-        return @normals_list
+        @normals_list
       end
 
       def flattened_materials
@@ -108,8 +111,8 @@ module CyberarmEngine
           @faces.each do |face|
             material = face.material
             next unless material
-            face.vertices.each do # Add material to each vertex
 
+            face.vertices.each do # Add material to each vertex
               list << material.diffuse.red
               list << material.diffuse.green
               list << material.diffuse.blue
@@ -121,7 +124,7 @@ module CyberarmEngine
           @materials_list = list.pack("f*")
         end
 
-        return @materials_list
+        @materials_list
       end
     end
   end

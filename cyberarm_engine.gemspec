@@ -1,5 +1,4 @@
-
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "cyberarm_engine/version"
 
@@ -9,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Cyberarm"]
   spec.email         = ["matthewlikesrobots@gmail.com"]
 
-  spec.summary       = %q{Make games quickly and easily with gosu}
-  spec.description   = %q{Yet another game making framework around gosu}
+  spec.summary       = "Make games quickly and easily with gosu"
+  spec.description   = "Yet another game making framework around gosu"
   spec.homepage      = "https://github.com/cyberarm/cyberarm_engine"
   spec.license       = "MIT"
 
@@ -21,20 +20,20 @@ Gem::Specification.new do |spec|
       "public gem pushes."
   end
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+  spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib", "assets"]
+  spec.require_paths = %w[lib assets]
 
+  spec.add_dependency "clipboard", "~> 1.3.4"
   spec.add_dependency "excon", "~> 0.76.0"
   spec.add_dependency "gosu", "~> 0.15.0"
   spec.add_dependency "gosu_more_drawables", "~> 0.3"
-  spec.add_dependency "clipboard", "~> 1.3.4"
   # spec.add_dependency "ffi", :platforms => [:mswin, :mingw] # Required by Clipboard on Windows
 
   spec.add_development_dependency "bundler", "~> 1.16"
-  spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency "rake", "~> 13.0"
 end

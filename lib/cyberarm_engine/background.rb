@@ -2,9 +2,13 @@ module CyberarmEngine
   class Background
     attr_accessor :x, :y, :z, :width, :height, :angle, :debug
     attr_reader   :background
+
     def initialize(x: 0, y: 0, z: 0, width: 0, height: 0, background: Gosu::Color::BLACK, angle: 0, debug: false)
-      @x,@y,@z = x,y,z
-      @width,@height = width,height
+      @x = x
+      @y = y
+      @z = z
+      @width = width
+      @height = height
       @debug = debug
 
       @paint  = Paint.new(background)
@@ -31,8 +35,8 @@ module CyberarmEngine
     end
 
     def update
-      origin_x = (@x + (@width/2))
-      origin_y = (@y + (@height/2))
+      origin_x = (@x + (@width / 2))
+      origin_y = (@y + (@height / 2))
 
       points = [
         @top_left     = Vector.new(@x, @y),
@@ -47,8 +51,8 @@ module CyberarmEngine
 
         # 90 is up here, while gosu uses 0 for up.
         radians = (@angle + 90).gosu_to_radians
-        vector.x = (@x + (@width/2))  + ((temp_x * Math.cos(radians)) - (temp_y * Math.sin(radians)))
-        vector.y = (@y + (@height/2)) + ((temp_x * Math.sin(radians)) + (temp_y * Math.cos(radians)))
+        vector.x = (@x + (@width / 2))  + ((temp_x * Math.cos(radians)) - (temp_y * Math.sin(radians)))
+        vector.y = (@y + (@height / 2)) + ((temp_x * Math.sin(radians)) + (temp_y * Math.cos(radians)))
       end
 
       # [
@@ -67,11 +71,11 @@ module CyberarmEngine
       a = la.x - lb.x
       b = la.y - lb.y
       c = Gosu.distance(la.x, la.y, lb.x, lb.y)
-      p a,b,c
-      d = (a * point.x + b * point.y + c).abs / (Math.sqrt(a * a + b * b))
+      p a, b, c
+      d = (a * point.x + b * point.y + c).abs / Math.sqrt(a * a + b * b)
       puts "Distance: #{d}"
       exit!
-      return d
+      d
     end
 
     def debug_outline
@@ -117,13 +121,13 @@ module CyberarmEngine
 
   class Paint
     attr_accessor :top_left, :top_right, :bottom_left, :bottom_right
+
     def initialize(background)
       set(background)
     end
 
     def set(background)
       @background = background
-
 
       if background.is_a?(Numeric)
         @top_left     = background
@@ -167,9 +171,9 @@ end
 
 # Add <=> method to support Range based gradients
 module Gosu
- class Color
-   def <=>(other)
-     self
-   end
- end
+  class Color
+    def <=>(_other)
+      self
+    end
+  end
 end

@@ -27,13 +27,14 @@ module CyberarmEngine
         remaining_bytes = @downloads.map { |d| d.remaining_bytes }.sum
         total_bytes = @downloads.map { |d| d.total_bytes }.sum
 
-        v = 1.0 - (remaining_bytes.to_f / total_bytes.to_f)
+        v = 1.0 - (remaining_bytes.to_f / total_bytes)
         return 0.0 if v.nan?
-        return v
+
+        v
       end
 
       def active_downloads
-        @downloads.select { |d| [:pending, :downloading].include?(d.status) }
+        @downloads.select { |d| %i[pending downloading].include?(d.status) }
       end
 
       def update
@@ -53,6 +54,7 @@ module CyberarmEngine
         attr_accessor :status
         attr_reader :uri, :save_as, :callback, :remaining_bytes, :total_downloaded_bytes, :total_bytes,
                     :error_message, :started_at, :finished_at
+
         def initialize(uri:, save_as:, callback: nil)
           @uri = uri
           @save_as = save_as
@@ -68,9 +70,10 @@ module CyberarmEngine
         end
 
         def progress
-          v = 1.0 - (@remaining_bytes.to_f / total_bytes.to_f)
+          v = 1.0 - (@remaining_bytes.to_f / total_bytes)
           return 0.0 if v.nan?
-          return v
+
+          v
         end
 
         def download
@@ -103,15 +106,14 @@ module CyberarmEngine
               @finished_at = Time.now # TODO: monotonic time
               @callback.call(self) if @callback
             end
-          rescue => e # TODO: cherrypick errors to cature
+          rescue StandardError => e # TODO: cherrypick errors to cature
             @status = :failed
             @finished_at = Time.now # TODO: monotonic time
             @error_message = e.message
             @callback.call(self) if @callback
           end
-
-          ensure
-            io.close if io
+        ensure
+          io.close if io
         end
       end
     end

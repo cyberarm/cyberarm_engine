@@ -1,6 +1,7 @@
 module CyberarmEngine
   class BorderCanvas
     attr_reader :element, :top, :right, :bottom, :left
+
     def initialize(element:)
       @element = element
 
@@ -25,7 +26,7 @@ module CyberarmEngine
 
       elsif color.is_a?(Array)
         if color.size == 1
-          color=color.first
+          color = color.first
 
         elsif color.size == 2
           @top.background    = color.first
@@ -61,7 +62,7 @@ module CyberarmEngine
 
     def update
       # TOP
-      @top.x = @element.x# + @element.border_thickness_left
+      @top.x = @element.x # + @element.border_thickness_left
       @top.y = @element.y
       @top.z = @element.z
 

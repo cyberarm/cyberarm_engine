@@ -8,23 +8,19 @@ module CyberarmEngine
       type = File.basename(model_file).split(".").last.to_sym
 
       if model = load_model_from_cache(type, model_file)
-        return model
+        model
       else
         model = CyberarmEngine::Model.new(file_path: model_file)
         cache_model(type, model_file, model)
 
-        return model
+        model
       end
     end
 
     def self.load_model_from_cache(type, model_file)
-      if CACHE[type].is_a?(Hash)
-        if CACHE[type][model_file]
-          return CACHE[type][model_file]
-        end
-      end
+      return CACHE[type][model_file] if CACHE[type].is_a?(Hash) && (CACHE[type][model_file])
 
-      return false
+      false
     end
 
     def self.cache_model(type, model_file, model)

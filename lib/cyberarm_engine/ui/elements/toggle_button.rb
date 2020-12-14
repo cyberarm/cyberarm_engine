@@ -1,7 +1,7 @@
 module CyberarmEngine
   class Element
     class ToggleButton < Button
-      attr_reader :toggled
+      attr_reader :toggled, :value
 
       def initialize(options, block = nil)
         if options.dig(:theme, :ToggleButton, :checkmark_image)
@@ -24,12 +24,12 @@ module CyberarmEngine
         end
       end
 
-      def clicked_left_mouse_button(sender, x, y)
+      def clicked_left_mouse_button(_sender, _x, _y)
         self.value = !@value
 
         @block.call(self) if @block
 
-        return :handled
+        :handled
       end
 
       def recalculate
@@ -43,10 +43,6 @@ module CyberarmEngine
         @height = _height || @text.height
 
         update_background
-      end
-
-      def value
-        @value
       end
 
       def value=(boolean)

@@ -8,11 +8,11 @@ module CyberarmEngine
         @type = default(:type)
 
         @caret_width = default(:caret_width)
-        @caret_height= @text.textobject.height
+        @caret_height = @text.textobject.height
         @caret_color = default(:caret_color)
         @caret_interval = default(:caret_interval)
         @caret_last_interval = Gosu.milliseconds
-        @show_caret  = true
+        @show_caret = true
 
         @text_input = Gosu::TextInput.new
         @text_input.text = text
@@ -26,7 +26,8 @@ module CyberarmEngine
           end
         end
 
-        @offset_x, @offset_y = 0, 0
+        @offset_x = 0
+        @offset_y = 0
 
         event(:begin_drag)
         event(:drag_update)
@@ -58,16 +59,16 @@ module CyberarmEngine
       end
 
       def update
-        if @type == :password
-          @text.text = default(:password_character) * @text_input.text.length
-        else
-          @text.text = @text_input.text
-        end
+        @text.text = if @type == :password
+                       default(:password_character) * @text_input.text.length
+                     else
+                       @text_input.text
+                     end
 
-        if @last_text_value != self.value
-          @last_text_value = self.value
+        if @last_text_value != value
+          @last_text_value = value
 
-          publish(:changed, self.value)
+          publish(:changed, value)
         end
 
         if Gosu.milliseconds >= @caret_last_interval + @caret_interval
@@ -85,7 +86,8 @@ module CyberarmEngine
 
       def handle_keyboard_shortcuts(id)
         return unless @focus && @enabled
-        if Gosu.button_down?(Gosu::KB_LEFT_CONTROL) or Gosu.button_down?(Gosu::KB_RIGHT_CONTROL)
+
+        if Gosu.button_down?(Gosu::KB_LEFT_CONTROL) || Gosu.button_down?(Gosu::KB_RIGHT_CONTROL)
           case id
           when Gosu::KB_A
             @text_input.selection_start = 0
@@ -113,7 +115,8 @@ module CyberarmEngine
 
           when Gosu::KB_V
             if instance_of?(EditLine) # EditLine assumes a single line of text
-              @text_input.text = @text_input.text.insert(@text_input.caret_pos, Clipboard.paste.encode("UTF-8").gsub("\n", ""))
+              @text_input.text = @text_input.text.insert(@text_input.caret_pos,
+                                                         Clipboard.paste.encode("UTF-8").gsub("\n", ""))
             else
               @text_input.text = @text_input.text.insert(@text_input.caret_pos, Clipboard.paste.encode("UTF-8"))
             end
@@ -123,15 +126,13 @@ module CyberarmEngine
 
       def caret_position_under_mouse(mouse_x)
         1.upto(@text.text.length) do |i|
-          if mouse_x < @text.x - @offset_x + @text.width(@text.text[0...i])
-            return i - 1
-          end
+          return i - 1 if mouse_x < @text.x - @offset_x + @text.width(@text.text[0...i])
         end
 
         @text_input.text.length
       end
 
-      def move_caret_to_mouse(mouse_x, mouse_y)
+      def move_caret_to_mouse(mouse_x, _mouse_y)
         @text_input.caret_pos = @text_input.selection_start = caret_position_under_mouse(mouse_x)
       end
 
@@ -144,16 +145,15 @@ module CyberarmEngine
         @last_text = @text.text
         @last_pos = caret_pos
 
-
         if caret_pos.between?(@offset_x, @width + @offset_x)
           # Do nothing
 
         elsif caret_pos < @offset_x
-          if caret_pos > @width
-            @offset_x = caret_pos + @width
-          else
-            @offset_x = 0
-          end
+          @offset_x = if caret_pos > @width
+                        caret_pos + @width
+                      else
+                        0
+                      end
 
         elsif caret_pos > @width
           @offset_x = caret_pos - @width
@@ -189,10 +189,10 @@ module CyberarmEngine
 
         move_caret_to_mouse(x, y)
 
-        return :handled
+        :handled
       end
 
-      def enter(sender)
+      def enter(_sender)
         if @focus
           @style.background_canvas.background = default(:active, :background)
           @text.color = default(:active, :color)
@@ -201,31 +201,29 @@ module CyberarmEngine
           @text.color = default(:hover, :color)
         end
 
-        return :handled
+        :handled
       end
 
       def leave(sender)
-        unless @focus
-          super
-        end
+        super unless @focus
 
-        return :handled
+        :handled
       end
 
-      def blur(sender)
+      def blur(_sender)
         @focus = false
         @style.background_canvas.background = default(:background)
         @text.color = default(:color)
         window.text_input = nil
 
-        return :handled
+        :handled
       end
 
       def draggable?(button)
         button == :left
       end
 
-      def begin_drag(sender, x, y, button)
+      def begin_drag(_sender, x, _y, _button)
         @drag_start = x
         @offset_drag_start = @offset_x
         @drag_caret_position = @text_input.caret_pos
@@ -233,14 +231,13 @@ module CyberarmEngine
         :handled
       end
 
-      def drag_update(sender, x, y, button)
+      def drag_update(_sender, x, _y, _button)
         @text_input.caret_pos = caret_position_under_mouse(x)
 
         :handled
       end
 
-      def end_drag(sender, x, y, button)
-
+      def end_drag(_sender, _x, _y, _button)
         :handled
       end
 

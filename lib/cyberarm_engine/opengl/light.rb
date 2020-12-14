@@ -6,16 +6,17 @@ module CyberarmEngine
 
     attr_reader :light_id
     attr_accessor :type, :ambient, :diffuse, :specular, :position, :direction, :intensity
+
     def initialize(
-                    id:,
-                    type: Light::POINT,
-                    ambient: Vector.new(0.5, 0.5, 0.5),
-                    diffuse: Vector.new(1, 1, 1),
-                    specular: Vector.new(0.2, 0.2, 0.2),
-                    position: Vector.new(0, 0, 0),
-                    direction: Vector.new(0, 0, 0),
-                    intensity: 1
-                  )
+      id:,
+      type: Light::POINT,
+      ambient: Vector.new(0.5, 0.5, 0.5),
+      diffuse: Vector.new(1, 1, 1),
+      specular: Vector.new(0.2, 0.2, 0.2),
+      position: Vector.new(0, 0, 0),
+      direction: Vector.new(0, 0, 0),
+      intensity: 1
+    )
       @light_id = id
       @type = type
 
@@ -40,9 +41,9 @@ module CyberarmEngine
 
     def convert(struct, apply_intensity = false)
       if apply_intensity
-        return struct.to_a.compact.map{ |i| i * @intensity }
+        struct.to_a.compact.map { |i| i * @intensity }
       else
-        return struct.to_a.compact
+        struct.to_a.compact
       end
     end
   end

@@ -7,10 +7,10 @@ end
 
 module CyberarmEngine
   def gl_error?
-    e = glGetError()
+    e = glGetError
     if e != GL_NO_ERROR
-      $stderr.puts "OpenGL error detected by handler at: #{caller[0]}"
-      $stderr.puts "    #{gluErrorString(e)} (#{e})\n"
+      warn "OpenGL error detected by handler at: #{caller[0]}"
+      warn "    #{gluErrorString(e)} (#{e})\n"
       exit if window.exit_on_opengl_error?
     end
   end

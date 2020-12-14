@@ -35,7 +35,7 @@ module CyberarmEngine
     # throws :blur event to focused element and sets GuiState focused element
     # Does NOT throw :focus event at element or set element as focused
     def focus=(element)
-      @focus.publish(:blur) if @focus and element && @focus != element
+      @focus.publish(:blur) if @focus && element && @focus != element
       @focus = element
     end
 
@@ -88,7 +88,8 @@ module CyberarmEngine
       if Vector.new(window.mouse_x, window.mouse_y) == @last_mouse_pos
         if @mouse_over && (Gosu.milliseconds - @mouse_moved_at) > tool_tip_delay
           @tip.text = @mouse_over.tip if @mouse_over
-          @tip.x, @tip.y = window.mouse_x - @tip.width / 2, window.mouse_y - @tip.height - 4
+          @tip.x = window.mouse_x - @tip.width / 2
+          @tip.y = window.mouse_y - @tip.height - 4
         else
           @tip.text = ""
         end
@@ -146,7 +147,7 @@ module CyberarmEngine
     end
 
     def redirect_mouse_button(button)
-      hide_menu unless @menu and (@menu == @mouse_over) or (@mouse_over&.parent == @menu)
+      hide_menu unless @menu && (@menu == @mouse_over) || (@mouse_over&.parent == @menu)
 
       if @focus && @mouse_over != @focus
         @focus.publish(:blur)
@@ -165,11 +166,14 @@ module CyberarmEngine
     end
 
     def redirect_released_mouse_button(button)
-      hide_menu if @menu and (@menu == @mouse_over) or (@mouse_over&.parent == @menu)
+      hide_menu if @menu && (@menu == @mouse_over) || (@mouse_over&.parent == @menu)
 
       if @mouse_over
         @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y)
-        @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over == @mouse_down_on[button]
+        if @mouse_over == @mouse_down_on[button]
+          @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x,
+                              window.mouse_y)
+        end
       end
 
       if @dragging_element
@@ -184,13 +188,13 @@ module CyberarmEngine
     def redirect_holding_mouse_button(button)
       if !@dragging_element && @mouse_down_on[button] && @mouse_down_on[button].draggable?(button) && @mouse_pos.distance(@mouse_down_position[button]) > @min_drag_distance
         @dragging_element = @mouse_down_on[button]
-        @dragging_element.publish(:"begin_drag", window.mouse_x, window.mouse_y, button)
+        @dragging_element.publish(:begin_drag, window.mouse_x, window.mouse_y, button)
       end
 
       if @dragging_element
-        @dragging_element.publish(:"drag_update", window.mouse_x, window.mouse_y, button) if @dragging_element
-      else
-        @mouse_over.publish(:"holding_#{button}_mouse_button", window.mouse_x, window.mouse_y) if @mouse_over
+        @dragging_element.publish(:drag_update, window.mouse_x, window.mouse_y, button) if @dragging_element
+      elsif @mouse_over
+        @mouse_over.publish(:"holding_#{button}_mouse_button", window.mouse_x, window.mouse_y)
       end
     end
 

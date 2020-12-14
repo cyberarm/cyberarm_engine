@@ -16,7 +16,7 @@ module CyberarmEngine
       @focus   = false
       @enabled = true
       @visible = true
-      @tip = @options[:tip] ? @options[:tip] : ""
+      @tip = @options[:tip] || ""
 
       @style = Style.new(options)
 
@@ -102,7 +102,7 @@ module CyberarmEngine
     end
 
     def default_events
-      [:left, :middle, :right].each do |button|
+      %i[left middle right].each do |button|
         event(:"#{button}_mouse_button")
         event(:"released_#{button}_mouse_button")
         event(:"clicked_#{button}_mouse_button")
@@ -152,7 +152,7 @@ module CyberarmEngine
       @style.background_canvas.draw
       @style.border_canvas.draw
 
-      Gosu.clip_to(@x,@y, width, height) do
+      Gosu.clip_to(@x, @y, width, height) do
         render
       end
     end
@@ -166,7 +166,7 @@ module CyberarmEngine
     def button_up(id)
     end
 
-    def draggable?(button)
+    def draggable?(_button)
       false
     end
 
@@ -175,7 +175,7 @@ module CyberarmEngine
 
     def hit?(x, y)
       x.between?(@x, @x + width) &&
-      y.between?(@y, @y + height)
+        y.between?(@y, @y + height)
     end
 
     def width
@@ -227,11 +227,11 @@ module CyberarmEngine
     end
 
     def dimensional_size(size, dimension)
-      raise "dimension must be either :width or :height" unless dimension == :width || dimension == :height
+      raise "dimension must be either :width or :height" unless %i[width height].include?(dimension)
 
       if size && size.is_a?(Numeric)
         if size.between?(0.0, 1.0)
-          ((@parent.send(:"content_#{dimension}") - self.send(:"noncontent_#{dimension}")) * size).round
+          ((@parent.send(:"content_#{dimension}") - send(:"noncontent_#{dimension}")) * size).round
         else
           size
         end
@@ -239,7 +239,7 @@ module CyberarmEngine
     end
 
     def background=(_background)
-      @style.background_canvas.background=(_background)
+      @style.background_canvas.background = (_background)
       update_background
     end
 
@@ -288,12 +288,12 @@ module CyberarmEngine
       raise "#{self.class}#value was not overridden!"
     end
 
-    def value=(value)
+    def value=(_value)
       raise "#{self.class}#value= was not overridden!"
     end
 
     def to_s
-      "#{self.class} x=#{x} y=#{y} width=#{width} height=#{height} value=#{ value.is_a?(String) ? "\"#{value}\"" : value }"
+      "#{self.class} x=#{x} y=#{y} width=#{width} height=#{height} value=#{value.is_a?(String) ? "\"#{value}\"" : value}"
     end
   end
 end

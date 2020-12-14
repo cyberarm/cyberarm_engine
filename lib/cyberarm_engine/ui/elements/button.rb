@@ -2,11 +2,11 @@ module CyberarmEngine
   class Element
     class Button < Label
       def initialize(text_or_image, options = {}, block = nil)
-        @image, @scale_x, @scale_y = nil, 1, 1
+        @image = nil
+        @scale_x = 1
+        @scale_y = 1
 
-        if text_or_image.is_a?(Gosu::Image)
-          @image = text_or_image
-        end
+        @image = text_or_image if text_or_image.is_a?(Gosu::Image)
 
         super(text_or_image, options, block)
 
@@ -26,14 +26,15 @@ module CyberarmEngine
           @style.border_thickness_left + @style.padding_left + @x,
           @style.border_thickness_top + @style.padding_top + @y,
           @z + 2,
-          @scale_x, @scale_y, @text.color)
+          @scale_x, @scale_y, @text.color
+        )
       end
 
       def draw_text
         @text.draw
       end
 
-      def enter(sender)
+      def enter(_sender)
         @focus = false unless window.button_down?(Gosu::MsLeft)
 
         if @focus
@@ -44,49 +45,50 @@ module CyberarmEngine
           @text.color = default(:hover, :color)
         end
 
-        return :handled
+        :handled
       end
 
-      def left_mouse_button(sender, x, y)
+      def left_mouse_button(_sender, _x, _y)
         @focus = true
         @style.background_canvas.background = default(:active, :background)
         window.current_state.focus = self
         @text.color = default(:active, :color)
 
-        return :handled
+        :handled
       end
 
-      def released_left_mouse_button(sender,x, y)
+      def released_left_mouse_button(sender, _x, _y)
         enter(sender)
 
-        return :handled
+        :handled
       end
 
-      def clicked_left_mouse_button(sender, x, y)
+      def clicked_left_mouse_button(_sender, _x, _y)
         @block.call(self) if @block
 
-        return :handled
+        :handled
       end
 
-      def leave(sender)
+      def leave(_sender)
         @style.background_canvas.background = default(:background)
         @text.color = default(:color)
 
-        return :handled
+        :handled
       end
 
-      def blur(sender)
+      def blur(_sender)
         @focus = false
 
-        return :handled
+        :handled
       end
 
       def recalculate
         if @image
-          @width, @height = 0, 0
+          @width = 0
+          @height = 0
 
           _width = dimensional_size(@style.image_width, :width)
-          _height= dimensional_size(@style.image_height,:height)
+          _height = dimensional_size(@style.image_height, :height)
 
           if _width && _height
             @scale_x = _width.to_f / @image.width
@@ -98,11 +100,12 @@ module CyberarmEngine
             @scale_y = _height.to_f / @image.height
             @scale_x = @scale_y
           else
-            @scale_x, @scale_y = 1, 1
+            @scale_x = 1
+            @scale_y = 1
           end
 
-          @width = _width  ? _width  : @image.width.round * @scale_x
-          @height= _height ? _height : @image.height.round * @scale_y
+          @width = _width || @image.width.round * @scale_x
+          @height = _height || @image.height.round * @scale_y
 
           update_background
         else
@@ -111,7 +114,7 @@ module CyberarmEngine
       end
 
       def value
-        @image ? @image : super
+        @image || super
       end
 
       def value=(value)
@@ -121,7 +124,8 @@ module CyberarmEngine
           super
         end
 
-        old_width, old_height = width, height
+        old_width = width
+        old_height = height
         recalculate
 
         root.gui_state.request_recalculate if old_width != width || old_height != height

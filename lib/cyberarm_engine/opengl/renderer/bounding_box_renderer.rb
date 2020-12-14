@@ -1,6 +1,7 @@
 module CyberarmEngine
   class BoundingBoxRenderer
     attr_reader :bounding_boxes, :vertex_count
+
     def initialize
       @bounding_boxes = {}
       @vertex_count = 0
@@ -8,7 +9,7 @@ module CyberarmEngine
 
     def render(entities)
       entities.each do |entity|
-        create_bounding_box(entity,color = nil)
+        create_bounding_box(entity, color = nil)
         draw_bounding_boxes
       end
 
@@ -43,7 +44,7 @@ module CyberarmEngine
       colors   = mesh_colors(color)
       vertices = mesh_vertices(box)
 
-      @vertex_count+=vertices.size
+      @vertex_count += vertices.size
 
       @bounding_boxes[entity_id][:vertices_size] = vertices.size
       @bounding_boxes[entity_id][:vertices]      = vertices.pack("f*")
@@ -58,7 +59,7 @@ module CyberarmEngine
         colors   = mesh_colors(mesh.debug_color)
         vertices = mesh_vertices(box)
 
-        @vertex_count+=vertices.size
+        @vertex_count += vertices.size
 
         data[:vertices_size] = vertices.size
         data[:vertices]      = vertices.pack("f*")
@@ -71,48 +72,48 @@ module CyberarmEngine
 
     def mesh_normals
       [
-        0,1,0,
-        0,1,0,
-        0,1,0,
-        0,1,0,
-        0,1,0,
-        0,1,0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
 
-        0,-1,0,
-        0,-1,0,
-        0,-1,0,
-        0,-1,0,
-        0,-1,0,
-        0,-1,0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
 
-        0,0,1,
-        0,0,1,
-        0,0,1,
-        0,0,1,
-        0,0,1,
-        0,0,1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
 
-        1,0,0,
-        1,0,0,
-        1,0,0,
-        1,0,0,
-        1,0,0,
-        1,0,0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
 
-        -1,0,0,
-        -1,0,0,
-        -1,0,0,
-        -1,0,0,
-        -1,0,0,
-        -1,0,0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
 
-        -1,0,0,
-        -1,0,0,
-        -1,0,0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
 
-        -1,0,0,
-        -1,0,0,
-        -1,0,0
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0
       ]
     end
 
@@ -219,7 +220,7 @@ module CyberarmEngine
           bounding_box[:entity].position.z
         )
         draw_bounding_box(bounding_box)
-        @bounding_boxes[key][:objects].each {|o| draw_bounding_box(o)}
+        @bounding_boxes[key][:objects].each { |o| draw_bounding_box(o) }
 
         glPopMatrix
       end

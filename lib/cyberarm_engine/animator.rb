@@ -2,8 +2,10 @@ module CyberarmEngine
   class Animator
     DEFAULT_TWEEN = :linear
     def initialize(start_time:, duration:, from:, to:, &block)
-      @start_time, @duration = start_time, duration
-      @from, @to = from.dup, to.dup
+      @start_time = start_time
+      @duration = duration
+      @from = from.dup
+      @to = to.dup
       @block = block
     end
 
@@ -23,7 +25,7 @@ module CyberarmEngine
       from + (to - from) * send("tween_#{tween}", progress)
     end
 
-    def color_transition(from, to, tween = DEFAULT_TWEEN)
+    def color_transition(from, to, _tween = DEFAULT_TWEEN)
       r = transition(from.red, to.red)
       g = transition(from.green, to.green)
       b = transition(from.blue, to.blue)

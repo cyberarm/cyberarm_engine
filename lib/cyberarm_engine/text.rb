@@ -5,7 +5,7 @@ module CyberarmEngine
     attr_accessor :x, :y, :z, :size, :options
     attr_reader :text, :textobject, :factor_x, :factor_y, :color, :shadow, :shadow_size, :shadow_alpha, :shadow_color
 
-    def initialize(text, options={})
+    def initialize(text, options = {})
       @text = text.to_s || ""
       @options = options
       @size = options[:size] || 18
@@ -17,28 +17,28 @@ module CyberarmEngine
       @factor_y = options[:factor_y]  || 1
       @color    = options[:color]     || Gosu::Color::WHITE
       @mode     = options[:mode]      || :default
-      @alignment= options[:alignment] || nil
+      @alignment = options[:alignment] || nil
       @shadow   = true  if options[:shadow] == true
       @shadow   = false if options[:shadow] == false
-      @shadow   = true if options[:shadow] == nil
-      @shadow_size = options[:shadow_size] ? options[:shadow_size] : 1
-      @shadow_alpha= options[:shadow_alpha] ? options[:shadow_alpha] : 30
-      @shadow_alpha= options[:shadow_alpha] ? options[:shadow_alpha] : 30
-      @shadow_color= options[:shadow_color]
+      @shadow   = true if options[:shadow].nil?
+      @shadow_size = options[:shadow_size] || 1
+      @shadow_alpha = options[:shadow_alpha] || 30
+      @shadow_alpha = options[:shadow_alpha] || 30
+      @shadow_color = options[:shadow_color]
       @textobject = check_cache(@size, @font)
 
       if @alignment
         case @alignment
         when :left
-          @x = 0+BUTTON_PADDING
+          @x = 0 + BUTTON_PADDING
         when :center
-          @x = ($window.width/2)-(@textobject.text_width(@text)/2)
+          @x = ($window.width / 2) - (@textobject.text_width(@text) / 2)
         when :right
-          @x = $window.width-BUTTON_PADDING-@textobject.text_width(@text)
+          @x = $window.width - BUTTON_PADDING - @textobject.text_width(@text)
         end
       end
 
-      return self
+      self
     end
 
     def check_cache(size, font_name)
@@ -62,7 +62,7 @@ module CyberarmEngine
         CACHE[@size][@font] = font
       end
 
-      return font
+      font
     end
 
     def text=(string)
@@ -74,26 +74,32 @@ module CyberarmEngine
       @rendered_shadow = nil
       @factor_x = n
     end
+
     def factor_y=(n)
       @rendered_shadow = nil
       @factor_y = n
     end
+
     def color=(color)
       @rendered_shadow = nil
       @color = color
     end
+
     def shadow=(boolean)
       @rendered_shadow = nil
       @shadow = boolean
     end
+
     def shadow_size=(n)
       @rendered_shadow = nil
       @shadow_size = n
     end
+
     def shadow_alpha=(n)
       @rendered_shadow = nil
       @shadow_alpha = n
     end
+
     def shadow_color=(n)
       @rendered_shadow = nil
       @shadow_color = n
@@ -108,32 +114,33 @@ module CyberarmEngine
     end
 
     def height(text = @text)
-      text.lines.count > 0 ? (text.lines.count) * textobject.height : @textobject.height
+      text.lines.count > 0 ? text.lines.count * textobject.height : @textobject.height
     end
 
     def draw(method = :draw_markup)
       if @shadow && !ARGV.join.include?("--no-shadow")
         shadow_alpha = @color.alpha <= 30 ? @color.alpha : @shadow_alpha
-        shadow_color = @shadow_color ? @shadow_color : Gosu::Color.rgba(@color.red, @color.green, @color.blue, shadow_alpha)
-		white = Gosu::Color::WHITE
+        shadow_color = @shadow_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue,
+                                                         shadow_alpha)
+        white = Gosu::Color::WHITE
 
         _x = @shadow_size
         _y = @shadow_size
 
-        @rendered_shadow ||= Gosu.render((self.width+(shadow_size*2)).ceil, (self.height+(@shadow_size*2)).ceil) do
-          @textobject.send(method, @text, _x-@shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x-@shadow_size, _y-@shadow_size, @z, @factor_x, @factor_y, white, :add)
+        @rendered_shadow ||= Gosu.render((width + (shadow_size * 2)).ceil, (height + (@shadow_size * 2)).ceil) do
+          @textobject.send(method, @text, _x - @shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x - @shadow_size, _y - @shadow_size, @z, @factor_x, @factor_y, white, :add)
 
-          @textobject.send(method, @text, _x, _y-@shadow_size, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x+@shadow_size, _y-@shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x, _y - @shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x + @shadow_size, _y - @shadow_size, @z, @factor_x, @factor_y, white, :add)
 
-          @textobject.send(method, @text, _x, _y+@shadow_size, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x-@shadow_size, _y+@shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x - @shadow_size, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
 
-          @textobject.send(method, @text, _x+@shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x+@shadow_size, _y+@shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x + @shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x + @shadow_size, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
         end
-        @rendered_shadow.draw(@x-@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, shadow_color)
+        @rendered_shadow.draw(@x - @shadow_size, @y - @shadow_size, @z, @factor_x, @factor_y, shadow_color)
       end
 
       @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color, @mode)
@@ -147,6 +154,7 @@ module CyberarmEngine
       @color.alpha
     end
 
-    def update; end
+    def update
+    end
   end
 end

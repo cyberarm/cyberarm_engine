@@ -1,55 +1,48 @@
 module CyberarmEngine
   class Model
-    attr_accessor :objects, :materials, :vertices, :uvs, :texures, :normals, :faces, :colors, :bones
-    attr_accessor :material_file, :current_material, :current_object, :vertex_count, :smoothing
-    attr_reader :position, :bounding_box, :textured_material, :file_path
-
-    attr_reader :positions_buffer_id, :colors_buffer_id, :normals_buffer_id, :uvs_buffer_id, :textures_buffer_id
-    attr_reader :vertex_array_id
-    attr_reader :aabb_tree
+    attr_accessor :objects, :materials, :vertices, :uvs, :texures, :normals, :faces, :colors, :bones, :material_file,
+                  :current_material, :current_object, :vertex_count, :smoothing
+    attr_reader :position, :bounding_box, :textured_material, :file_path, :positions_buffer_id, :colors_buffer_id,
+                :normals_buffer_id, :uvs_buffer_id, :textures_buffer_id, :vertex_array_id, :aabb_tree
 
     def initialize(file_path:)
       @file_path = file_path
 
       @material_file  = nil
       @current_object = nil
-      @current_material=nil
-      @vertex_count  = 0
+      @current_material = nil
+      @vertex_count = 0
 
-      @objects  = []
-      @materials= {}
+      @objects = []
+      @materials = {}
       @vertices = []
       @colors   = []
       @uvs      = []
       @normals  = []
       @faces    = []
       @bones    = []
-      @smoothing= 0
+      @smoothing = 0
 
       @bounding_box = BoundingBox.new
       start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
 
       type = File.basename(file_path).split(".").last.to_sym
       parser = Model::Parser.find(type)
-      unless parser
-        raise "Unsupported model type '.#{type}', supported models are: #{Model::Parser.supported_formats}"
-      end
+      raise "Unsupported model type '.#{type}', supported models are: #{Model::Parser.supported_formats}" unless parser
 
       parse(parser)
 
       @has_texture = false
 
-      @materials.each do |key, material|
-        if material.texture_id
-          @has_texture = true
-        end
+      @materials.each do |_key, material|
+        @has_texture = true if material.texture_id
       end
 
       allocate_gl_objects
       populate_vertex_buffer
       configure_vao
 
-      @objects.each {|o| @vertex_count+=o.vertices.size}
+      @objects.each { |o| @vertex_count += o.vertices.size }
 
       start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
       # build_collision_tree
@@ -87,28 +80,28 @@ module CyberarmEngine
       @vertex_array_id = nil
       buffer = " " * 4
       glGenVertexArrays(1, buffer)
-      @vertex_array_id = buffer.unpack('L2').first
+      @vertex_array_id = buffer.unpack1("L2")
 
       # Allocate buffers for future use
       @positions_buffer_id = nil
       buffer = " " * 4
       glGenBuffers(1, buffer)
-      @positions_buffer_id = buffer.unpack('L2').first
+      @positions_buffer_id = buffer.unpack1("L2")
 
       @colors_buffer_id = nil
       buffer = " " * 4
       glGenBuffers(1, buffer)
-      @colors_buffer_id = buffer.unpack('L2').first
+      @colors_buffer_id = buffer.unpack1("L2")
 
       @normals_buffer_id = nil
       buffer = " " * 4
       glGenBuffers(1, buffer)
-      @normals_buffer_id = buffer.unpack('L2').first
+      @normals_buffer_id = buffer.unpack1("L2")
 
       @uvs_buffer_id = nil
       buffer = " " * 4
       glGenBuffers(1, buffer)
-      @uvs_buffer_id = buffer.unpack('L2').first
+      @uvs_buffer_id = buffer.unpack1("L2")
     end
 
     def populate_vertex_buffer
@@ -122,16 +115,15 @@ module CyberarmEngine
         colors  << face.colors.map   { |color| [color.red, color.green, color.blue] }
         norms   << face.normals.map  { |vert| [vert.x, vert.y, vert.z, vert.weight] }
 
-        if has_texture?
-          uvs     << face.uvs.map    { |vert| [vert.x, vert.y, vert.z] }
-        end
+        uvs << face.uvs.map { |vert| [vert.x, vert.y, vert.z] } if has_texture?
       end
 
       glBindBuffer(GL_ARRAY_BUFFER, @positions_buffer_id)
       glBufferData(GL_ARRAY_BUFFER, pos.flatten.size * Fiddle::SIZEOF_FLOAT, pos.flatten.pack("f*"), GL_STATIC_DRAW)
 
       glBindBuffer(GL_ARRAY_BUFFER, @colors_buffer_id)
-      glBufferData(GL_ARRAY_BUFFER, colors.flatten.size * Fiddle::SIZEOF_FLOAT, colors.flatten.pack("f*"), GL_STATIC_DRAW)
+      glBufferData(GL_ARRAY_BUFFER, colors.flatten.size * Fiddle::SIZEOF_FLOAT, colors.flatten.pack("f*"),
+                   GL_STATIC_DRAW)
 
       glBindBuffer(GL_ARRAY_BUFFER, @normals_buffer_id)
       glBufferData(GL_ARRAY_BUFFER, norms.flatten.size * Fiddle::SIZEOF_FLOAT, norms.flatten.pack("f*"), GL_STATIC_DRAW)

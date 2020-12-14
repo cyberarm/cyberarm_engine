@@ -5,55 +5,60 @@ module CyberarmEngine
     attr_accessor :image, :angle, :position, :velocity, :center_x, :center_y, :scale_x, :scale_y,
                   :color, :mode, :options, :paused, :radius, :last_position
     attr_reader :alpha
-    def initialize(options={})
-      if options[:auto_manage] || options[:auto_manage] == nil
-        $window.current_state.add_game_object(self)
-      end
+
+    def initialize(options = {})
+      $window.current_state.add_game_object(self) if options[:auto_manage] || options[:auto_manage].nil?
 
       @options = options
       @image = options[:image] ? image(options[:image]) : nil
-      x = options[:x] ? options[:x] : 0
-      y = options[:y] ? options[:y] : 0
-      z = options[:z] ? options[:z] : 0
+      x = options[:x] || 0
+      y = options[:y] || 0
+      z = options[:z] || 0
       @position = Vector.new(x, y, z)
       @velocity = Vector.new
       @last_position = Vector.new
-      @angle = options[:angle] ? options[:angle] : 0
+      @angle = options[:angle] || 0
 
-      @center_x = options[:center_x] ? options[:center_x] : 0.5
-      @center_y = options[:center_y] ? options[:center_y] : 0.5
+      @center_x = options[:center_x] || 0.5
+      @center_y = options[:center_y] || 0.5
 
-      @scale_x  = options[:scale_x] ? options[:scale_x] : 1
-      @scale_y  = options[:scale_y] ? options[:scale_y] : 1
+      @scale_x  = options[:scale_x] || 1
+      @scale_y  = options[:scale_y] || 1
 
-      @color    = options[:color] ? options[:color] : Gosu::Color.argb(0xff_ffffff)
-      @alpha    = options[:alpha] ? options[:alpha] : 255
-      @mode = options[:mode] ? options[:mode] : :default
+      @color    = options[:color] || Gosu::Color.argb(0xff_ffffff)
+      @alpha    = options[:alpha] || 255
+      @mode = options[:mode] || :default
 
       @paused = false
       @speed = 0
       @debug_color = Gosu::Color::GREEN
-      @world_center_point = Vector.new(0,0)
+      @world_center_point = Vector.new(0, 0)
 
       setup
 
-      @debug_text = Text.new("", color: @debug_color, y: @position.y-(self.height*self.scale), z: 9999)
+      @debug_text = Text.new("", color: @debug_color, y: @position.y - (height * scale), z: 9999)
       @debug_text.x = @position.x
-      if @radius == 0 || @radius == nil
-        @radius = options[:radius] ? options[:radius] : defined?(@image.width) ? ((@image.width+@image.height)/4)*scale : 1
+      if @radius == 0 || @radius.nil?
+        @radius = if options[:radius]
+                    options[:radius]
+                  else
+                    defined?(@image.width) ? ((@image.width + @image.height) / 4) * scale : 1
+                  end
       end
     end
 
     def draw
       if @image
-        @image.draw_rot(@position.x, @position.y, @position.z, @angle, @center_x, @center_y, @scale_x, @scale_y, @color, @mode)
+        @image.draw_rot(@position.x, @position.y, @position.z, @angle, @center_x, @center_y, @scale_x, @scale_y,
+                        @color, @mode)
       end
 
       if $debug
         show_debug_heading
         $window.draw_circle(@position.x, @position.y, radius, 9999, @debug_color)
         if @debug_text.text != ""
-          $window.draw_rect(@debug_text.x-10, (@debug_text.y-10), @debug_text.width+20, @debug_text.height+20, Gosu::Color.rgba(0,0,0,200), 9999)
+          $window.draw_rect(@debug_text.x - 10, (@debug_text.y - 10), @debug_text.width + 20, @debug_text.height + 20,
+                            Gosu::Color.rgba(0, 0, 0, 200), 9999)
           @debug_text.draw
         end
       end
@@ -64,13 +69,13 @@ module CyberarmEngine
 
     def debug_text(text)
       @debug_text.text = text
-      @debug_text.x = @position.x-(@debug_text.width / 2)
-      @debug_text.y = @position.y-(@debug_text.height + self.radius + self.height)
+      @debug_text.x = @position.x - (@debug_text.width / 2)
+      @debug_text.y = @position.y - (@debug_text.height + radius + height)
     end
 
     def scale
       if @scale_x == @scale_y
-        return @scale_x
+        @scale_x
       else
         false
         # maths?
@@ -80,7 +85,7 @@ module CyberarmEngine
     def scale=(int)
       self.scale_x = int
       self.scale_y = int
-      self.radius = ((@image.width+@image.height)/4)*self.scale
+      self.radius = ((@image.width + @image.height) / 4) * scale
     end
 
     def visible
@@ -97,16 +102,16 @@ module CyberarmEngine
     end
 
     def _x_visible
-      self.x.between?(($window.width/2)-(@world_center_point.x), ($window.width/2)+@world_center_point.x) ||
-        self.x.between?(((@world_center_point.x)-$window.width/2), ($window.width/2)+@world_center_point.x)
+      x.between?(($window.width / 2) - @world_center_point.x, ($window.width / 2) + @world_center_point.x) ||
+        x.between?((@world_center_point.x - $window.width / 2), ($window.width / 2) + @world_center_point.x)
     end
 
     def _y_visible
-      self.y.between?(($window.height/2)-(@world_center_point.y), ($window.height/2)+@world_center_point.y) ||
-        self.y.between?((@world_center_point.y)-($window.height/2), ($window.height/2)+@world_center_point.y)
+      y.between?(($window.height / 2) - @world_center_point.y, ($window.height / 2) + @world_center_point.y) ||
+        y.between?(@world_center_point.y - ($window.height / 2), ($window.height / 2) + @world_center_point.y)
     end
 
-    def heading(ahead_by = 100, object = nil, angle_only = false)
+    def heading(ahead_by = 100, _object = nil, angle_only = false)
       direction = Gosu.angle(@last_position.x, @last_position.x, @position.x, position.y).gosu_to_radians
 
       _x = @position.x + (ahead_by * Math.cos(direction))
@@ -122,11 +127,11 @@ module CyberarmEngine
     end
 
     def width
-      @image ? @image.width * self.scale : 0
+      @image ? @image.width * scale : 0
     end
 
     def height
-      @image ? @image.height * self.scale : 0
+      @image ? @image.height * scale : 0
     end
 
     def pause
@@ -138,8 +143,8 @@ module CyberarmEngine
     end
 
     def rotate(int)
-      self.angle+=int
-      self.angle%=360
+      self.angle += int
+      self.angle %= 360
     end
 
     def alpha=(int) # 0-255
@@ -149,7 +154,7 @@ module CyberarmEngine
     end
 
     def draw_rect(x, y, width, height, color, z = 0)
-      $window.draw_rect(x,y,width,height,color,z)
+      $window.draw_rect(x, y, width, height, color, z)
     end
 
     def button_up(id)
@@ -163,14 +168,14 @@ module CyberarmEngine
       best_distance = 100_000_000_000 # Huge default number
 
       game_object_class.all.each do |object|
-        distance = Gosu::distance(self.x, self.y, object.x, object.y)
+        distance = Gosu.distance(x, y, object.x, object.y)
         if distance <= best_distance
           best_object = object
           best_distance = distance
         end
       end
 
-      return best_object
+      best_object
     end
 
     def look_at(object)
@@ -178,31 +183,24 @@ module CyberarmEngine
     end
 
     def circle_collision?(object)
-      distance = Gosu.distance(self.x, self.y, object.x, object.y)
-      if distance <= self.radius+object.radius
-        true
-      else
-        false
-      end
+      distance = Gosu.distance(x, y, object.x, object.y)
+      distance <= radius + object.radius
     end
 
     # Duplication... so DRY.
-    def each_circle_collision(object, resolve_with = :width, &block)
+    def each_circle_collision(object, _resolve_with = :width, &block)
       if object.class != Class && object.instance_of?(object.class)
-        $window.current_state.game_objects.select {|i| i.class == object.class}.each do |o|
-          distance = Gosu.distance(self.x, self.y, object.x, object.y)
-          if distance <= self.radius+object.radius
-            block.call(o, object) if block
-          end
+        $window.current_state.game_objects.select { |i| i.instance_of?(object.class) }.each do |o|
+          distance = Gosu.distance(x, y, object.x, object.y)
+          block.call(o, object) if distance <= radius + object.radius && block
         end
       else
-        list = $window.current_state.game_objects.select {|i| i.class == object}
+        list = $window.current_state.game_objects.select { |i| i.instance_of?(object) }
         list.each do |o|
           next if self == o
-          distance = Gosu.distance(self.x, self.y, o.x, o.y)
-          if distance <= self.radius+o.radius
-            block.call(self, o) if block
-          end
+
+          distance = Gosu.distance(x, y, o.x, o.y)
+          block.call(self, o) if distance <= radius + o.radius && block
         end
       end
     end
@@ -210,35 +208,30 @@ module CyberarmEngine
     def destroy
       if $window.current_state
         $window.current_state.game_objects.each do |o|
-          if o.is_a?(self.class) && o == self
-            $window.current_state.game_objects.delete(o)
-          end
+          $window.current_state.game_objects.delete(o) if o.is_a?(self.class) && o == self
         end
       end
     end
 
     # NOTE: This could be implemented more reliably
     def all
-      INSTANCES.select {|i| i.class == self}
+      INSTANCES.select { |i| i.instance_of?(self) }
     end
 
-    def self.each_circle_collision(object, resolve_with = :width, &block)
+    def self.each_circle_collision(object, _resolve_with = :width, &block)
       if object.class != Class && object.instance_of?(object.class)
-        $window.current_state.game_objects.select {|i| i.class == self}.each do |o|
+        $window.current_state.game_objects.select { |i| i.instance_of?(self) }.each do |o|
           distance = Gosu.distance(o.x, o.y, object.x, object.y)
-          if distance <= o.radius+object.radius
-            block.call(o, object) if block
-          end
+          block.call(o, object) if distance <= o.radius + object.radius && block
         end
       else
-        lista = $window.current_state.game_objects.select {|i| i.class == self}
-        listb = $window.current_state.game_objects.select {|i| i.class == object}
+        lista = $window.current_state.game_objects.select { |i| i.instance_of?(self) }
+        listb = $window.current_state.game_objects.select { |i| i.instance_of?(object) }
         lista.product(listb).each do |o, o2|
           next if o == o2
+
           distance = Gosu.distance(o.x, o.y, o2.x, o2.y)
-          if distance <= o.radius+o2.radius
-            block.call(o, o2) if block
-          end
+          block.call(o, o2) if distance <= o.radius + o2.radius && block
         end
       end
     end
@@ -247,9 +240,7 @@ module CyberarmEngine
       INSTANCES.clear
       if $window.current_state
         $window.current_state.game_objects.each do |o|
-          if o.is_a?(self.class)
-            $window.current_state.game_objects.delete(o)
-          end
+          $window.current_state.game_objects.delete(o) if o.is_a?(self.class)
         end
       end
     end

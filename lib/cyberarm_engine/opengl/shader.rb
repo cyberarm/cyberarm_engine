@@ -22,9 +22,7 @@ module CyberarmEngine
       if shader
         @@shaders.delete(name)
 
-        if shader.compiled?
-          glDeleteProgram(shader.program)
-        end
+        glDeleteProgram(shader.program) if shader.compiled?
       end
     end
 
@@ -68,15 +66,15 @@ module CyberarmEngine
     # returns currently active {Shader}, if one is active
     #
     # @return [Shader?]
-    def self.active_shader
-      @active_shader
+    class << self
+      attr_reader :active_shader
     end
 
     # sets currently active {Shader}
     #
     # @param instance [Shader] instance of {Shader} to set as active
-    def self.active_shader=(instance)
-      @active_shader = instance
+    class << self
+      attr_writer :active_shader
     end
 
     # stops using currently active {Shader}
@@ -94,7 +92,8 @@ module CyberarmEngine
     #
     # @param variable [String]
     def self.attribute_location(variable)
-      raise RuntimeError, "No active shader!" unless Shader.active_shader
+      raise "No active shader!" unless Shader.active_shader
+
       Shader.active_shader.attribute_location(variable)
     end
 
@@ -103,12 +102,14 @@ module CyberarmEngine
     # @param variable [String]
     # @param value
     def self.set_uniform(variable, value)
-      raise RuntimeError, "No active shader!" unless Shader.active_shader
+      raise "No active shader!" unless Shader.active_shader
+
       Shader.active_shader.set_uniform(variable, value)
     end
 
     attr_reader :name, :program
-    def initialize(name:, includes_dir: nil, vertex: "shaders/default.vert", fragment:)
+
+    def initialize(name:, fragment:, includes_dir: nil, vertex: "shaders/default.vert")
       raise "Shader name can not be blank" if name.length == 0
 
       @name = name
@@ -120,7 +121,7 @@ module CyberarmEngine
       @error_buffer_size = 1024 * 8
       @variable_missing = {}
 
-      @data = {shaders: {}}
+      @data = { shaders: {} }
 
       unless shader_files_exist?(vertex: vertex, fragment: fragment)
         raise ArgumentError, "Shader files not found: #{vertex} or #{fragment}"
@@ -133,7 +134,7 @@ module CyberarmEngine
       compile_shader(type: :fragment)
       link_shaders
 
-      @data[:shaders].each { |key, id| glDeleteShader(id) }
+      @data[:shaders].each { |_key, id| glDeleteShader(id) }
 
       # Only add shader if it successfully compiles
       if @compiled
@@ -175,7 +176,7 @@ module CyberarmEngine
       _size = [processed_source.length].pack("I")
       glShaderSource(_shader, 1, _source, _size)
 
-      @data[:shaders][type] =_shader
+      @data[:shaders][type] = _shader
     end
 
     # evaluates shader preprocessors
@@ -199,22 +200,25 @@ module CyberarmEngine
       lines = source.lines
 
       lines.each_with_index do |line, i|
-        if line.start_with?(PREPROCESSOR_CHARACTER)
-          preprocessor = line.strip.split(" ")
-          lines.delete(line)
+        next unless line.start_with?(PREPROCESSOR_CHARACTER)
 
-          case preprocessor.first
-          when "@include"
-            raise ArgumentError, "Shader preprocessor include directory was not given for shader #{@name}" unless @includes_dir
+        preprocessor = line.strip.split(" ")
+        lines.delete(line)
 
-            preprocessor[1..preprocessor.length - 1].join.scan(/"([^"]*)"/).flatten.each do |file|
-              source = File.read("#{@includes_dir}/#{file}.glsl")
-
-              lines.insert(i, source)
-            end
-          else
-            warn "Unsupported preprocessor #{preprocessor.first} for #{@name}"
+        case preprocessor.first
+        when "@include"
+          unless @includes_dir
+            raise ArgumentError,
+                  "Shader preprocessor include directory was not given for shader #{@name}"
           end
+
+          preprocessor[1..preprocessor.length - 1].join.scan(/"([^"]*)"/).flatten.each do |file|
+            source = File.read("#{@includes_dir}/#{file}.glsl")
+
+            lines.insert(i, source)
+          end
+        else
+          warn "Unsupported preprocessor #{preprocessor.first} for #{@name}"
         end
       end
 
@@ -230,12 +234,12 @@ module CyberarmEngine
       raise ArgumentError, "No shader for #{type.inspect}" unless _shader
 
       glCompileShader(_shader)
-      buffer = '    '
+      buffer = "    "
       glGetShaderiv(_shader, GL_COMPILE_STATUS, buffer)
-      compiled = buffer.unpack('L')[0]
+      compiled = buffer.unpack1("L")
 
       if compiled == 0
-        log = ' ' * @error_buffer_size
+        log = " " * @error_buffer_size
         glGetShaderInfoLog(_shader, @error_buffer_size, nil, log)
         puts "Shader Error: Program \"#{@name}\""
         puts "  #{type.to_s.capitalize} Shader InfoLog:", "  #{log.strip.split("\n").join("\n  ")}\n\n"
@@ -246,7 +250,7 @@ module CyberarmEngine
         _compiled = true
       end
 
-      return _compiled
+      _compiled
     end
 
     # link compiled OpenGL Shaders in to a OpenGL Program
@@ -261,18 +265,18 @@ module CyberarmEngine
       end
       glLinkProgram(@program)
 
-      buffer = '    '
+      buffer = "    "
       glGetProgramiv(@program, GL_LINK_STATUS, buffer)
-      linked = buffer.unpack('L')[0]
+      linked = buffer.unpack1("L")
 
       if linked == 0
-        log = ' ' * @error_buffer_size
+        log = " " * @error_buffer_size
         glGetProgramInfoLog(@program, @error_buffer_size, nil, log)
         puts "Shader Error: Program \"#{@name}\""
         puts "  Program InfoLog:", "  #{log.strip.split("\n").join("\n  ")}\n\n"
       end
 
-      @compiled = linked == 0 ? false : true
+      @compiled = !(linked == 0)
     end
 
     # Returns the location of a uniform _variable_
@@ -281,18 +285,22 @@ module CyberarmEngine
     # @return [Integer] location of uniform
     def variable(variable)
       loc = glGetUniformLocation(@program, variable)
-      if (loc == -1)
-        puts "Shader Error: Program \"#{@name}\" has no such uniform named \"#{variable}\"", "  Is it used in the shader? GLSL may have optimized it out.", "  Is it miss spelled?" unless @variable_missing[variable]
+      if loc == -1
+        unless @variable_missing[variable]
+          puts "Shader Error: Program \"#{@name}\" has no such uniform named \"#{variable}\"",
+               "  Is it used in the shader? GLSL may have optimized it out.", "  Is it miss spelled?"
+        end
         @variable_missing[variable] = true
       end
-      return loc
+      loc
     end
 
     # @see Shader.use Shader.use
     def use(&block)
       return unless compiled?
       raise "Another shader is already in use! #{Shader.active_shader.name.inspect}" if Shader.active_shader
-      Shader.active_shader=self
+
+      Shader.active_shader = self
 
       glUseProgram(@program)
 
@@ -331,7 +339,7 @@ module CyberarmEngine
     # @param location [Integer]
     # @return [void]
     def uniform_transform(variable, value, location = nil)
-      attr_loc = location ? location : attribute_location(variable)
+      attr_loc = location || attribute_location(variable)
 
       glUniformMatrix4fv(attr_loc, 1, GL_FALSE, value.to_gl.pack("F16"))
     end
@@ -343,7 +351,7 @@ module CyberarmEngine
     # @param location [Integer]
     # @return [void]
     def uniform_boolean(variable, value, location = nil)
-      attr_loc = location ? location : attribute_location(variable)
+      attr_loc = location || attribute_location(variable)
 
       glUniform1i(attr_loc, value ? 1 : 0)
     end
@@ -354,7 +362,7 @@ module CyberarmEngine
     # @param location [Integer]
     # @return [void]
     def uniform_integer(variable, value, location = nil)
-      attr_loc = location ? location : attribute_location(variable)
+      attr_loc = location || attribute_location(variable)
 
       glUniform1i(attr_loc, value)
     end
@@ -366,7 +374,7 @@ module CyberarmEngine
     # @param location [Integer]
     # @return [void]
     def uniform_float(variable, value, location = nil)
-      attr_loc = location ? location : attribute_location(variable)
+      attr_loc = location || attribute_location(variable)
 
       glUniform1f(attr_loc, value)
     end
@@ -378,7 +386,7 @@ module CyberarmEngine
     # @param location [Integer]
     # @return [void]
     def uniform_vec3(variable, value, location = nil)
-      attr_loc = location ? location : attribute_location(variable)
+      attr_loc = location || attribute_location(variable)
 
       glUniform3f(attr_loc, *value.to_a[0..2])
     end
@@ -390,7 +398,7 @@ module CyberarmEngine
     # @param location [Integer]
     # @return [void]
     def uniform_vec4(variable, value, location = nil)
-      attr_loc = location ? location : attribute_location(variable)
+      attr_loc = location || attribute_location(variable)
 
       glUniform4f(attr_loc, *value.to_a)
     end

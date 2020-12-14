@@ -11,17 +11,21 @@ module CyberarmEngine
 
     def theme_defaults(options)
       raise "Error" unless self.class.ancestors.include?(CyberarmEngine::Element)
+
       _theme = THEME
       _theme = deep_merge(_theme, options[:theme]) if options[:theme]
       _theme.delete(:theme) if options[:theme]
 
       hash = {}
       class_names = self.class.ancestors
-      class_names = class_names[0..class_names.index(CyberarmEngine::Element)].map! {|c| c.to_s.split("::").last.to_sym}.reverse!
+      class_names = class_names[0..class_names.index(CyberarmEngine::Element)].map! do |c|
+        c.to_s.split("::").last.to_sym
+      end.reverse!
 
       class_names.each do |klass|
         next unless data = _theme.dig(klass)
-        data.each do |key, value|
+
+        data.each do |_key, _value|
           hash.merge!(data)
         end
       end
@@ -32,7 +36,7 @@ module CyberarmEngine
     # Derived from Rails Hash#deep_merge!
     # Enables passing partial themes through Element options without issue
     def deep_merge(original, intergrate, &block)
-      hash = original.merge(intergrate) do |key, this_val, other_val|
+      original.merge(intergrate) do |key, this_val, other_val|
         if this_val.is_a?(Hash) && other_val.is_a?(Hash)
           deep_merge(this_val, other_val, &block)
         elsif block_given?
@@ -41,8 +45,6 @@ module CyberarmEngine
           other_val
         end
       end
-
-      return hash
     end
 
     THEME = {
@@ -73,8 +75,8 @@ module CyberarmEngine
         text_wrap: :none,
 
         hover: {
-          color: Gosu::Color.rgb(200,200,200),
-          background:  ["ffB23E41".to_i(16), "ffFF7C00".to_i(16)]
+          color: Gosu::Color.rgb(200, 200, 200),
+          background: ["ffB23E41".to_i(16), "ffFF7C00".to_i(16)]
         },
 
         active: {

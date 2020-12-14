@@ -4,14 +4,14 @@ module CyberarmEngine
       include Common
 
       attr_accessor :stroke_color, :fill_color
-      attr_reader :children, :gui_state
-      attr_reader :scroll_x, :scroll_y
+      attr_reader :children, :gui_state, :scroll_x, :scroll_y
 
       def initialize(options = {}, block = nil)
         @gui_state = options.delete(:gui_state)
         super
 
-        @scroll_x, @scroll_y = 0, 0
+        @scroll_x = 0
+        @scroll_y = 0
         @scroll_speed = 10
 
         @text_color = options[:color]
@@ -49,27 +49,27 @@ module CyberarmEngine
           @children.each(&:draw)
         end
 
-        if false#DEBUG
+        if false # DEBUG
           Gosu.flush
 
           Gosu.draw_line(
-            self.x, self.y, Gosu::Color::RED,
-            self.x + outer_width, self.y, Gosu::Color::RED,
+            x, y, Gosu::Color::RED,
+            x + outer_width, y, Gosu::Color::RED,
             Float::INFINITY
           )
           Gosu.draw_line(
-            self.x + outer_width, self.y, Gosu::Color::RED,
-            self.x + outer_width, self.y + outer_height, Gosu::Color::RED,
+            x + outer_width, y, Gosu::Color::RED,
+            x + outer_width, y + outer_height, Gosu::Color::RED,
             Float::INFINITY
           )
           Gosu.draw_line(
-            self.x + outer_width, self.y + outer_height, Gosu::Color::RED,
-            self.x, self.y + outer_height, Gosu::Color::RED,
+            x + outer_width, y + outer_height, Gosu::Color::RED,
+            x, y + outer_height, Gosu::Color::RED,
             Float::INFINITY
           )
           Gosu.draw_line(
-            self.x, outer_height, Gosu::Color::RED,
-            self.x, self.y, Gosu::Color::RED,
+            x, outer_height, Gosu::Color::RED,
+            x, y, Gosu::Color::RED,
             Float::INFINITY
           )
         end
@@ -110,13 +110,14 @@ module CyberarmEngine
           @width  = @style.width  = window.width
           @height = @style.height = window.height
         else
-          @width, @height = 0, 0
+          @width = 0
+          @height = 0
 
           _width = dimensional_size(@style.width, :width)
-          _height= dimensional_size(@style.height,:height)
+          _height = dimensional_size(@style.height, :height)
 
-          @width  = _width  ? _width  : (@children.map {|c| c.x + c.outer_width }.max || 0).round
-          @height = _height ? _height : (@children.map {|c| c.y + c.outer_height}.max || 0).round
+          @width  = _width  || (@children.map { |c| c.x + c.outer_width }.max || 0).round
+          @height = _height || (@children.map { |c| c.y + c.outer_height }.max || 0).round
         end
 
         # Move child to parent after positioning
@@ -140,13 +141,17 @@ module CyberarmEngine
 
       def max_width
         _width = dimensional_size(@style.width, :width)
-        _width ? outer_width : window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
+        if _width
+          outer_width
+        else
+          window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
+        end
       end
 
       def fits_on_line?(element) # Flow
         p [@options[:id], @width] if @options[:id]
         @current_position.x + element.outer_width <= max_width &&
-        @current_position.x + element.outer_width <= window.width
+          @current_position.x + element.outer_width <= window.width
       end
 
       def position_on_current_line(element) # Flow
@@ -157,14 +162,14 @@ module CyberarmEngine
         @current_position.x = @style.margin_left if @current_position.x >= max_width
       end
 
-      def tallest_neighbor(querier, y_position) # Flow
+      def tallest_neighbor(querier, _y_position) # Flow
         response = querier
         @children.each do |child|
           response = child if child.outer_height > response.outer_height
           break if child == querier
         end
 
-        return response
+        response
       end
 
       def position_on_next_line(child) # Flow
@@ -195,17 +200,17 @@ module CyberarmEngine
       # end
 
       def value
-        @children.map {|c| c.class}.join(", ")
+        @children.map { |c| c.class }.join(", ")
       end
 
       def to_s
         "#{self.class} x=#{x} y=#{y} width=#{width} height=#{height} children=#{@children.size}"
       end
 
-      def write_tree(indent = "", index = 0)
+      def write_tree(indent = "", _index = 0)
         puts self
 
-        indent = indent + "  "
+        indent += "  "
         @children.each_with_index do |child, i|
           print "#{indent}#{i}: "
 

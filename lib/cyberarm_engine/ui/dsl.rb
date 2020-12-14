@@ -12,70 +12,70 @@ module CyberarmEngine
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::Label.new(text, options, block) )
+      add_element(Element::Label.new(text, options, block))
     end
 
     def button(text, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::Button.new(text, options, block) { if block.is_a?(Proc); block.call; end } )
+      add_element(Element::Button.new(text, options, block) { block.call if block.is_a?(Proc) })
     end
 
     def list_box(options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::ListBox.new(options, block) { if block.is_a?(Proc); block.call; end } )
+      add_element(Element::ListBox.new(options, block) { block.call if block.is_a?(Proc) })
     end
 
     def edit_line(text, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::EditLine.new(text, options, block) )
+      add_element(Element::EditLine.new(text, options, block))
     end
 
     def edit_box(text, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::EditBox.new(text, options, block) )
+      add_element(Element::EditBox.new(text, options, block))
     end
 
     def toggle_button(options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::ToggleButton.new(options, block) )
+      add_element(Element::ToggleButton.new(options, block))
     end
 
     def check_box(text, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::CheckBox.new(text, options, block) )
+      add_element(Element::CheckBox.new(text, options, block))
     end
 
     def image(path, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::Image.new(path, options, block) )
+      add_element(Element::Image.new(path, options, block))
     end
 
     def progress(options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::Progress.new(options, block) )
+      add_element(Element::Progress.new(options, block))
     end
 
     def slider(options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element( Element::Slider.new(options, block) )
+      add_element(Element::Slider.new(options, block))
     end
 
     def background(color = Gosu::Color::NONE)
@@ -93,7 +93,7 @@ module CyberarmEngine
     private def add_element(element)
       element_parent.add(element)
 
-      return element
+      element
     end
 
     private def element_parent
@@ -114,7 +114,7 @@ module CyberarmEngine
 
       $__current_container__ = old_parent
 
-      return _container
+      _container
     end
   end
 end

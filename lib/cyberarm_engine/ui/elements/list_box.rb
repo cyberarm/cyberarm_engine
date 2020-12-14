@@ -5,8 +5,8 @@ module CyberarmEngine
       attr_reader :choose
 
       def initialize(options = {}, block = nil)
-        @items = options[:items] ? options[:items] : []
-        @choose = options[:choose] ? options[:choose] : @items.first
+        @items = options[:items] || []
+        @choose = options[:choose] || @items.first
 
         super(@choose, options, block)
 
@@ -29,6 +29,7 @@ module CyberarmEngine
       def choose=(item)
         valid = @items.detect { |i| i == item }
         return unless valid # TODO: Throw an error?
+
         @choose = item
 
         self.value = item.to_s
@@ -36,18 +37,19 @@ module CyberarmEngine
         recalculate
       end
 
-      def released_left_mouse_button(sender, x, y)
+      def released_left_mouse_button(_sender, _x, _y)
         show_menu
 
-        return :handled
+        :handled
       end
 
       def show_menu
         @menu.clear
         @items.each do |item|
-          [ @block]
+          [@block]
           block = proc { self.choose = item; @block.call(item) if @block }
-          b = Button.new(item, { parent: @menu, width: 1.0, theme: @options[:theme], margin: 0, border_color: 0x00ffffff }, block)
+          b = Button.new(item,
+                         { parent: @menu, width: 1.0, theme: @options[:theme], margin: 0, border_color: 0x00ffffff }, block)
 
           @menu.add(b)
         end

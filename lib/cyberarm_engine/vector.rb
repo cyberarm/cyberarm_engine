@@ -60,21 +60,14 @@ module CyberarmEngine
       Vector.new(0, 0, -1)
     end
 
+    attr_accessor :x, :y, :z, :weight
+
     def initialize(x = 0, y = 0, z = 0, weight = 0)
-      @x, @y, @z, @weight = x, y, z, weight
+      @x = x
+      @y = y
+      @z = z
+      @weight = weight
     end
-
-    def x; @x; end
-    def x=(n); @x = n; end
-
-    def y; @y; end
-    def y=(n); @y = n; end
-
-    def z; @z; end
-    def z=(n); @z = n; end
-
-    def weight; @weight; end
-    def weight=(n); @weight = n; end
 
     alias w weight
     alias w= weight=
@@ -83,14 +76,14 @@ module CyberarmEngine
     def ==(other)
       if other.is_a?(Numeric)
         @x      == other &&
-        @y      == other &&
-        @z      == other &&
-        @weight == other
+          @y      == other &&
+          @z      == other &&
+          @weight == other
       elsif other.is_a?(Vector)
         @x      == other.x &&
-        @y      == other.y &&
-        @z      == other.z &&
-        @weight == other.weight
+          @y      == other.y &&
+          @z      == other.z &&
+          @weight == other.weight
       else
         other == self
       end
@@ -172,20 +165,20 @@ module CyberarmEngine
     def dot(other)
       product = 0
 
-      a = self.to_a
+      a = to_a
       b = other.to_a
 
       3.times do |i|
-        product = product + (a[i] * b[i])
+        product += (a[i] * b[i])
       end
 
-      return product
+      product
     end
 
     # cross product of {Vector}
     # @return [CyberarmEngine::Vector]
     def cross(other)
-      a = self.to_a
+      a = to_a
       b = other.to_a
 
       Vector.new(
@@ -198,7 +191,7 @@ module CyberarmEngine
     # returns degrees
     # @return [Float]
     def angle(other)
-      Math.acos( self.normalized.dot(other.normalized) ) * 180 / Math::PI
+      Math.acos(normalized.dot(other.normalized)) * 180 / Math::PI
     end
 
     # returns magnitude of Vector, ignoring #weight
@@ -219,7 +212,6 @@ module CyberarmEngine
       mag = magnitude
       self / Vector.new(mag, mag, mag)
     end
-
 
     # returns a direction {Vector}
     #
@@ -265,19 +257,19 @@ module CyberarmEngine
     # 2D distance using X and Y
     # @return [Float]
     def distance(other)
-      Math.sqrt((@x-other.x)**2 + (@y-other.y)**2)
+      Math.sqrt((@x - other.x)**2 + (@y - other.y)**2)
     end
 
     # 2D distance using X and Z
     # @return [Float]
     def gl_distance2d(other)
-      Math.sqrt((@x-other.x)**2 + (@z-other.z)**2)
+      Math.sqrt((@x - other.x)**2 + (@z - other.z)**2)
     end
 
     # 3D distance using X, Y, and Z
     # @return [Float]
     def distance3d(other)
-      Math.sqrt((@x-other.x)**2 + (@y-other.y)**2 + (@z-other.z)**2)
+      Math.sqrt((@x - other.x)**2 + (@y - other.y)**2 + (@z - other.z)**2)
     end
 
     # Converts {Vector} to Array
@@ -295,7 +287,7 @@ module CyberarmEngine
     # Converts {Vector} to Hash
     # @return [Hash]
     def to_h
-      {x: @x, y: @y, z: @z, weight: @weight}
+      { x: @x, y: @y, z: @z, weight: @weight }
     end
   end
 end

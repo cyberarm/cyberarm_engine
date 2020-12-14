@@ -4,7 +4,7 @@ module CyberarmEngine
       raise "Origin must be a Vector!" unless origin.is_a?(Vector)
       raise "Direction must be a Vector!" unless direction.is_a?(Vector)
 
-      @origin  = origin
+      @origin = origin
       @direction = direction
       @range = range
 
@@ -42,15 +42,15 @@ module CyberarmEngine
       tmin = max(tmin, min(tz1, tz2))
       tmax = min(tmax, max(tz1, tz2))
 
-      return tmax >= max(tmin, 0.0);
+      tmax >= max(tmin, 0.0)
     end
 
     def min(x, y)
-      ((x) < (y) ? (x) : (y))
+      ((x) < (y) ? x : y)
     end
 
     def max(x, y)
-      ((x) > (y) ? (x) : (y))
+      ((x) > (y) ? x : y)
     end
   end
 end

@@ -3,8 +3,10 @@ module CyberarmEngine
     @@immediate_mode_warning = false
 
     attr_accessor :show_wireframe
+
     def initialize(width:, height:, show_wireframe: false)
-      @width, @height = width, height
+      @width = width
+      @height = height
       @show_wireframe = show_wireframe
 
       @g_buffer = GBuffer.new(width: @width, height: @height)
@@ -63,7 +65,9 @@ module CyberarmEngine
         @g_buffer.unbind_framebuffer
         gl_error?
       else
-        puts "Shaders are disabled or failed to compile, using immediate mode for rendering..." unless @@immediate_mode_warning
+        unless @@immediate_mode_warning
+          puts "Shaders are disabled or failed to compile, using immediate mode for rendering..."
+        end
         @@immediate_mode_warning = true
 
         gl_error?
@@ -141,8 +145,8 @@ module CyberarmEngine
         glBindTexture(GL_TEXTURE_2D, @g_buffer.texture(:depth))
         shader.uniform_integer("depth", 4)
 
-        lights.each_with_index do |light, i|
-          shader.uniform_integer("light[0].type", light.type);
+        lights.each_with_index do |light, _i|
+          shader.uniform_integer("light[0].type", light.type)
           shader.uniform_vec3("light[0].direction", light.direction)
           shader.uniform_vec3("light[0].position", light.position)
           shader.uniform_vec3("light[0].diffuse", light.diffuse)
@@ -229,7 +233,7 @@ module CyberarmEngine
     end
 
     def draw_mesh(model)
-      model.objects.each_with_index do |o, i|
+      model.objects.each_with_index do |o, _i|
         glEnable(GL_COLOR_MATERIAL)
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
         glShadeModel(GL_FLAT) unless o.faces.first[4]
@@ -255,16 +259,16 @@ module CyberarmEngine
           glPolygonOffset(2, 0.5)
           glLineWidth(3)
 
-          glDrawArrays(GL_TRIANGLES, 0, o.flattened_vertices_size/4)
+          glDrawArrays(GL_TRIANGLES, 0, o.flattened_vertices_size / 4)
 
           glLineWidth(1)
           glPolygonOffset(0, 0)
           glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
           glEnable(GL_LIGHTING)
 
-          glDrawArrays(GL_TRIANGLES, 0, o.flattened_vertices_size/4)
+          glDrawArrays(GL_TRIANGLES, 0, o.flattened_vertices_size / 4)
         else
-          glDrawArrays(GL_TRIANGLES, 0, o.flattened_vertices_size/4)
+          glDrawArrays(GL_TRIANGLES, 0, o.flattened_vertices_size / 4)
         end
 
         # glBindBuffer(GL_ARRAY_BUFFER, 0)

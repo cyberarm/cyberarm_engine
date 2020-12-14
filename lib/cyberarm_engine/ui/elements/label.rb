@@ -5,11 +5,11 @@ module CyberarmEngine
         super(options, block)
 
         @text = Text.new(
-                        text, font: @options[:font], z: @z, color: @options[:color],
-                        size: @options[:text_size], shadow: @options[:text_shadow],
-                        shadow_size: @options[:text_shadow_size],
-                        shadow_color: @options[:text_shadow_color]
-                      )
+          text, font: @options[:font], z: @z, color: @options[:color],
+                size: @options[:text_size], shadow: @options[:text_shadow],
+                shadow_size: @options[:text_shadow_size],
+                shadow_color: @options[:text_shadow_color]
+        )
 
         @raw_text = text
       end
@@ -18,7 +18,7 @@ module CyberarmEngine
         @text.draw
       end
 
-      def clicked_left_mouse_button(sender, x, y)
+      def clicked_left_mouse_button(_sender, _x, _y)
         @block&.call(self)
 
         # return :handled
@@ -44,11 +44,11 @@ module CyberarmEngine
           when :left
             @text.x = @style.border_thickness_left + @style.padding_left + @x
           when :center
-            if @text.width <= outer_width
-              @text.x = @x + outer_width / 2 - @text.width / 2
-            else # Act as left aligned
-              @text.x = @style.border_thickness_left + @style.padding_left + @x
-            end
+            @text.x = if @text.width <= outer_width
+                        @x + outer_width / 2 - @text.width / 2
+                      else # Act as left aligned
+                        @style.border_thickness_left + @style.padding_left + @x
+                      end
           when :right
             @text.x = @x + outer_width - (@text.width + @style.border_thickness_right + @style.padding_right)
           end
@@ -84,7 +84,7 @@ module CyberarmEngine
               if wrap_behavior == :word_wrap
                 max_reach.times do |i|
                   reach = i
-                  break if copy[line_end.floor - i].to_s.match(/[[:punct:]]|[ ]/)
+                  break if copy[line_end.floor - i].to_s.match(/[[:punct:]]| /)
                 end
 
                 puts "Max width: #{max_width}/#{line_width(@raw_text)} Reach: {#{reach}/#{max_reach}} Line Start: #{line_start}/#{line_end.floor} (#{copy.length}|#{@raw_text.length}) [#{entering_line_end}] '#{copy}' {#{copy[line_start...line_end]}}"

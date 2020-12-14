@@ -1,4 +1,4 @@
-CYBERARM_ENGINE_ROOT_PATH = File.expand_path("../..", __FILE__)
+CYBERARM_ENGINE_ROOT_PATH = File.expand_path("..", __dir__)
 
 begin
   require File.expand_path("../../ffi-gosu/lib/gosu", File.dirname(__FILE__))

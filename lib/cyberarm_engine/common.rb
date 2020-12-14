@@ -1,6 +1,6 @@
 module CyberarmEngine
   module Common
-    def push_state(klass, options={})
+    def push_state(klass, options = {})
       window.push_state(klass, options)
     end
 
@@ -20,7 +20,7 @@ module CyberarmEngine
       window.show_cursor
     end
 
-    def show_cursor=boolean
+    def show_cursor=(boolean)
       window.show_cursor = boolean
     end
 
@@ -34,24 +34,24 @@ module CyberarmEngine
 
     def lighten(color, amount = 25)
       if defined?(color.alpha)
-        return Gosu::Color.rgba(color.red + amount, color.green + amount, color.blue + amount, color.alpha)
+        Gosu::Color.rgba(color.red + amount, color.green + amount, color.blue + amount, color.alpha)
       else
-        return Gosu::Color.rgb(color.red + amount, color.green + amount, color.blue + amount)
+        Gosu::Color.rgb(color.red + amount, color.green + amount, color.blue + amount)
       end
     end
 
     def darken(color, amount = 25)
       if defined?(color.alpha)
-        return Gosu::Color.rgba(color.red - amount, color.green - amount, color.blue - amount, color.alpha)
+        Gosu::Color.rgba(color.red - amount, color.green - amount, color.blue - amount, color.alpha)
       else
-        return Gosu::Color.rgb(color.red - amount, color.green - amount, color.blue - amount)
+        Gosu::Color.rgb(color.red - amount, color.green - amount, color.blue - amount)
       end
     end
 
     def opacity(color, ratio = 1.0)
       alpha = 255 * ratio
 
-      return Gosu::Color.rgba(color.red, color.green, color.blue, alpha)
+      Gosu::Color.rgba(color.red, color.green, color.blue, alpha)
     end
 
     def get_asset(path, hash, klass, retro = false, tileable = false)
@@ -65,16 +65,16 @@ module CyberarmEngine
 
       unless asset
         instance = nil
-        if klass == Gosu::Image
-          instance = klass.new(path, retro: retro, tileable: tileable)
-        else
-          instance = klass.new(path)
-        end
+        instance = if klass == Gosu::Image
+                     klass.new(path, retro: retro, tileable: tileable)
+                   else
+                     klass.new(path)
+                   end
         hash[path] = instance
         asset = instance
       end
 
-      return asset
+      asset
     end
 
     def get_image(path, retro: false, tileable: false)

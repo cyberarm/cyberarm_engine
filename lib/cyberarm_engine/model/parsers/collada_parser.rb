@@ -57,7 +57,7 @@ module CyberarmEngine
       array = positions.at_css("[id=\"#{id}-positions-array\"]")
 
       stride = Integer(positions.at_css("[source=\"##{id}-positions-array\"]").attributes["stride"].value)
-      list = array.children.first.to_s.split(" ").map{ |f| Float(f) }.each_slice(stride).each do |slice|
+      list = array.children.first.to_s.split(" ").map { |f| Float(f) }.each_slice(stride).each do |slice|
         position = Vector.new(*slice)
         @model.current_object.vertices << position
         @model.vertices << position
@@ -69,7 +69,7 @@ module CyberarmEngine
       array = normals.at_css("[id=\"#{id}-normals-array\"]")
 
       stride = Integer(normals.at_css("[source=\"##{id}-normals-array\"]").attributes["stride"].value)
-      list = array.children.first.to_s.split(" ").map{ |f| Float(f) }.each_slice(stride).each do |slice|
+      list = array.children.first.to_s.split(" ").map { |f| Float(f) }.each_slice(stride).each do |slice|
         normal = Vector.new(*slice)
         @model.current_object.normals << normal
         @model.normals << normal
@@ -81,20 +81,23 @@ module CyberarmEngine
 
     def project_node(name)
       @collada.css("library_visual_scenes visual_scene node").each do |node|
-        if node.attributes["name"].value == name
-          transform = Transform.new( node.at_css("matrix").children.first.to_s.split(" ").map { |f| Float(f) } )
+        next unless node.attributes["name"].value == name
 
-          @model.current_object.vertices.each do |vert|
-            v = vert.multiply_transform(transform)
-            vert.x, vert.y, vert.z, vert.w = v.x, v.y, v.z, v.w
-          end
+        transform = Transform.new(node.at_css("matrix").children.first.to_s.split(" ").map { |f| Float(f) })
 
-          break
+        @model.current_object.vertices.each do |vert|
+          v = vert.multiply_transform(transform)
+          vert.x = v.x
+          vert.y = v.y
+          vert.z = v.z
+          vert.w = v.w
         end
+
+        break
       end
     end
 
-    def build_faces(id, mesh)
+    def build_faces(_id, mesh)
       material_name = mesh.at_css("triangles").attributes["material"].value
       set_material(material_name)
 
@@ -116,7 +119,7 @@ module CyberarmEngine
         face.normals  = []
         face.colors   = []
         face.material = current_material
-        face.smoothing= @model.smoothing
+        face.smoothing = @model.smoothing
 
         slice.each do |index|
           face.vertices << @model.vertices[index]

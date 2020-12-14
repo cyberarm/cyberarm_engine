@@ -1,11 +1,13 @@
 module CyberarmEngine
   class GBuffer
     attr_reader :screen_vbo, :vertices, :uvs
+
     def initialize(width:, height:)
-    @width, @height = width, height
+      @width = width
+      @height = height
 
       @framebuffer = nil
-      @buffers = [:position, :diffuse, :normal, :texcoord]
+      @buffers = %i[position diffuse normal texcoord]
       @textures = {}
       @screen_vbo = nil
       @ready = false
@@ -16,9 +18,9 @@ module CyberarmEngine
         -1.0,  1.0, 0,
 
         -1.0,  1.0, 0,
-        1.0,  -1.0, 0,
-        1.0,   1.0, 0,
-    ].freeze
+        1.0, -1.0, 0,
+        1.0, 1.0, 0
+      ].freeze
 
       @uvs = [
         0, 0,
@@ -35,9 +37,9 @@ module CyberarmEngine
     end
 
     def create_framebuffer
-      buffer = ' ' * 4
+      buffer = " " * 4
       glGenFramebuffers(1, buffer)
-      @framebuffer = buffer.unpack('L2').first
+      @framebuffer = buffer.unpack1("L2")
 
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, @framebuffer)
 
@@ -48,20 +50,20 @@ module CyberarmEngine
       if status != GL_FRAMEBUFFER_COMPLETE
         message = ""
 
-        case status
-        when GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-          message = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"
-        when GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-          message = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"
-        when GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER
-          message = "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"
-        when GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER
-          message = "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"
-        when GL_FRAMEBUFFER_UNSUPPORTED
-          message = "GL_FRAMEBUFFER_UNSUPPORTED"
-        else
-          message = "Unknown error!"
-        end
+        message = case status
+                  when GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+                    "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"
+                  when GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+                    "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"
+                  when GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER
+                    "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"
+                  when GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER
+                    "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"
+                  when GL_FRAMEBUFFER_UNSUPPORTED
+                    "GL_FRAMEBUFFER_UNSUPPORTED"
+                  else
+                    "Unknown error!"
+                  end
         puts "Incomplete framebuffer: #{status}\nError: #{message}"
       else
         @ready = true
@@ -72,9 +74,9 @@ module CyberarmEngine
 
     def create_textures
       @buffers.size.times do |i|
-        buffer = ' ' * 4
+        buffer = " " * 4
         glGenTextures(1, buffer)
-        texture_id = buffer.unpack('L2').first
+        texture_id = buffer.unpack1("L2")
         @textures[@buffers[i]] = texture_id
 
         glBindTexture(GL_TEXTURE_2D, texture_id)
@@ -84,39 +86,39 @@ module CyberarmEngine
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texture_id, 0)
       end
 
-      buffer = ' ' * 4
+      buffer = " " * 4
       glGenTextures(1, buffer)
-      texture_id = buffer.unpack('L2').first
+      texture_id = buffer.unpack1("L2")
       @textures[:depth] = texture_id
 
       glBindTexture(GL_TEXTURE_2D, texture_id)
       glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, @width, @height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nil)
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture_id, 0)
 
-      draw_buffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 ]
+      draw_buffers = [GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3]
       glDrawBuffers(draw_buffers.size, draw_buffers.pack("I*"))
     end
 
     def create_screen_vbo
-      buffer = ' ' * 4
+      buffer = " " * 4
       glGenVertexArrays(1, buffer)
-      @screen_vbo = buffer.unpack('L2').first
+      @screen_vbo = buffer.unpack1("L2")
 
       buffer = " " * 4
       glGenBuffers(1, buffer)
-      @positions_buffer_id = buffer.unpack('L2').first
+      @positions_buffer_id = buffer.unpack1("L2")
 
       buffer = " " * 4
       glGenBuffers(1, buffer)
-      @uvs_buffer_id = buffer.unpack('L2').first
+      @uvs_buffer_id = buffer.unpack1("L2")
 
       glBindVertexArray(@screen_vbo)
       glBindBuffer(GL_ARRAY_BUFFER, @positions_buffer_id)
-      glBufferData(GL_ARRAY_BUFFER, @vertices.size * Fiddle::SIZEOF_FLOAT, @vertices.pack("f*"), GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, @vertices.size * Fiddle::SIZEOF_FLOAT, @vertices.pack("f*"), GL_STATIC_DRAW)
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nil)
 
       glBindBuffer(GL_ARRAY_BUFFER, @uvs_buffer_id)
-      glBufferData(GL_ARRAY_BUFFER, @uvs.size * Fiddle::SIZEOF_FLOAT, @uvs.pack("f*"), GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, @uvs.size * Fiddle::SIZEOF_FLOAT, @uvs.pack("f*"), GL_STATIC_DRAW)
       glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nil)
 
       glEnableVertexAttribArray(0)

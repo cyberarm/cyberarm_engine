@@ -13,7 +13,7 @@ module CyberarmEngine
     end
 
     def self.clear
-      @@hash.each do |key, value|
+      @@hash.each do |key, _value|
         @@hash[key] = 0
       end
     end

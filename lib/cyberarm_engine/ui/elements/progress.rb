@@ -5,7 +5,7 @@ module CyberarmEngine
         super(options, block)
 
         @fraction_background = Background.new(background: @style.fraction_background)
-        self.value = options[:fraction] ? options[:fraction] : 0.0
+        self.value = options[:fraction] || 0.0
       end
 
       def render
@@ -14,9 +14,9 @@ module CyberarmEngine
 
       def recalculate
         _width = dimensional_size(@style.width, :width)
-        _height= dimensional_size(@style.height,:height)
+        _height = dimensional_size(@style.height, :height)
         @width = _width
-        @height= _height
+        @height = _height
 
         update_background
       end
@@ -44,7 +44,7 @@ module CyberarmEngine
         update_background
 
         publish(:changed, @fraction)
-        return @fraction
+        @fraction
       end
     end
   end

@@ -5,7 +5,7 @@ module CyberarmEngine
     attr_accessor :options, :global_pause
     attr_reader :game_objects
 
-    def initialize(options={})
+    def initialize(options = {})
       @options = options
       @game_objects = []
       @global_pause = false
@@ -26,7 +26,10 @@ module CyberarmEngine
     end
 
     def draw_bounding_box(box)
-      x,y, max_x, max_y = box.x, box.y, box.max_x, box.max_y
+      x = box.x
+      y = box.y
+      max_x = box.max_x
+      max_y = box.max_y
 
       color = Gosu::Color.rgba(255, 127, 64, 240)
 

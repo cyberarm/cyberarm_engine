@@ -1,11 +1,11 @@
 module Gosu
   class Color
-    def _dump(level)
+    def _dump(_level)
       [
-        "%02X" % self.alpha,
-        "%02X" % self.red,
-        "%02X" % self.green,
-        "%02X" % self.blue
+        "%02X" % alpha,
+        "%02X" % red,
+        "%02X" % green,
+        "%02X" % blue
       ].join
     end
 
@@ -21,13 +21,14 @@ module CyberarmEngine
       @hash = Marshal.load(Marshal.dump(hash))
     end
 
-    def method_missing(method, *args, &block)
+    def method_missing(method, *args)
       if method.to_s.end_with?("=")
         raise "Did not expect more than 1 argument" if args.size > 1
-        return @hash[method.to_s.sub("=", "").to_sym] = args.first
+
+        @hash[method.to_s.sub("=", "").to_sym] = args.first
 
       elsif args.size == 0
-        return @hash[method]
+        @hash[method]
 
       else
         raise ArgumentError, "Did not expect arguments"

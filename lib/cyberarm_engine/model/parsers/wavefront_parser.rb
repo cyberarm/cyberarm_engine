@@ -8,29 +8,29 @@ module CyberarmEngine
       lines = 0
       list = File.read(@model.file_path).split("\n")
       list.each do |line|
-        lines+=1
+        lines += 1
         line = line.strip
 
-        array = line.split(' ')
+        array = line.split(" ")
         case array[0]
-        when 'mtllib'
+        when "mtllib"
           @model.material_file = array[1]
           parse_mtllib
-        when 'usemtl'
+        when "usemtl"
           set_material(array[1])
-        when 'o'
+        when "o"
           change_object(nil, array[1])
-        when 's'
+        when "s"
           set_smoothing(array[1])
-        when 'v'
+        when "v"
           add_vertex(array)
-        when 'vt'
+        when "vt"
           add_texture_coordinate(array)
 
-        when 'vn'
+        when "vn"
           add_normal(array)
 
-        when 'f'
+        when "f"
           verts = []
           uvs   = []
           norms = []
@@ -46,22 +46,21 @@ module CyberarmEngine
           face.normals  = []
           face.colors   = []
           face.material = current_material
-          face.smoothing= @model.smoothing
+          face.smoothing = @model.smoothing
 
           mat   = face.material.diffuse
           color = mat
 
           verts.each_with_index do |v, index|
-
             if uvs.first != ""
-              face.vertices << @model.vertices[Integer(v)-1]
-              face.uvs      << @model.uvs[Integer(uvs[index])-1]
-              face.normals  << @model.normals[Integer(norms[index])-1]
+              face.vertices << @model.vertices[Integer(v) - 1]
+              face.uvs      << @model.uvs[Integer(uvs[index]) - 1]
+              face.normals  << @model.normals[Integer(norms[index]) - 1]
               face.colors   << color
             else
-              face.vertices << @model.vertices[Integer(v)-1]
+              face.vertices << @model.vertices[Integer(v) - 1]
               face.uvs      << nil
-              face.normals  << @model.normals[Integer(norms[index])-1]
+              face.normals  << @model.normals[Integer(norms[index]) - 1]
               face.colors   << color
             end
           end
@@ -78,43 +77,42 @@ module CyberarmEngine
     end
 
     def parse_mtllib
-      file = File.open(@model.file_path.sub(File.basename(@model.file_path), '')+@model.material_file, 'r')
+      file = File.open(@model.file_path.sub(File.basename(@model.file_path), "") + @model.material_file, "r")
       file.readlines.each do |line|
-        array = line.strip.split(' ')
+        array = line.strip.split(" ")
         case array.first
-        when 'newmtl'
+        when "newmtl"
           material = Model::Material.new(array.last)
           @model.current_material = array.last
           @model.materials[array.last] = material
-        when 'Ns' # Specular Exponent
-        when 'Ka' # Ambient color
-          @model.materials[@model.current_material].ambient  = Color.new(Float(array[1]), Float(array[2]), Float(array[3]))
-        when 'Kd' # Diffuse color
-          @model.materials[@model.current_material].diffuse  = Color.new(Float(array[1]), Float(array[2]), Float(array[3]))
-        when 'Ks' # Specular color
-          @model.materials[@model.current_material].specular = Color.new(Float(array[1]), Float(array[2]), Float(array[3]))
-        when 'Ke' # Emissive
-        when 'Ni' # Unknown (Blender Specific?)
-        when 'd'  # Dissolved (Transparency)
-        when 'illum' # Illumination model
-        when 'map_Kd' # Diffuse texture
+        when "Ns" # Specular Exponent
+        when "Ka" # Ambient color
+          @model.materials[@model.current_material].ambient  = Color.new(Float(array[1]), Float(array[2]),
+                                                                         Float(array[3]))
+        when "Kd" # Diffuse color
+          @model.materials[@model.current_material].diffuse  = Color.new(Float(array[1]), Float(array[2]),
+                                                                         Float(array[3]))
+        when "Ks" # Specular color
+          @model.materials[@model.current_material].specular = Color.new(Float(array[1]), Float(array[2]),
+                                                                         Float(array[3]))
+        when "Ke" # Emissive
+        when "Ni" # Unknown (Blender Specific?)
+        when "d"  # Dissolved (Transparency)
+        when "illum" # Illumination model
+        when "map_Kd" # Diffuse texture
           texture = File.basename(array[1])
-          texture_path = "#{File.expand_path("../../", @model.file_path)}/textures/#{texture}"
+          texture_path = "#{File.expand_path('../../', @model.file_path)}/textures/#{texture}"
           @model.materials[@model.current_material].set_texture(texture_path)
         end
       end
     end
 
     def set_smoothing(value)
-      if value == "1"
-        @model.smoothing = true
-      else
-        @model.smoothing = false
-      end
+      @model.smoothing = value == "1"
     end
 
     def add_vertex(array)
-      @model.vertex_count+=1
+      @model.vertex_count += 1
       vert = nil
       if array.size == 5
         vert = Vector.new(Float(array[1]), Float(array[2]), Float(array[3]), Float(array[4]))
@@ -143,9 +141,9 @@ module CyberarmEngine
     def add_texture_coordinate(array)
       texture = nil
       if array.size == 4
-        texture = Vector.new(Float(array[1]), 1-Float(array[2]), Float(array[3]))
+        texture = Vector.new(Float(array[1]), 1 - Float(array[2]), Float(array[3]))
       elsif array.size == 3
-        texture = Vector.new(Float(array[1]), 1-Float(array[2]), 1.0)
+        texture = Vector.new(Float(array[1]), 1 - Float(array[2]), 1.0)
       else
         raise
       end

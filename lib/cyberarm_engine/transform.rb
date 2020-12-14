@@ -2,11 +2,12 @@ module CyberarmEngine
   # Basic 4x4 matrix operations
   class Transform
     attr_reader :elements
+
     def initialize(matrix)
       @elements = matrix
 
       raise "Transform is wrong size! Got #{@elements.size}, expected 16" if 16 != @elements.size
-      raise "Invalid value for matrix, must all be numeric!" if @elements.any? { |e| e.nil? || !e.is_a?(Numeric)}
+      raise "Invalid value for matrix, must all be numeric!" if @elements.any? { |e| e.nil? || !e.is_a?(Numeric) }
     end
 
     def self.identity
@@ -27,10 +28,10 @@ module CyberarmEngine
       double c = Math.cos(angle).degrees_to_radians
       double s = Math.sin(angle).degrees_to_radians
       matrix = [
-          +c, +s, 0, 0,
-          -s, +c, 0, 0,
-          0,  0,  1, 0,
-          0,  0,  0, 1,
+        +c, +s, 0, 0,
+        -s, +c, 0, 0,
+        0,  0,  1, 0,
+        0,  0,  0, 1
       ]
 
       rotate_matrix = Transform.new(matrix, rows: 4, columns: 4)
@@ -44,7 +45,7 @@ module CyberarmEngine
         )
       end
 
-      return rotate_matrix
+      rotate_matrix
     end
 
     # 2d translate operation, replicates Gosu's Gosu.translate function
@@ -54,7 +55,7 @@ module CyberarmEngine
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        x, y, z, 1,
+        x, y, z, 1
       ]
 
       Transform.new(matrix)
@@ -67,7 +68,7 @@ module CyberarmEngine
         scale_x, 0,       0,       0,
         0,       scale_y, 0,       0,
         0,       0,       scale_z, 0,
-        0,       0,       0,       1,
+        0,       0,       0,       1
       ]
 
       scale_matrix = Transform.new(matrix)
@@ -81,7 +82,7 @@ module CyberarmEngine
         )
       end
 
-      return scale_matrix
+      scale_matrix
     end
 
     def self.concat(left, right)
@@ -107,13 +108,13 @@ module CyberarmEngine
         1, 0, 0, x,
         0, 1, 0, y,
         0, 0, 1, z,
-        0, 0, 0, 1,
+        0, 0, 0, 1
       ]
 
       Transform.new(matrix)
     end
 
-    def self.rotate_3d(vector, order = "zyx")
+    def self.rotate_3d(vector, _order = "zyx")
       x, y, z = vector.to_a[0..2].map { |axis| axis * Math::PI / 180.0 }
 
       rotation_x = Transform.new(
@@ -163,7 +164,7 @@ module CyberarmEngine
           x * x * n + c,     x * y * n - z * s, x * z * n + y * s, 0,
           y * x * n + z * s, y * y * n + c,     y * z * n - x * s, 0,
           x * z * n - y * s, y * z * n + x * s, z * z * n + c,     0,
-          0,                 0,                 0,               1.0
+          0,                 0,                 0, 1.0
         ]
       )
     end
@@ -190,7 +191,7 @@ module CyberarmEngine
         [
           f / aspect_ratio, 0.0,    0.0, 0.0,
           0.0,                f,    0.0, 0.0,
-          0.0,                0.0,   zn, zf,
+          0.0,                0.0, zn, zf,
           0.0,                0.0, -1.0, 0.0
         ]
       )
@@ -200,13 +201,13 @@ module CyberarmEngine
       s = Vector.new(
         2 / (right - left.to_f),
         2 / (top - bottom.to_f),
-        -2 / (far - near.to_f),
+        -2 / (far - near.to_f)
       )
 
       t = Vector.new(
         (right + left.to_f)   / (right - left.to_f),
         (top   + bottom.to_f) / (top   - bottom.to_f),
-        (far   + near.to_f)   / (far   - near.to_f),
+        (far   + near.to_f)   / (far   - near.to_f)
       )
 
       Transform.new(
@@ -232,16 +233,15 @@ module CyberarmEngine
 
       Transform.new(
         [
-                  x_axis.x,         y_axis.y,         z_axis.z, 0,
-                  x_axis.x,         y_axis.y,         z_axis.z, 0,
-                  x_axis.x,         y_axis.y,         z_axis.z, 0,
+          x_axis.x, y_axis.y, z_axis.z, 0,
+          x_axis.x,         y_axis.y,         z_axis.z, 0,
+          x_axis.x,         y_axis.y,         z_axis.z, 0,
           -x_axis.dot(eye), -y_axis.dot(eye), -z_axis.dot(eye), 1
         ]
       )
     end
 
     def *(other)
-
       case other
       when CyberarmEngine::Vector
         matrix = @elements.clone
@@ -254,7 +254,7 @@ module CyberarmEngine
         Transform.new(matrix)
 
       when CyberarmEngine::Transform
-        return multiply_matrices(other)
+        multiply_matrices(other)
       else
         p other.class
         raise TypeError, "Expected CyberarmEngine::Vector or CyberarmEngine::Transform got #{other.class}"
@@ -279,7 +279,7 @@ module CyberarmEngine
         end
       end
 
-      return Transform.new(matrix)
+      Transform.new(matrix)
     end
 
     # arranges Matrix in column major form

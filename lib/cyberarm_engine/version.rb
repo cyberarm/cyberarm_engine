@@ -1,4 +1,4 @@
 module CyberarmEngine
-  NAME    = "InDev"
-  VERSION = "0.14.0"
+  NAME    = "InDev".freeze
+  VERSION = "0.14.0".freeze
 end
