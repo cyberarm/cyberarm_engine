@@ -1,5 +1,7 @@
 module CyberarmEngine
   class Window < Gosu::Window
+    include Common
+
     IMAGES = {}
     SAMPLES = {}
     SONGS = {}
