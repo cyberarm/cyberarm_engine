@@ -37,7 +37,10 @@ module CyberarmEngine
       def enter(_sender)
         @focus = false unless window.button_down?(Gosu::MsLeft)
 
-        if @focus
+        if !@enabled
+          @style.background_canvas.background = default(:disabled, :background)
+          @text.color = default(:disabled, :color)
+        elsif @focus
           @style.background_canvas.background = default(:active, :background)
           @text.color = default(:active, :color)
         else
@@ -50,9 +53,16 @@ module CyberarmEngine
 
       def left_mouse_button(_sender, _x, _y)
         @focus = true
-        @style.background_canvas.background = default(:active, :background)
+
+        unless @enabled
+          @style.background_canvas.background = default(:disabled, :background)
+          @text.color = default(:disabled, :color)
+        else
+          @style.background_canvas.background = default(:active, :background)
+          @text.color = default(:active, :color)
+        end
+
         window.current_state.focus = self
-        @text.color = default(:active, :color)
 
         :handled
       end
@@ -64,14 +74,19 @@ module CyberarmEngine
       end
 
       def clicked_left_mouse_button(_sender, _x, _y)
-        @block.call(self) if @block
+        @block.call(self) if @enabled && @block
 
         :handled
       end
 
       def leave(_sender)
-        @style.background_canvas.background = default(:background)
-        @text.color = default(:color)
+        unless @enabled
+          @style.background_canvas.background = default(:disabled, :background)
+          @text.color = default(:disabled, :color)
+        else
+          @style.background_canvas.background = default(:background)
+          @text.color = default(:color)
+        end
 
         :handled
       end
@@ -83,6 +98,14 @@ module CyberarmEngine
       end
 
       def recalculate
+        unless @enabled
+          @style.background_canvas.background = default(:disabled, :background)
+          @text.color = default(:disabled, :color)
+        else
+          @style.background_canvas.background = default(:background)
+          @text.color = default(:color)
+        end
+
         if @image
           @width = 0
           @height = 0

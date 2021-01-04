@@ -82,6 +82,11 @@ module CyberarmEngine
         active: {
           color: Gosu::Color::BLACK,
           background: ["ffB23E41".to_i(16)]
+        },
+
+        disabled: {
+          color: Gosu::Color::GRAY,
+          background: 0xff303030
         }
       },
 

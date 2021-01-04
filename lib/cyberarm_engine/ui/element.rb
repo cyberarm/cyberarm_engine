@@ -13,10 +13,10 @@ module CyberarmEngine
       @options = options
       @block = block
 
-      @focus   = false
-      @enabled = true
-      @visible = true
-      @tip = @options[:tip] || ""
+      @focus   = @options[:focus].nil?   ? false : @options[:focus]
+      @enabled = @options[:enabled].nil? ? true  : @options[:enabled]
+      @visible = @options[:visible].nil? ? true  : @options[:visible]
+      @tip     = @options[:tip] || ""
 
       @style = Style.new(options)
 

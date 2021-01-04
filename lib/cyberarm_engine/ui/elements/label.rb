@@ -19,7 +19,7 @@ module CyberarmEngine
       end
 
       def clicked_left_mouse_button(_sender, _x, _y)
-        @block&.call(self)
+        @block&.call(self) if @enabled
 
         # return :handled
       end
