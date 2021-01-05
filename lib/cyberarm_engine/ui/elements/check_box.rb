@@ -6,7 +6,7 @@ module CyberarmEngine
         options[:toggled] = options[:checked]
 
         @toggle_button = ToggleButton.new(options)
-        @label         = Label.new(text, options)
+        @label         = TextBlock.new(text, options)
 
         @label.subscribe(:holding_left_mouse_button) do |sender, x, y|
           @toggle_button.left_mouse_button(sender, x, y)

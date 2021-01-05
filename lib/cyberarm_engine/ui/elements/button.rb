@@ -1,6 +1,6 @@
 module CyberarmEngine
   class Element
-    class Button < Label
+    class Button < TextBlock
       def initialize(text_or_image, options = {}, block = nil)
         @image = nil
         @scale_x = 1

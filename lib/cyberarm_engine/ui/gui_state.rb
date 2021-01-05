@@ -26,7 +26,7 @@ module CyberarmEngine
       @dragging_element = nil
       @pending_recalculate_request = false
 
-      @tip = CyberarmEngine::Text.new("", size: 22, z: Float::INFINITY)
+      @tip = Element::ToolTip.new("", parent: @root_container, z: Float::INFINITY)
       @menu = nil
       @min_drag_distance = 0
       @mouse_pos = Vector.new
@@ -51,9 +51,8 @@ module CyberarmEngine
         @menu.draw
       end
 
-      if @tip.text.length.positive?
+      if @tip.value.length.positive?
         Gosu.flush
-        Gosu.draw_rect(@tip.x - 2, @tip.y - 2, @tip.width + 4, @tip.height + 4, 0xff020202, Float::INFINITY)
         @tip.draw
       end
     end
@@ -87,11 +86,17 @@ module CyberarmEngine
 
       if Vector.new(window.mouse_x, window.mouse_y) == @last_mouse_pos
         if @mouse_over && (Gosu.milliseconds - @mouse_moved_at) > tool_tip_delay
-          @tip.text = @mouse_over.tip if @mouse_over
+          @tip.value = @mouse_over.tip if @mouse_over
           @tip.x = window.mouse_x - @tip.width / 2
-          @tip.y = window.mouse_y - @tip.height - 4
+          @tip.x = 0 if @tip.x < 0
+          @tip.x = window.width - @tip.width if @tip.x + @tip.width > window.width
+          @tip.y = window.mouse_y - @tip.height
+          @tip.y = 0 if @tip.y < 0
+          @tip.y = window.height - @tip.height if @tip.y + @tip.height > window.height
+          @tip.update
+          @tip.recalculate
         else
-          @tip.text = ""
+          @tip.value = ""
         end
       else
         @mouse_moved_at = Gosu.milliseconds
@@ -107,7 +112,7 @@ module CyberarmEngine
     end
 
     def tool_tip_delay
-      500 # ms
+      250 # ms
     end
 
     def button_down(id)

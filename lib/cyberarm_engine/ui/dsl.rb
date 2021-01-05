@@ -8,11 +8,29 @@ module CyberarmEngine
       container(CyberarmEngine::Element::Stack, options, &block)
     end
 
+    # TODO: Remove in version 0.16.0+
     def label(text, options = {}, &block)
       options[:parent] = element_parent
       options[:theme] = current_theme
 
-      add_element(Element::Label.new(text, options, block))
+      add_element(Element::TextBlock.new(text, options, block))
+    end
+
+    [
+      "Banner",
+      "Title",
+      "Subtitle",
+      "Tagline",
+      "Caption",
+      "Para",
+      "Inscription"
+    ].each do |const|
+      define_method(:"#{const.downcase}") do |text, options, &block|
+        options[:parent] = element_parent
+        options[:theme] = current_theme
+
+        add_element(Element.const_get(const).new(text, options, block))
+      end
     end
 
     def button(text, options = {}, &block)

@@ -149,8 +149,7 @@ module CyberarmEngine
     class Inscription < TextBlock
     end
 
-    # TODO: Remove in version 0.16.0+
-    class Label < TextBlock
+    class ToolTip < TextBlock
     end
   end
 end

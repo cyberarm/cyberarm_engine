@@ -106,7 +106,7 @@ module CyberarmEngine
         retro: false
       },
 
-      Label: { # < Element
+      TextBlock: { # < Element
         text_size: 28,
         text_wrap: :none, # :word_wrap, :break_word, :none
         text_shadow: false,
@@ -114,6 +114,45 @@ module CyberarmEngine
         font: "Arial",
         margin: 0,
         padding: 2
+      },
+
+      Banner: { # < TextBlock
+        text_size: 48
+      },
+
+      Title: { # < TextBlock
+        text_size: 34
+      },
+
+      Subtitle: { # < TextBlock
+        text_size: 26
+      },
+
+      Tagline: { # < TextBlock
+        text_size: 24
+      },
+
+      Caption: { # < TextBlock
+        text_size: 22
+      },
+
+      Para: { # < TextBlock
+        text_size: 18
+      },
+
+      Inscription: { # < TextBlock
+        text_size: 16
+      },
+
+      ToolTip: { # < TextBlock
+        color: Gosu::Color::WHITE,
+        padding_top: 4,
+        padding_bottom: 4,
+        padding_left: 8,
+        padding_right: 8,
+        border_thickness: 1,
+        border_color: 0xffaaaaaa,
+        background: 0xff404040
       },
 
       ToggleButton: { # < Button
