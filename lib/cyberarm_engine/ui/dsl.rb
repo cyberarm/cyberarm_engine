@@ -25,7 +25,7 @@ module CyberarmEngine
       "Para",
       "Inscription"
     ].each do |const|
-      define_method(:"#{const.downcase}") do |text, options, &block|
+      define_method(:"#{const.downcase}") do |text, options = {}, &block|
         options[:parent] = element_parent
         options[:theme] = current_theme
 

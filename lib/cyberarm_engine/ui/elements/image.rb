@@ -1,11 +1,13 @@
 module CyberarmEngine
   class Element
     class Image < Element
-      def initialize(path, options = {}, block = nil)
+      def initialize(path_or_image, options = {}, block = nil)
         super(options, block)
-        @path = path
+        @path = path_or_image if path_or_image.is_a?(String)
 
-        @image = Gosu::Image.new(path, retro: @options[:image_retro])
+        @image = Gosu::Image.new(path_or_image, retro: @options[:retro], tileable: @options[:tileable]) if @path
+        @image = path_or_image unless @path
+
         @scale_x = 1
         @scale_y = 1
       end
@@ -48,6 +50,19 @@ module CyberarmEngine
       end
 
       def value
+        @image
+      end
+
+      def value=(path_or_image, retro: false, tileable: false)
+        @path = path_or_image if path_or_image.is_a?(String)
+
+        @image = Gosu::Image.new(path_or_image, retro: retro, tileable: tileable) if @path
+        @image = path_or_image unless @path
+
+        recalculate
+      end
+
+      def path
         @path
       end
     end

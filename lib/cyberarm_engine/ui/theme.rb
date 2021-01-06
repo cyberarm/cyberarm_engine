@@ -103,6 +103,7 @@ module CyberarmEngine
 
       Image: { # < Element
         color: Gosu::Color::WHITE,
+        tileable: false,
         retro: false
       },
 
