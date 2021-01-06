@@ -47,6 +47,8 @@ module CyberarmEngine
 
         @width = _width || @image.width.round * @scale_x
         @height = _height || @image.height.round * @scale_y
+
+        update_background
       end
 
       def value

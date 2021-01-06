@@ -10,7 +10,7 @@ module CyberarmEngine
 
         super(text_or_image, options, block)
 
-        @style.background_canvas.background = default(:background)
+        @style.background_canvas.background = @style.background
       end
 
       def render
@@ -38,14 +38,14 @@ module CyberarmEngine
         @focus = false unless window.button_down?(Gosu::MsLeft)
 
         if !@enabled
-          @style.background_canvas.background = default(:disabled, :background)
-          @text.color = default(:disabled, :color)
+          @style.background_canvas.background = @style.disabled[:background]
+          @text.color = @style.disabled[:color]
         elsif @focus
-          @style.background_canvas.background = default(:active, :background)
-          @text.color = default(:active, :color)
+          @style.background_canvas.background = @style.active[:background]
+          @text.color = @style.active[:color]
         else
-          @style.background_canvas.background = default(:hover, :background)
-          @text.color = default(:hover, :color)
+          @style.background_canvas.background = @style.hover[:background]
+          @text.color = @style.hover[:color]
         end
 
         :handled
@@ -55,11 +55,11 @@ module CyberarmEngine
         @focus = true
 
         unless @enabled
-          @style.background_canvas.background = default(:disabled, :background)
-          @text.color = default(:disabled, :color)
+          @style.background_canvas.background = @style.disabled[:background]
+          @text.color = @style.disabled[:color]
         else
-          @style.background_canvas.background = default(:active, :background)
-          @text.color = default(:active, :color)
+          @style.background_canvas.background = @style.active[:background]
+          @text.color = @style.active[:color]
         end
 
         window.current_state.focus = self
@@ -81,11 +81,11 @@ module CyberarmEngine
 
       def leave(_sender)
         unless @enabled
-          @style.background_canvas.background = default(:disabled, :background)
-          @text.color = default(:disabled, :color)
+          @style.background_canvas.background = @style.disabled[:background]
+          @text.color = @style.disabled[:color]
         else
-          @style.background_canvas.background = default(:background)
-          @text.color = default(:color)
+          @style.background_canvas.background = @style.background
+          @text.color = @style.color
         end
 
         :handled
@@ -99,11 +99,11 @@ module CyberarmEngine
 
       def recalculate
         unless @enabled
-          @style.background_canvas.background = default(:disabled, :background)
-          @text.color = default(:disabled, :color)
+          @style.background_canvas.background = @style.disabled[:background]
+          @text.color = @style.disabled[:color]
         else
-          @style.background_canvas.background = default(:background)
-          @text.color = default(:color)
+          @style.background_canvas.background = @style.background
+          @text.color = @style.color
         end
 
         if @image
