@@ -22,13 +22,16 @@ module CyberarmEngine
 
         def @menu.recalculate
           super
+
           recalculate_menu
         end
+
+        self.choose = @choose
       end
 
       def choose=(item)
         valid = @items.detect { |i| i == item }
-        return unless valid # TODO: Throw an error?
+        raise "Invalid value '#{item}' for choose, valid options were: #{@items.map { |i| "#{i.inspect}" }.join(", ")}" unless valid
 
         @choose = item
 
@@ -45,13 +48,24 @@ module CyberarmEngine
 
       def show_menu
         @menu.clear
-        @items.each do |item|
-          [@block]
-          block = proc { self.choose = item; @block.call(item) if @block }
-          b = Button.new(item,
-                         { parent: @menu, width: 1.0, theme: @options[:theme], margin: 0, border_color: 0x00ffffff }, block)
 
-          @menu.add(b)
+        @items.each do |item|
+          btn = Button.new(
+            item,
+            {
+              parent: @menu,
+              width: 1.0,
+              theme: @options[:theme],
+              margin: 0,
+              border_color: 0x00ffffff
+            },
+            proc do
+              self.choose = item
+              @block&.call(item)
+            end
+          )
+
+          @menu.add(btn)
         end
         recalculate
 
