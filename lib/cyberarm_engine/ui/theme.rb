@@ -109,7 +109,7 @@ module CyberarmEngine
 
       TextBlock: { # < Element
         text_size: 28,
-        text_wrap: :none, # :word_wrap, :break_word, :none
+        text_wrap: :word_wrap, # :word_wrap, :break_word, :none
         text_shadow: false,
         text_align: :left,
         font: "Arial",

@@ -63,7 +63,7 @@ module CyberarmEngine
         wrap_behavior = style.text_wrap
         copy = @raw_text.to_s.dup
 
-        if max_width >= line_width(copy[0]) && line_width(copy) > max_width && wrap_behavior != :none
+        if line_width(copy[0]) <= max_width && line_width(copy) > max_width && wrap_behavior != :none
           breaks = []
           line_start = 0
           line_end   = copy.length
@@ -71,6 +71,7 @@ module CyberarmEngine
           while line_start != copy.length
             if line_width(copy[line_start...line_end]) > max_width
               line_end = ((line_end - line_start) / 2.0)
+              line_end = 1.0 if line_end <= 1
             elsif line_end < copy.length && line_width(copy[line_start...line_end + 1]) < max_width
               # To small, grow!
               # TODO: find a more efficient way
@@ -87,7 +88,7 @@ module CyberarmEngine
                   break if copy[line_end.floor - i].to_s.match(/[[:punct:]]| /)
                 end
 
-                puts "Max width: #{max_width}/#{line_width(@raw_text)} Reach: {#{reach}/#{max_reach}} Line Start: #{line_start}/#{line_end.floor} (#{copy.length}|#{@raw_text.length}) [#{entering_line_end}] '#{copy}' {#{copy[line_start...line_end]}}"
+                # puts "Max width: #{max_width}/#{line_width(@raw_text)} Reach: {#{reach}/#{max_reach}} Line Start: #{line_start}/#{line_end.floor} (#{copy.length}|#{@raw_text.length}) [#{entering_line_end}] '#{copy}' {#{copy[line_start...line_end]}}"
                 line_end = line_end.floor - reach + 1 if reach != max_reach # Add +1 to walk in front of punctuation
               end
 
@@ -108,7 +109,7 @@ module CyberarmEngine
       end
 
       def line_width(text)
-        (@x + @text.textobject.markup_width(text) + noncontent_width)
+        (@text.textobject.markup_width(text) + noncontent_width)
       end
 
       def value
