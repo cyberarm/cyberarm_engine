@@ -21,7 +21,7 @@ module CyberarmEngine
     def initialize(width: 800, height: 600, fullscreen: false, update_interval: 1000.0 / 60, resizable: false, borderless: false)
       @show_cursor = false
 
-      super(width, height, fullscreen: fullscreen, update_interval: update_interval, resizable: resizable)
+      super(width, height, fullscreen: fullscreen, update_interval: update_interval, resizable: resizable, borderless: borderless)
       $window = self
       @last_frame_time = Gosu.milliseconds - 1
       @current_frame_time = Gosu.milliseconds
