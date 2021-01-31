@@ -11,11 +11,13 @@ module CyberarmEngine
         super
 
         @scroll_position = Vector.new(0, 0)
-        @scroll_speed = 10
+        @scroll_speed = 40
 
         @text_color = options[:color]
 
         @children = []
+
+        event(:window_size_changed)
       end
 
       def build

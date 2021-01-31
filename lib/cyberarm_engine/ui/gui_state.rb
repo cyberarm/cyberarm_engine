@@ -105,7 +105,10 @@ module CyberarmEngine
       @last_mouse_pos = Vector.new(window.mouse_x, window.mouse_y)
       @mouse_pos = @last_mouse_pos.clone
 
-      request_recalculate if @active_width != window.width || @active_height != window.height
+      if @active_width != window.width || @active_height != window.height
+        request_recalculate
+        @root_container.publish(:window_size_changed)
+      end
 
       @active_width  = window.width
       @active_height = window.height
