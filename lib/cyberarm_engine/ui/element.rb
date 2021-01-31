@@ -226,6 +226,22 @@ module CyberarmEngine
       (@style.border_thickness_top + @style.padding_top) + (@style.padding_bottom + @style.border_thickness_bottom)
     end
 
+    def scroll_width
+      @children.sum { |c| c.width } + noncontent_width
+    end
+
+    def scroll_height
+      @children.sum { |c| c.height } + noncontent_height
+    end
+
+    def max_scroll_width
+      scroll_width - width
+    end
+
+    def max_scroll_height
+      scroll_height - height
+    end
+
     def dimensional_size(size, dimension)
       raise "dimension must be either :width or :height" unless %i[width height].include?(dimension)
 

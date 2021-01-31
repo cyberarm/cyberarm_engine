@@ -4,14 +4,13 @@ module CyberarmEngine
       include Common
 
       attr_accessor :stroke_color, :fill_color
-      attr_reader :children, :gui_state, :scroll_x, :scroll_y
+      attr_reader :children, :gui_state, :scroll_position
 
       def initialize(options = {}, block = nil)
         @gui_state = options.delete(:gui_state)
         super
 
-        @scroll_x = 0
-        @scroll_y = 0
+        @scroll_position = Vector.new(0, 0)
         @scroll_speed = 10
 
         @text_color = options[:color]
@@ -98,6 +97,8 @@ module CyberarmEngine
 
       def recalculate
         @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
+        @current_position += @scroll_position
+
         return unless visible?
 
         Stats.increment(:gui_recalculations_last_frame, 1)
@@ -189,15 +190,31 @@ module CyberarmEngine
         @current_position.y += element.outer_height
       end
 
-      # def mouse_wheel_up(sender, x, y)
-      #   @children.each {|c| c.y -= @scroll_speed}
-      #   @children.each {|c| c.recalculate}
-      # end
+      def mouse_wheel_up(sender, x, y)
+        return unless @style.scroll
+        return if height < max_scroll_height
 
-      # def mouse_wheel_down(sender, x, y)
-      #   @children.each {|c| c.y += @scroll_speed}
-      #   @children.each {|c| c.recalculate}
-      # end
+        if @scroll_position.y < 0
+          @scroll_position.y += @scroll_speed
+          @scroll_position.y = 0 if @scroll_position.y > 0
+          recalculate
+
+          return :handled
+        end
+      end
+
+      def mouse_wheel_down(sender, x, y)
+        return unless @style.scroll
+        return if height < max_scroll_height
+
+        if @scroll_position.y.abs < max_scroll_height
+          @scroll_position.y -= @scroll_speed
+          @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
+          recalculate
+
+          return :handled
+        end
+      end
 
       def value
         @children.map { |c| c.class }.join(", ")
