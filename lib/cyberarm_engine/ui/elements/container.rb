@@ -45,6 +45,17 @@ module CyberarmEngine
         root.gui_state.request_recalculate
       end
 
+      def apend(&block)
+        old_container = $__current_container__
+
+        $__current_container__ = self
+        block.call(self) if block
+
+        $__current_container__ = old_container
+
+        root.gui_state.request_recalculate
+      end
+
       def render
         Gosu.clip_to(@x, @y, width, height) do
           @children.each(&:draw)

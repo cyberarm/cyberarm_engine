@@ -67,6 +67,8 @@ module CyberarmEngine
 
         if @last_text_value != value
           @last_text_value = value
+          @show_caret = true
+          @caret_last_interval = Gosu.milliseconds
 
           publish(:changed, value)
         end
@@ -250,6 +252,10 @@ module CyberarmEngine
 
       def value
         @text_input.text
+      end
+
+      def value=(string)
+        @text_input.text = string
       end
     end
   end
