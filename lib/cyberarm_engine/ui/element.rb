@@ -39,6 +39,8 @@ module CyberarmEngine
       stylize
 
       default_events
+
+      root.gui_state.request_focus(self) if @options[:autofocus]
     end
 
     def stylize
@@ -116,6 +118,7 @@ module CyberarmEngine
       event(:hover)
       event(:leave)
 
+      event(:focus)
       event(:blur)
 
       event(:changed)
@@ -293,6 +296,12 @@ module CyberarmEngine
       @gui_state != nil
     end
 
+    def focus(_)
+      warn "#{self.class}#focus was not overridden!"
+
+      :handled
+    end
+
     def recalculate
       raise "#{self.class}#recalculate was not overridden!"
     end
@@ -310,6 +319,10 @@ module CyberarmEngine
 
     def to_s
       "#{self.class} x=#{x} y=#{y} width=#{width} height=#{height} value=#{value.is_a?(String) ? "\"#{value}\"" : value}"
+    end
+
+    def inspect
+      to_s
     end
   end
 end

@@ -212,6 +212,16 @@ module CyberarmEngine
         :handled
       end
 
+      def focus(sender)
+        @focus = true
+        @style.background_canvas.background = default(:active, :background)
+        @text.color = default(:active, :color)
+        window.text_input = @text_input
+        @text_input.caret_pos = @text_input.selection_start = @text_input.text.length
+
+        :handled
+      end
+
       def blur(_sender)
         @focus = false
         @style.background_canvas.background = default(:background)

@@ -66,6 +66,13 @@ module CyberarmEngine
         @pending_recalculate_request = false
       end
 
+      if @pending_focus_request
+        @pending_focus_request = false
+
+        self.focus = @pending_focus_element
+        @pending_focus_element.publish(:focus)
+      end
+
       @menu&.update
       super
 
@@ -215,12 +222,26 @@ module CyberarmEngine
       @pending_recalculate_request = true
     end
 
+    def request_focus(element)
+      @pending_focus_request = true
+      @pending_focus_element = element
+    end
+
     def show_menu(list_box)
       @menu = list_box
     end
 
     def hide_menu
       @menu = nil
+    end
+
+    def to_s
+      # "#{self.class} children=#{@children.map { |c| c.to_s }}"
+      @root_container.to_s
+    end
+
+    def inspect
+      to_s
     end
   end
 end
