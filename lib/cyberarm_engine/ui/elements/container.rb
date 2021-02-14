@@ -205,7 +205,8 @@ module CyberarmEngine
 
       def mouse_wheel_up(sender, x, y)
         return unless @style.scroll
-        return if height < max_scroll_height
+
+        return unless height < scroll_height
 
         if @scroll_position.y < 0
           @scroll_position.y += @scroll_speed
@@ -218,7 +219,8 @@ module CyberarmEngine
 
       def mouse_wheel_down(sender, x, y)
         return unless @style.scroll
-        return if height < max_scroll_height
+
+        return unless height < scroll_height
 
         if @scroll_position.y.abs < max_scroll_height
           @scroll_position.y -= @scroll_speed
@@ -227,6 +229,16 @@ module CyberarmEngine
 
           return :handled
         end
+      end
+
+      def scroll_top
+        @scroll_position.y
+      end
+
+      def scroll_top=(n)
+        n = 0 if n <= 0
+        @scroll_position.y = -n
+        @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
       end
 
       def value
