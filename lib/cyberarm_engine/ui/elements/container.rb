@@ -60,30 +60,13 @@ module CyberarmEngine
         Gosu.clip_to(@x, @y, width, height) do
           @children.each(&:draw)
         end
+      end
 
-        if false # DEBUG
-          Gosu.flush
+      def debug_draw
+        super
 
-          Gosu.draw_line(
-            x, y, Gosu::Color::RED,
-            x + outer_width, y, Gosu::Color::RED,
-            Float::INFINITY
-          )
-          Gosu.draw_line(
-            x + outer_width, y, Gosu::Color::RED,
-            x + outer_width, y + outer_height, Gosu::Color::RED,
-            Float::INFINITY
-          )
-          Gosu.draw_line(
-            x + outer_width, y + outer_height, Gosu::Color::RED,
-            x, y + outer_height, Gosu::Color::RED,
-            Float::INFINITY
-          )
-          Gosu.draw_line(
-            x, outer_height, Gosu::Color::RED,
-            x, y, Gosu::Color::RED,
-            Float::INFINITY
-          )
+        @children.each do |child|
+          child.debug_draw
         end
       end
 
@@ -206,8 +189,6 @@ module CyberarmEngine
       def mouse_wheel_up(sender, x, y)
         return unless @style.scroll
 
-        return unless height < scroll_height
-
         if @scroll_position.y < 0
           @scroll_position.y += @scroll_speed
           @scroll_position.y = 0 if @scroll_position.y > 0
@@ -238,7 +219,12 @@ module CyberarmEngine
       def scroll_top=(n)
         n = 0 if n <= 0
         @scroll_position.y = -n
-        @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
+
+        if max_scroll_height.positive?
+          @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
+        else
+          @scroll_position.y = 0
+        end
       end
 
       def value

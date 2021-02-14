@@ -18,6 +18,8 @@ module CyberarmEngine
       @visible = @options[:visible].nil? ? true  : @options[:visible]
       @tip     = @options[:tip] || ""
 
+      @debug_color = @options[:debug_color].nil? ? Gosu::Color::RED : @options[:debug_color]
+
       @style = Style.new(options)
 
       @root ||= nil
@@ -158,6 +160,31 @@ module CyberarmEngine
       Gosu.clip_to(@x, @y, width, height) do
         render
       end
+    end
+
+    def debug_draw
+      return if defined?(GUI_DEBUG_ONLY_ELEMENT) && self.class == GUI_DEBUG_ONLY_ELEMENT
+
+      Gosu.draw_line(
+        x, y, @debug_color,
+        x + outer_width, y, @debug_color,
+        Float::INFINITY
+      )
+      Gosu.draw_line(
+        x + outer_width, y, @debug_color,
+        x + outer_width, y + outer_height, @debug_color,
+        Float::INFINITY
+      )
+      Gosu.draw_line(
+        x + outer_width, y + outer_height, @debug_color,
+        x, y + outer_height, @debug_color,
+        Float::INFINITY
+      )
+      Gosu.draw_line(
+        x, outer_height, @debug_color,
+        x, y, @debug_color,
+        Float::INFINITY
+      )
     end
 
     def update

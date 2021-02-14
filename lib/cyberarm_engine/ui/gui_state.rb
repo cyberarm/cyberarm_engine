@@ -55,6 +55,12 @@ module CyberarmEngine
         Gosu.flush
         @tip.draw
       end
+
+      if defined?(GUI_DEBUG)
+        Gosu.flush
+
+        @root_container.debug_draw
+      end
     end
 
     def update

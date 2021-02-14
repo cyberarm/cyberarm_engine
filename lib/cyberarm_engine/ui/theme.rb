@@ -64,6 +64,10 @@ module CyberarmEngine
         border_radius: 0
       },
 
+      Container: { # < Element (Base class for Stack and Flow)
+        debug_color: Gosu::Color::YELLOW
+      },
+
       Button: { # < Label
         margin: 1,
         padding: 4,
