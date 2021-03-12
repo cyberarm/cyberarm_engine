@@ -77,10 +77,12 @@ module CyberarmEngine
       if klass.instance_of?(klass.class) && defined?(klass.options)
         @states << klass
         klass.setup if options[:setup]
+        klass.post_setup if options[:setup]
       else
         @states << klass.new(options) if child_of?(klass, GameState)
         @states << klass.new if child_of?(klass, Element::Container)
         current_state.setup if current_state.instance_of?(klass) && options[:setup]
+        current_state.post_setup if current_state.instance_of?(klass) && options[:setup]
       end
     end
 

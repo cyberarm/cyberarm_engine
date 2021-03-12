@@ -1,9 +1,8 @@
 CYBERARM_ENGINE_ROOT_PATH = File.expand_path("..", __dir__)
 
-begin
-  require File.expand_path("../../ffi-gosu/lib/gosu", File.dirname(__FILE__))
-rescue LoadError => e
-  pp e
+if ARGV.join.include?("--ffi-gosu")
+  require File.expand_path("../../ffi-gosu/lib/gosu", __dir__)
+else
   require "gosu"
 end
 require "json"

@@ -70,6 +70,7 @@ module CyberarmEngine
                    else
                      klass.new(path)
                    end
+
         hash[path] = instance
         asset = instance
       end

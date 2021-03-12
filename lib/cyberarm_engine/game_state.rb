@@ -17,6 +17,11 @@ module CyberarmEngine
     def setup
     end
 
+    # Called immediately after setup returns.
+    # GuiState uses this to set current_theme for ToolTip
+    def post_setup
+    end
+
     def draw
       @game_objects.each(&:draw)
     end

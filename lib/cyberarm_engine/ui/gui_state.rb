@@ -26,10 +26,13 @@ module CyberarmEngine
       @dragging_element = nil
       @pending_recalculate_request = false
 
-      @tip = Element::ToolTip.new("", parent: @root_container, z: Float::INFINITY)
       @menu = nil
       @min_drag_distance = 0
       @mouse_pos = Vector.new
+    end
+
+    def post_setup
+      @tip = Element::ToolTip.new("", parent: @root_container, z: Float::INFINITY, theme: current_theme)
     end
 
     # throws :blur event to focused element and sets GuiState focused element
@@ -103,7 +106,7 @@ module CyberarmEngine
           @tip.x = window.mouse_x - @tip.width / 2
           @tip.x = 0 if @tip.x < 0
           @tip.x = window.width - @tip.width if @tip.x + @tip.width > window.width
-          @tip.y = window.mouse_y - @tip.height
+          @tip.y = window.mouse_y - (@tip.height + 5)
           @tip.y = 0 if @tip.y < 0
           @tip.y = window.height - @tip.height if @tip.y + @tip.height > window.height
           @tip.update
