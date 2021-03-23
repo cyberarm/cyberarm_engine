@@ -23,7 +23,8 @@ module CyberarmEngine
       "Tagline",
       "Caption",
       "Para",
-      "Inscription"
+      "Inscription",
+      "Link"
     ].each do |const|
       define_method(:"#{const.downcase}") do |text, options = {}, &block|
         options[:parent] = element_parent

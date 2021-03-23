@@ -159,6 +159,19 @@ module CyberarmEngine
         border_color: 0xffaaaaaa,
         background: 0xff404040
       },
+      Link: { # < TextBlock
+        color: Gosu::Color::BLUE,
+        border_thickness: 1,
+        border_bottom_color: Gosu::Color::BLUE,
+        hover: {
+          color: 0xff_ff00ff,
+          border_bottom_color: 0xff_ff00ff
+        },
+        active: {
+          color: 0xff_ff0000,
+          border_bottom_color: 0xff_ff0000
+        }
+      },
 
       ToggleButton: { # < Button
         checkmark: "√"

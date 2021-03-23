@@ -18,12 +18,6 @@ module CyberarmEngine
         @text.draw
       end
 
-      def clicked_left_mouse_button(_sender, _x, _y)
-        @block&.call(self) if @enabled
-
-        # return :handled
-      end
-
       def recalculate
         @width  = 0
         @height = 0
@@ -151,6 +145,9 @@ module CyberarmEngine
     end
 
     class ToolTip < TextBlock
+    end
+
+    class Link < TextBlock
     end
   end
 end
