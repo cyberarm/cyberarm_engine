@@ -34,69 +34,6 @@ module CyberarmEngine
         @text.draw
       end
 
-      def enter(_sender)
-        @focus = false unless window.button_down?(Gosu::MsLeft)
-
-        if !@enabled
-          @style.background_canvas.background = @style.disabled[:background]
-          @text.color = @style.disabled[:color]
-        elsif @focus
-          @style.background_canvas.background = @style.active[:background]
-          @text.color = @style.active[:color]
-        else
-          @style.background_canvas.background = @style.hover[:background]
-          @text.color = @style.hover[:color]
-        end
-
-        :handled
-      end
-
-      def left_mouse_button(_sender, _x, _y)
-        @focus = true
-
-        unless @enabled
-          @style.background_canvas.background = @style.disabled[:background]
-          @text.color = @style.disabled[:color]
-        else
-          @style.background_canvas.background = @style.active[:background]
-          @text.color = @style.active[:color]
-        end
-
-        window.current_state.focus = self
-
-        :handled
-      end
-
-      def released_left_mouse_button(sender, _x, _y)
-        enter(sender)
-
-        :handled
-      end
-
-      def clicked_left_mouse_button(_sender, _x, _y)
-        @block.call(self) if @enabled && @block
-
-        :handled
-      end
-
-      def leave(_sender)
-        unless @enabled
-          @style.background_canvas.background = @style.disabled[:background]
-          @text.color = @style.disabled[:color]
-        else
-          @style.background_canvas.background = @style.background
-          @text.color = @style.color
-        end
-
-        :handled
-      end
-
-      def blur(_sender)
-        @focus = false
-
-        :handled
-      end
-
       def recalculate
         unless @enabled
           @style.background_canvas.background = @style.disabled[:background]

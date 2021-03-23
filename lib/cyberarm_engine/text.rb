@@ -65,6 +65,15 @@ module CyberarmEngine
       font
     end
 
+    def swap_font(size, font_name = @font)
+      if @size != size || @font != font_name
+        @size = size
+        @font = font_name
+
+        @textobject = check_cache(size, font_name)
+      end
+    end
+
     def text=(string)
       @rendered_shadow = nil
       @text = string

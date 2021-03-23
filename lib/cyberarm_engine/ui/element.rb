@@ -105,6 +105,55 @@ module CyberarmEngine
       @style.margin_bottom = default(:margin_bottom) || @style.margin
     end
 
+    def update_styles(event = :default)
+      _style = @style.send(event)
+
+      if @text&.is_a?(CyberarmEngine::Text)
+        @text.color = _style&.dig(:color) || @style.color
+        @text.swap_font(_style&.dig(:text_size) || @style.text_size, _style&.dig(:font) || @style.font)
+      end
+
+      _padding = (_style&.dig(:padding) || @style.padding) || 0
+
+      @style.padding_left   = _style&.dig(:padding_left)   || _padding
+      @style.padding_right  = _style&.dig(:padding_right)  || _padding
+      @style.padding_top    = _style&.dig(:padding_top)    || _padding
+      @style.padding_bottom = _style&.dig(:padding_bottom) || _padding
+
+      _margin = (_style&.dig(:margin) || @style.margin) || 0
+
+      @style.margin_left   = _style&.dig(:margin_left)   || _margin
+      @style.margin_right  = _style&.dig(:margin_right)  || _margin
+      @style.margin_top    = _style&.dig(:margin_top)    || _margin
+      @style.margin_bottom = _style&.dig(:margin_bottom) || _margin
+
+      @style.background_canvas.background = _style&.dig(:background) || @style.background
+
+      _border_thickness = (_style&.dig(:border_thickness) || @style.border_thickness) || 0
+
+      @style.border_thickness_left   = _style&.dig(:border_thickness_left)   || _border_thickness
+      @style.border_thickness_right  = _style&.dig(:border_thickness_right)  || _border_thickness
+      @style.border_thickness_top    = _style&.dig(:border_thickness_top)    || _border_thickness
+      @style.border_thickness_bottom = _style&.dig(:border_thickness_bottom) || _border_thickness
+
+      _border_color = (_style&.dig(:border_color) || @style.border_color) || Gosu::Color::NONE
+
+      @style.border_color_left   = _style&.dig(:border_color_left)   || _border_color
+      @style.border_color_right  = _style&.dig(:border_color_right)  || _border_color
+      @style.border_color_top    = _style&.dig(:border_color_top)    || _border_color
+      @style.border_color_bottom = _style&.dig(:border_color_bottom) || _border_color
+
+      @style.border_canvas.color = [
+        @style.border_color_top,
+        @style.border_color_right,
+        @style.border_color_bottom,
+        @style.border_color_left
+      ]
+
+      (root&.gui_state || @gui_state).request_recalculate
+      # recalculate
+    end
+
     def default_events
       %i[left middle right].each do |button|
         event(:"#{button}_mouse_button")
@@ -124,6 +173,62 @@ module CyberarmEngine
       event(:blur)
 
       event(:changed)
+    end
+
+    def enter(_sender)
+      @focus = false unless window.button_down?(Gosu::MsLeft)
+
+      if !@enabled
+        update_styles(:disabled)
+      elsif @focus
+        update_styles(:active)
+      else
+        update_styles(:hover)
+      end
+
+      :handled
+    end
+
+    def left_mouse_button(_sender, _x, _y)
+      @focus = true
+
+      unless @enabled
+        update_styles(:disabled)
+      else
+        update_styles(:active)
+      end
+
+      window.current_state.focus = self
+
+      :handled
+    end
+
+    def released_left_mouse_button(sender, _x, _y)
+      enter(sender)
+
+      :handled
+    end
+
+    def clicked_left_mouse_button(_sender, _x, _y)
+      @block&.call(self) if @enabled
+
+      return :handled
+    end
+
+    def leave(_sender)
+      unless @enabled
+        update_styles(:disabled)
+      else
+        update_styles
+      end
+
+      :handled
+    end
+
+    def blur(_sender)
+      @focus = false
+
+      :handled
     end
 
     def enabled?
@@ -285,7 +390,7 @@ module CyberarmEngine
     end
 
     def background=(_background)
-      @style.background_canvas.background = (_background)
+      @style.background_canvas.background = _background
       update_background
     end
 
@@ -308,11 +413,9 @@ module CyberarmEngine
         @root = parent
 
         loop do
-          if @root.parent.nil?
-            break
-          else
-            @root = @root.parent
-          end
+          break unless @root&.parent
+
+          @root = @root.parent
         end
       end
 
