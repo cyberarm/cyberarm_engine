@@ -177,6 +177,10 @@ module CyberarmEngine
         checkmark: "√"
       },
 
+      CheckBox: { # < Flow
+        text_wrap: :none
+      },
+
       Progress: { # < Element
         width: 250,
         height: 36,

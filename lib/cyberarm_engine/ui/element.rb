@@ -38,6 +38,8 @@ module CyberarmEngine
       @style.background_canvas = Background.new
       @style.border_canvas     = BorderCanvas.new(element: self)
 
+      @style_event = :default
+
       stylize
 
       default_events
@@ -47,14 +49,18 @@ module CyberarmEngine
 
     def stylize
       set_static_position
-      set_border_thickness(@style.border_thickness)
 
-      set_padding(@style.padding)
+      set_padding
+      set_margin
 
-      set_margin(@style.margin)
+      set_background
 
-      set_background(@style.background)
-      set_border_color(@style.border_color)
+      set_border_thickness
+      set_border_color
+    end
+
+    def safe_style_fetch(*args)
+      @style.hash.dig(@style_event, *args) || @style.hash.dig(:default, *args) || default(*args)
     end
 
     def set_static_position
@@ -62,86 +68,28 @@ module CyberarmEngine
       @y = @style.y if @style.y != 0
     end
 
-    def set_background(background)
-      @style.background = background
-      @style.background_canvas.background = background
+    def set_background
+      @style.background = safe_style_fetch(:background)
+
+      @style.background_canvas.background = @style.background
     end
 
-    def set_border_thickness(border_thickness)
-      @style.border_thickness = border_thickness
+    def set_border_thickness
+      @style.border_thickness = safe_style_fetch(:border_thickness)
 
-      @style.border_thickness_left   = default(:border_thickness_left)   || @style.border_thickness
-      @style.border_thickness_right  = default(:border_thickness_right)  || @style.border_thickness
-      @style.border_thickness_top    = default(:border_thickness_top)    || @style.border_thickness
-      @style.border_thickness_bottom = default(:border_thickness_bottom) || @style.border_thickness
+      @style.border_thickness_left   = safe_style_fetch(:border_thickness_left)   || @style.border_thickness
+      @style.border_thickness_right  = safe_style_fetch(:border_thickness_right)  || @style.border_thickness
+      @style.border_thickness_top    = safe_style_fetch(:border_thickness_top)    || @style.border_thickness
+      @style.border_thickness_bottom = safe_style_fetch(:border_thickness_bottom) || @style.border_thickness
     end
 
-    def set_border_color(color)
-      @style.border_color = color
+    def set_border_color
+      @style.border_color = safe_style_fetch(:border_color)
 
-      @style.border_color_left   = default(:border_color_left)   || @style.border_color
-      @style.border_color_right  = default(:border_color_right)  || @style.border_color
-      @style.border_color_top    = default(:border_color_top)    || @style.border_color
-      @style.border_color_bottom = default(:border_color_bottom) || @style.border_color
-
-      @style.border_canvas.color = color
-    end
-
-    def set_padding(padding)
-      @style.padding = padding
-
-      @style.padding_left   = default(:padding_left)   || @style.padding
-      @style.padding_right  = default(:padding_right)  || @style.padding
-      @style.padding_top    = default(:padding_top)    || @style.padding
-      @style.padding_bottom = default(:padding_bottom) || @style.padding
-    end
-
-    def set_margin(margin)
-      @style.margin = margin
-
-      @style.margin_left   = default(:margin_left)   || @style.margin
-      @style.margin_right  = default(:margin_right)  || @style.margin
-      @style.margin_top    = default(:margin_top)    || @style.margin
-      @style.margin_bottom = default(:margin_bottom) || @style.margin
-    end
-
-    def update_styles(event = :default)
-      _style = @style.send(event)
-
-      if @text&.is_a?(CyberarmEngine::Text)
-        @text.color = _style&.dig(:color) || @style.color
-        @text.swap_font(_style&.dig(:text_size) || @style.text_size, _style&.dig(:font) || @style.font)
-      end
-
-      _padding = (_style&.dig(:padding) || @style.padding) || 0
-
-      @style.padding_left   = _style&.dig(:padding_left)   || _padding
-      @style.padding_right  = _style&.dig(:padding_right)  || _padding
-      @style.padding_top    = _style&.dig(:padding_top)    || _padding
-      @style.padding_bottom = _style&.dig(:padding_bottom) || _padding
-
-      _margin = (_style&.dig(:margin) || @style.margin) || 0
-
-      @style.margin_left   = _style&.dig(:margin_left)   || _margin
-      @style.margin_right  = _style&.dig(:margin_right)  || _margin
-      @style.margin_top    = _style&.dig(:margin_top)    || _margin
-      @style.margin_bottom = _style&.dig(:margin_bottom) || _margin
-
-      @style.background_canvas.background = _style&.dig(:background) || @style.background
-
-      _border_thickness = (_style&.dig(:border_thickness) || @style.border_thickness) || 0
-
-      @style.border_thickness_left   = _style&.dig(:border_thickness_left)   || _border_thickness
-      @style.border_thickness_right  = _style&.dig(:border_thickness_right)  || _border_thickness
-      @style.border_thickness_top    = _style&.dig(:border_thickness_top)    || _border_thickness
-      @style.border_thickness_bottom = _style&.dig(:border_thickness_bottom) || _border_thickness
-
-      _border_color = (_style&.dig(:border_color) || @style.border_color) || Gosu::Color::NONE
-
-      @style.border_color_left   = _style&.dig(:border_color_left)   || _border_color
-      @style.border_color_right  = _style&.dig(:border_color_right)  || _border_color
-      @style.border_color_top    = _style&.dig(:border_color_top)    || _border_color
-      @style.border_color_bottom = _style&.dig(:border_color_bottom) || _border_color
+      @style.border_color_left   = safe_style_fetch(:border_color_left)   || @style.border_color
+      @style.border_color_right  = safe_style_fetch(:border_color_right)  || @style.border_color
+      @style.border_color_top    = safe_style_fetch(:border_color_top)    || @style.border_color
+      @style.border_color_bottom = safe_style_fetch(:border_color_bottom) || @style.border_color
 
       @style.border_canvas.color = [
         @style.border_color_top,
@@ -149,9 +97,36 @@ module CyberarmEngine
         @style.border_color_bottom,
         @style.border_color_left
       ]
+    end
+
+    def set_padding
+      @style.padding = safe_style_fetch(:padding)
+
+      @style.padding_left   = safe_style_fetch(:padding_left)   || @style.padding
+      @style.padding_right  = safe_style_fetch(:padding_right)  || @style.padding
+      @style.padding_top    = safe_style_fetch(:padding_top)    || @style.padding
+      @style.padding_bottom = safe_style_fetch(:padding_bottom) || @style.padding
+    end
+
+    def set_margin
+      @style.margin = safe_style_fetch(:margin)
+
+      @style.margin_left   = safe_style_fetch(:margin_left)   || @style.margin
+      @style.margin_right  = safe_style_fetch(:margin_right)  || @style.margin
+      @style.margin_top    = safe_style_fetch(:margin_top)    || @style.margin
+      @style.margin_bottom = safe_style_fetch(:margin_bottom) || @style.margin
+    end
+
+    def update_styles(event = :default)
+      _style = @style.send(event)
+      @style_event = event
+
+      if @text.is_a?(CyberarmEngine::Text)
+        @text.color = _style&.dig(:color) || @style.default[:color]
+        @text.swap_font(_style&.dig(:text_size) || @style.default[:text_size], _style&.dig(:font) || @style.default[:font])
+      end
 
       (root&.gui_state || @gui_state).request_recalculate
-      # recalculate
     end
 
     def default_events
@@ -210,16 +185,16 @@ module CyberarmEngine
     end
 
     def clicked_left_mouse_button(_sender, _x, _y)
-      @block&.call(self) if @enabled
+      @block&.call(self) if @enabled && !self.is_a?(Container)
 
-      return :handled
+      :handled
     end
 
     def leave(_sender)
-      unless @enabled
-        update_styles(:disabled)
-      else
+      if @enabled
         update_styles
+      else
+        update_styles(:disabled)
       end
 
       :handled
@@ -227,6 +202,12 @@ module CyberarmEngine
 
     def blur(_sender)
       @focus = false
+
+      if @enabled
+        update_styles
+      else
+        update_styles(:disabled)
+      end
 
       :handled
     end
