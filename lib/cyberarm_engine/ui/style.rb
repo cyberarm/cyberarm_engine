@@ -17,8 +17,20 @@ end
 
 module CyberarmEngine
   class Style
+    attr_reader :hash
+
     def initialize(hash = {})
-      @hash = Marshal.load(Marshal.dump(hash))
+      h = Marshal.load(Marshal.dump(hash))
+
+      h[:default] = {}
+
+      h.each do |key, value|
+        next if value.is_a?(Hash)
+
+        h[:default][key] = value
+      end
+
+      @hash = h
     end
 
     def method_missing(method, *args)
@@ -27,9 +39,8 @@ module CyberarmEngine
 
         @hash[method.to_s.sub("=", "").to_sym] = args.first
 
-      elsif args.size == 0
+      elsif args.empty?
         @hash[method]
-
       else
         raise ArgumentError, "Did not expect arguments"
       end

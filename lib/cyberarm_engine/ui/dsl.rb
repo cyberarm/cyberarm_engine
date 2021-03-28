@@ -98,7 +98,7 @@ module CyberarmEngine
     end
 
     def background(color = Gosu::Color::NONE)
-      element_parent.style.background = color
+      element_parent.style.default[:background] = color
     end
 
     def theme(theme)

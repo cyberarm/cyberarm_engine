@@ -59,6 +59,8 @@ module CyberarmEngine
       end
 
       def update
+        @style_event = :active if @focus
+
         @text.text = if @type == :password
                        default(:password_character) * @text_input.text.length
                      else
@@ -194,38 +196,27 @@ module CyberarmEngine
         :handled
       end
 
-      def enter(_sender)
-        if @focus
-          @style.background_canvas.background = default(:active, :background)
-          @text.color = default(:active, :color)
-        else
-          @style.background_canvas.background = default(:hover, :background)
-          @text.color = default(:hover, :color)
-        end
-
-        :handled
-      end
-
-      def leave(sender)
-        super unless @focus
-
-        :handled
-      end
-
       def focus(sender)
-        @focus = true
-        @style.background_canvas.background = default(:active, :background)
-        @text.color = default(:active, :color)
+        super
+
         window.text_input = @text_input
         @text_input.caret_pos = @text_input.selection_start = @text_input.text.length
 
         :handled
       end
 
+      def enter(sender)
+        _has_focus = @focus
+
+        super
+
+        @focus = _has_focus
+
+        :handled
+      end
+
       def blur(_sender)
-        @focus = false
-        @style.background_canvas.background = default(:background)
-        @text.color = default(:color)
+        super
         window.text_input = nil
 
         :handled
