@@ -32,6 +32,8 @@ require "cyberarm_engine"
 
 class Hello < CyberarmEngine::GuiState
   def setup
+    background Gosu::Color::GRAY
+
     stack do
       label "Hello World!"
 
@@ -43,15 +45,14 @@ class Hello < CyberarmEngine::GuiState
 end
 
 class Window < CyberarmEngine::Window
-  def initialize
-    super
+  def setup
     self.show_cursor = true
 
     push_state(Hello)
   end
 end
 
-Window.new.show
+Window.new(width: 800, height: 600, fullscreen: false, resizable: true).show
 ```
 
 ## Development
