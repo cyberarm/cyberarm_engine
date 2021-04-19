@@ -61,3 +61,5 @@ require_relative "cyberarm_engine/model/model_object"
 require_relative "cyberarm_engine/model/parser"
 require_relative "cyberarm_engine/model/parsers/wavefront_parser"
 require_relative "cyberarm_engine/model/parsers/collada_parser" if defined?(Nokogiri)
+
+require_relative "cyberarm_engine/builtin/intro_state"
