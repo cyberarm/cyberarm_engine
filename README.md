@@ -1,4 +1,4 @@
-# CyberarmEngine
+![CyberarmEngine](https://raw.githubusercontent.com/cyberarm/cyberarm_engine/master/assets/textures/logo.png)
 
 Yet Another Game Engine On Top Of Gosu
 
