@@ -1,11 +1,11 @@
 module CyberarmEngine
   class Animator
-    DEFAULT_TWEEN = :linear
-    def initialize(start_time:, duration:, from:, to:, &block)
+    def initialize(start_time:, duration:, from:, to:, tween: :linear, &block)
       @start_time = start_time
       @duration = duration
       @from = from.dup
       @to = to.dup
+      @tween = tween
       @block = block
     end
 
@@ -14,18 +14,18 @@ module CyberarmEngine
     end
 
     def progress
-      (@start_time.to_f + (Gosu.milliseconds - @start_time)) / (@start_time + @duration.to_f)
+      ((Gosu.milliseconds - @start_time) / @duration.to_f).clamp(0.0, 1.0)
     end
 
     def complete?
       progress >= 1.0
     end
 
-    def transition(from, to, tween = DEFAULT_TWEEN)
+    def transition(from = @from, to = @to, tween = @tween)
       from + (to - from) * send("tween_#{tween}", progress)
     end
 
-    def color_transition(from, to, _tween = DEFAULT_TWEEN)
+    def color_transition(from = @from, to = @to, _tween = @tween)
       r = transition(from.red, to.red)
       g = transition(from.green, to.green)
       b = transition(from.blue, to.blue)
@@ -34,7 +34,7 @@ module CyberarmEngine
       Gosu::Color.rgba(r, g, b, a)
     end
 
-    def color_hsv_transition(from, to, tween = DEFAULT_TWEEN)
+    def color_hsv_transition(from = @from, to = @to, tween = @tween)
       hue = transition(from.hue, to.hue, tween)
       saturation = transition(from.saturation, to.saturation, tween)
       value = transition(from.value, to.value, tween)
@@ -49,8 +49,8 @@ module CyberarmEngine
       t
     end
 
-    def tween_sine(t)
-      Math.sin(t) * t
+    def tween_ease_in_out(t)
+      (-0.5 * (Math.cos(Math::PI * t) - 1))
     end
   end
 end

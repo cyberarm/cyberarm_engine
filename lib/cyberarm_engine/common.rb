@@ -16,6 +16,10 @@ module CyberarmEngine
       window.pop_state
     end
 
+    def shift_state
+      window.shift_state
+    end
+
     def show_cursor
       window.show_cursor
     end

@@ -149,6 +149,7 @@ module CyberarmEngine
           @textobject.send(method, @text, _x + @shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
           @textobject.send(method, @text, _x + @shadow_size, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
         end
+
         @rendered_shadow.draw(@x - @shadow_size, @y - @shadow_size, @z, @factor_x, @factor_y, shadow_color)
       end
 
