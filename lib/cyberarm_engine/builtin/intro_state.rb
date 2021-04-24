@@ -22,18 +22,19 @@ module CyberarmEngine
 
       base_time = Gosu.milliseconds
 
+      @born_time = Gosu.milliseconds
+      @continue_after = 5_000
+
       @animators = [
         Animator.new(start_time: base_time += 1000, duration: 100,   from: 0.0, to: 1.0, tween: :ease_in_out),
         Animator.new(start_time: base_time += -500, duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
         Animator.new(start_time: base_time += 500,  duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
         Animator.new(start_time: base_time += 500,  duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
         Animator.new(start_time: base_time +  500,  duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
+        Animator.new(start_time: Gosu.milliseconds + @continue_after - 1_000,  duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
 
         Animator.new(start_time: Gosu.milliseconds + 250, duration: 500, from: 0.0, to: 1.0, tween: :ease_in_out) # CyberarmEngine LOGO
       ]
-
-      @born_time = Gosu.milliseconds
-      @continue_after = 5_000
     end
 
     def draw
@@ -89,6 +90,8 @@ module CyberarmEngine
           )
         end
       end
+
+      Gosu.draw_rect(0, 0, window.width, window.height, Gosu::Color.rgba(0, 0, 0, 255 * @animators[5].transition), 10_000)
     end
 
     def update
