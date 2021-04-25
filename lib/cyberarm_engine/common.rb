@@ -28,8 +28,8 @@ module CyberarmEngine
       window.show_cursor = boolean
     end
 
-    def draw_rect(x, y, width, height, color, z = 0)
-      Gosu.draw_rect(x, y, width, height, color, z)
+    def draw_rect(x, y, width, height, color, z = 0, mode = :default)
+      Gosu.draw_rect(x, y, width, height, color, z, mode)
     end
 
     def fill(color, z = 0)

@@ -3,8 +3,8 @@ module CyberarmEngine
     attr_accessor :position, :orientation, :aspect_ratio, :field_of_view,
                   :min_view_distance, :max_view_distance
 
-    def initialize(position:, aspect_ratio:, orientation: Vector.new(0, 0,
-                                                                     0), field_of_view: 70.0, min_view_distance: 0.1, max_view_distance: 155.0)
+    def initialize(position:, aspect_ratio:, orientation: Vector.new(0, 0, 0),
+                   field_of_view: 70.0, min_view_distance: 0.1, max_view_distance: 1024.0)
       @position = position
       @orientation = orientation
 
