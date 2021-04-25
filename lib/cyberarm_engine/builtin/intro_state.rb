@@ -33,7 +33,7 @@ module CyberarmEngine
         Animator.new(start_time: base_time +  500,  duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
         Animator.new(start_time: Gosu.milliseconds + @continue_after - 1_000,  duration: 1_000, from: 0.0, to: 1.0, tween: :ease_in_out),
 
-        Animator.new(start_time: Gosu.milliseconds + 250, duration: 500, from: 0.0, to: 1.0, tween: :ease_in_out) # CyberarmEngine LOGO
+        Animator.new(start_time: Gosu.milliseconds + 250, duration: 500, from: 0.0, to: 1.0, tween: :swing_to) # CyberarmEngine LOGO
       ]
     end
 
