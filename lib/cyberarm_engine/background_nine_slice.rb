@@ -24,19 +24,19 @@ module CyberarmEngine
     end
 
     def nine_slice
-      @segment_top_left = Gosu.render(@left, @top) { @image.draw(0, 0, 0) }
-      @segment_top_right = Gosu.render(@image.width - @right, @top) { @image.draw(-@right, 0, 0) }
+      @segment_top_left = @image.subimage(0, 0, @left, @top)
+      @segment_top_right = @image.subimage(@image.width - @right, 0, @right, @top)
 
-      @segment_left = Gosu.render(@left, @bottom - @top) { @image.draw(0, -@top, 0) }
-      @segment_right = Gosu.render(@image.width - @right, @bottom - @top) { @image.draw(-@right, -@top, 0) }
+      @segment_left = @image.subimage(0, @top, @left, @image.height - (@top + @bottom))
+      @segment_right = @image.subimage(@image.width - @right, @top, @left, @image.height - (@top + @bottom))
 
-      @segment_bottom_left = Gosu.render(@left, @image.height - @bottom) { @image.draw(0, -@bottom, 0) }
-      @segment_bottom_right = Gosu.render(@image.width - @right, @image.height - @bottom) { @image.draw(-@right, -@bottom, 0) }
+      @segment_bottom_left = @image.subimage(0, @image.height - @bottom, @left, @bottom)
+      @segment_bottom_right = @image.subimage(@image.width - @right, @image.height - @bottom, @right, @bottom)
 
-      @segment_top = Gosu.render(@right - @left, @top) { @image.draw(-@left, 0, 0) }
-      @segment_bottom = Gosu.render(@right - @left, @image.height - @bottom) { @image.draw(-@left, -@bottom, 0) }
+      @segment_top = @image.subimage(@left, 0, @image.width - (@left + @right), @top)
+      @segment_bottom = @image.subimage(@left, @image.height - @bottom, @image.width - (@left + @right), @bottom)
 
-      @segment_middle = Gosu.render(@right - @left, @bottom - @top) { @image.draw(-@left, -@top, 0) }
+      @segment_middle = @image.subimage(@left, @top, @image.width - (@left + @right), @image.height - (@top + @bottom))
     end
 
     def cx
@@ -56,11 +56,13 @@ module CyberarmEngine
     end
 
     def width_scale
-      width_scale = (@width - (@left + (@image.width - @right))).to_f / (@right - @left)
+      scale = (@width - (@image.width - (@left + @right))).to_f / (@image.width - (@left + @right))
+      scale.abs
     end
 
     def height_scale
-      height_scale = (@height - (@top + (@image.height - @bottom))).to_f / (@bottom - @top)
+      scale = (@height - (@image.height - (@top + @bottom))).to_f / (@image.height - (@top + @bottom))
+      scale.abs
     end
 
     def draw
@@ -82,6 +84,8 @@ module CyberarmEngine
 
     def draw_tiled
       @segment_top_left.draw(@x, @y, @z)
+
+      p [width_scale, height_scale]
 
       Gosu.clip_to(@x + @segment_top_left.width, @y, @segment_top.width * width_scale, @segment_top.height) do
         width_scale.ceil.times do |i|
