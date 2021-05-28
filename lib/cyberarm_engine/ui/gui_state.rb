@@ -103,7 +103,7 @@ module CyberarmEngine
       if Vector.new(window.mouse_x, window.mouse_y) == @last_mouse_pos
         if @mouse_over && (Gosu.milliseconds - @mouse_moved_at) > tool_tip_delay
           @tip.value = @mouse_over.tip if @mouse_over
-          @tip.x = window.mouse_x - @tip.width / 2
+          @tip.x = window.mouse_x
           @tip.x = 0 if @tip.x < 0
           @tip.x = window.width - @tip.width if @tip.x + @tip.width > window.width
           @tip.y = window.mouse_y - (@tip.height + 5)

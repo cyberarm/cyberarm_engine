@@ -118,6 +118,9 @@ module CyberarmEngine
     end
 
     def update_styles(event = :default)
+      old_width = width
+      old_height = height
+
       _style = @style.send(event)
       @style_event = event
 
@@ -126,7 +129,13 @@ module CyberarmEngine
         @text.swap_font(_style&.dig(:text_size) || @style.default[:text_size], _style&.dig(:font) || @style.default[:font])
       end
 
-      (root&.gui_state || @gui_state).request_recalculate
+      return if self.is_a?(ToolTip)
+
+      if old_width != width || old_height != height
+        (root&.gui_state || @gui_state).request_recalculate
+      else
+        stylize
+      end
     end
 
     def default_events

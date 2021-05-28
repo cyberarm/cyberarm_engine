@@ -23,7 +23,6 @@ module CyberarmEngine
       @shadow   = true if options[:shadow].nil?
       @shadow_size = options[:shadow_size] || 1
       @shadow_alpha = options[:shadow_alpha] || 30
-      @shadow_alpha = options[:shadow_alpha] || 30
       @shadow_color = options[:shadow_color]
       @textobject = check_cache(@size, @font)
 
