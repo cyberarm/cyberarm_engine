@@ -8,7 +8,10 @@ module CyberarmEngine
           text, font: @options[:font], z: @z, color: @options[:color],
                 size: @options[:text_size], shadow: @options[:text_shadow],
                 shadow_size: @options[:text_shadow_size],
-                shadow_color: @options[:text_shadow_color]
+                shadow_color: @options[:text_shadow_color],
+                border: @options[:text_border],
+                border_size: @options[:text_border_size],
+                border_color: @options[:text_border_color]
         )
 
         @raw_text = text

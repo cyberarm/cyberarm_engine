@@ -115,6 +115,7 @@ module CyberarmEngine
         text_size: 28,
         text_wrap: :word_wrap, # :word_wrap, :break_word, :none
         text_shadow: false,
+        text_border: false,
         text_align: :left,
         font: "Arial",
         margin: 0,

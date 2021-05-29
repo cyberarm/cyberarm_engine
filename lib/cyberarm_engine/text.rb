@@ -3,7 +3,9 @@ module CyberarmEngine
     CACHE = {}
 
     attr_accessor :x, :y, :z, :size, :options
-    attr_reader :text, :textobject, :factor_x, :factor_y, :color, :shadow, :shadow_size, :shadow_alpha, :shadow_color
+    attr_reader :text, :textobject, :factor_x, :factor_y, :color,
+                :border, :border_size, :border_alpha, :border_color,
+                :shadow, :shadow_size, :shadow_alpha, :shadow_color
 
     def initialize(text, options = {})
       @text = text.to_s || ""
@@ -15,15 +17,25 @@ module CyberarmEngine
       @z = options[:z] || 1025
       @factor_x = options[:factor_x]  || 1
       @factor_y = options[:factor_y]  || 1
-      @color    = options[:color]     || Gosu::Color::WHITE
+      if options[:color]
+        @color = options[:color].is_a?(Gosu::Color) ? options[:color] : Gosu::Color.new(options[:color])
+      else
+        @color = Gosu::Color::WHITE
+      end
       @mode     = options[:mode]      || :default
       @alignment = options[:alignment] || nil
-      @shadow   = true  if options[:shadow] == true
-      @shadow   = false if options[:shadow] == false
-      @shadow   = true if options[:shadow].nil?
-      @shadow_size = options[:shadow_size] || 1
+
+      @border   = options[:border]
+      @border   = true if options[:border].nil?
+      @border_size = options[:border_size] || 1
+      @border_alpha = options[:border_alpha] || 30
+      @border_color = options[:border_color]
+
+      @shadow = options[:shadow]
+      @shadow_size = options[:shadow_size] || 2
       @shadow_alpha = options[:shadow_alpha] || 30
       @shadow_color = options[:shadow_color]
+
       @textobject = check_cache(@size, @font)
 
       if @alignment
@@ -36,8 +48,6 @@ module CyberarmEngine
           @x = $window.width - BUTTON_PADDING - @textobject.text_width(@text)
         end
       end
-
-      self
     end
 
     def check_cache(size, font_name)
@@ -74,43 +84,47 @@ module CyberarmEngine
     end
 
     def text=(string)
-      @rendered_shadow = nil
+      @rendered_border = nil
       @text = string
     end
 
     def factor_x=(n)
-      @rendered_shadow = nil
+      @rendered_border = nil
       @factor_x = n
     end
 
     def factor_y=(n)
-      @rendered_shadow = nil
+      @rendered_border = nil
       @factor_y = n
     end
 
     def color=(color)
-      @rendered_shadow = nil
-      @color = color
+      @rendered_border = nil
+      if color
+        @color = color.is_a?(Gosu::Color) ? color : Gosu::Color.new(color)
+      else
+        raise "color cannot be nil"
+      end
     end
 
-    def shadow=(boolean)
-      @rendered_shadow = nil
-      @shadow = boolean
+    def border=(boolean)
+      @rendered_border = nil
+      @border = boolean
     end
 
-    def shadow_size=(n)
-      @rendered_shadow = nil
-      @shadow_size = n
+    def border_size=(n)
+      @rendered_border = nil
+      @border_size = n
     end
 
-    def shadow_alpha=(n)
-      @rendered_shadow = nil
-      @shadow_alpha = n
+    def border_alpha=(n)
+      @rendered_border = nil
+      @border_alpha = n
     end
 
-    def shadow_color=(n)
-      @rendered_shadow = nil
-      @shadow_color = n
+    def border_color=(n)
+      @rendered_border = nil
+      @border_color = n
     end
 
     def width(text = @text)
@@ -126,30 +140,35 @@ module CyberarmEngine
     end
 
     def draw(method = :draw_markup)
-      if @shadow && !ARGV.join.include?("--no-shadow")
-        shadow_alpha = @color.alpha <= 30 ? @color.alpha : @shadow_alpha
-        shadow_color = @shadow_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue,
-                                                         shadow_alpha)
+      if @border && !ARGV.join.include?("--no-border")
+        border_alpha = @color.alpha <= 30 ? @color.alpha : @border_alpha
+        border_color = @border_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue,
+                                                         border_alpha)
         white = Gosu::Color::WHITE
 
-        _x = @shadow_size
-        _y = @shadow_size
+        _x = @border_size
+        _y = @border_size
 
-        @rendered_shadow ||= Gosu.render((width + (shadow_size * 2)).ceil, (height + (@shadow_size * 2)).ceil) do
-          @textobject.send(method, @text, _x - @shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x - @shadow_size, _y - @shadow_size, @z, @factor_x, @factor_y, white, :add)
+        @rendered_border ||= Gosu.render((width + (border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
+          @textobject.send(method, @text, _x - @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
+          @textobject.send(method, @text, _x - @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
 
-          @textobject.send(method, @text, _x, _y - @shadow_size, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x + @shadow_size, _y - @shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
+          @textobject.send(method, @text, _x + @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
 
-          @textobject.send(method, @text, _x, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x - @shadow_size, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
+          @textobject.send(method, @text, _x - @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
 
-          @textobject.send(method, @text, _x + @shadow_size, _y, @z, @factor_x, @factor_y, white, :add)
-          @textobject.send(method, @text, _x + @shadow_size, _y + @shadow_size, @z, @factor_x, @factor_y, white, :add)
+          @textobject.send(method, @text, _x + @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
+          @textobject.send(method, @text, _x + @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
         end
 
-        @rendered_shadow.draw(@x - @shadow_size, @y - @shadow_size, @z, @factor_x, @factor_y, shadow_color)
+        @rendered_border.draw(@x - @border_size, @y - @border_size, @z, @factor_x, @factor_y, border_color)
+      end
+
+      if @shadow
+        shadow_color = @shadow_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha)
+        @textobject.send(method, @text, @x + @shadow_size, @y + @shadow_size, @z, @factor_x, @factor_y, shadow_color, @mode)
       end
 
       @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color, @mode)
