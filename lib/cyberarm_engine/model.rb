@@ -3,7 +3,8 @@ module CyberarmEngine
     attr_accessor :objects, :materials, :vertices, :uvs, :texures, :normals, :faces, :colors, :bones, :material_file,
                   :current_material, :current_object, :vertex_count, :smoothing
     attr_reader :position, :bounding_box, :textured_material, :file_path, :positions_buffer_id, :colors_buffer_id,
-                :normals_buffer_id, :uvs_buffer_id, :textures_buffer_id, :vertex_array_id, :aabb_tree
+                :normals_buffer_id, :uvs_buffer_id, :textures_buffer_id, :vertex_array_id, :aabb_tree,
+                :vertices_count
 
     def initialize(file_path:)
       @file_path = file_path
@@ -23,6 +24,8 @@ module CyberarmEngine
       @bones    = []
       @smoothing = 0
 
+      @vertices_count = 0
+
       @bounding_box = BoundingBox.new
       start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
 
@@ -31,6 +34,8 @@ module CyberarmEngine
       raise "Unsupported model type '.#{type}', supported models are: #{Model::Parser.supported_formats}" unless parser
 
       parse(parser)
+
+      @vertices_count = @vertices.size
 
       @has_texture = false
 

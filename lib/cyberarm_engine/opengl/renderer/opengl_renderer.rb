@@ -3,11 +3,14 @@ module CyberarmEngine
     @@immediate_mode_warning = false
 
     attr_accessor :show_wireframe
+    attr_reader :number_of_vertices
 
     def initialize(width:, height:, show_wireframe: false)
       @width = width
       @height = height
       @show_wireframe = show_wireframe
+
+      @number_of_vertices = 0
 
       @g_buffer = GBuffer.new(width: @width, height: @height)
     end
@@ -20,6 +23,8 @@ module CyberarmEngine
     end
 
     def render(camera, lights, entities)
+      @number_of_vertices = 0
+
       glViewport(0, 0, @width, @height)
       glEnable(GL_DEPTH_TEST)
 
@@ -44,6 +49,8 @@ module CyberarmEngine
             gl_error?
             draw_model(entity.model, shader)
             entity.draw
+
+            @number_of_vertices += entity.model.vertices_count
           end
         end
 
@@ -90,6 +97,8 @@ module CyberarmEngine
           draw_mesh(entity.model)
           entity.draw
           glPopMatrix
+
+          @number_of_vertices += entity.model.vertices_count
         end
       end
 
