@@ -352,11 +352,11 @@ module CyberarmEngine
     end
 
     def scroll_width
-      @children.sum { |c| c.width } + noncontent_width
+      @children.sum(&:width) + noncontent_width
     end
 
     def scroll_height
-      @children.sum { |c| c.height } + noncontent_height
+      @children.sum(&:height) + noncontent_height
     end
 
     def max_scroll_width
@@ -370,12 +370,10 @@ module CyberarmEngine
     def dimensional_size(size, dimension)
       raise "dimension must be either :width or :height" unless %i[width height].include?(dimension)
 
-      if size && size.is_a?(Numeric)
-        if size.between?(0.0, 1.0)
-          ((@parent.send(:"content_#{dimension}") - send(:"noncontent_#{dimension}")) * size).round
-        else
-          size
-        end
+      if size.is_a?(Numeric) && size.between?(0.0, 1.0)
+        (@parent.send(:"content_#{dimension}") * size).round - send(:"noncontent_#{dimension}").round
+      else
+        size
       end
     end
 
