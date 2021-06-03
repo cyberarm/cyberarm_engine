@@ -128,15 +128,19 @@ module CyberarmEngine
     end
 
     def width(text = @text)
-      textobject.text_width(text)
+      textobject.text_width(text) + @border_size + @shadow_size
     end
 
     def markup_width(text = @text)
-      textobject.markup_width(text)
+      textobject.markup_width(text) + @border_size + @shadow_size
     end
 
     def height(text = @text)
-      text.lines.count > 0 ? text.lines.count * textobject.height : @textobject.height
+      if text.lines.count > 0
+        text.lines.count * textobject.height + @border_size + @shadow_size
+      else
+        @textobject.height + @border_size + @shadow_size
+      end
     end
 
     def draw(method = :draw_markup)

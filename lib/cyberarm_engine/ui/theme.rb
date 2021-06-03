@@ -119,7 +119,10 @@ module CyberarmEngine
         text_align: :left,
         font: "Arial",
         margin: 0,
-        padding: 2
+        padding: 2,
+        disabled: {
+          color: Gosu::Color.rgb(175, 175, 175),
+        }
       },
 
       Banner: { # < TextBlock

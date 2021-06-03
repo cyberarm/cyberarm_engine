@@ -22,6 +22,12 @@ module CyberarmEngine
       end
 
       def recalculate
+        unless @enabled
+          @text.color = @style.disabled[:color]
+        else
+          @text.color = @style.color
+        end
+
         @width  = 0
         @height = 0
 
