@@ -128,6 +128,10 @@ module CyberarmEngine
     end
 
     def width(text = @text)
+      markup_width(text)
+    end
+
+    def text_width(text = @text)
       textobject.text_width(text) + @border_size + @shadow_size
     end
 
@@ -152,8 +156,9 @@ module CyberarmEngine
 
         _x = @border_size
         _y = @border_size
+        _width = method == :draw_markup ? text_width : markup_width
 
-        @rendered_border ||= Gosu.render((width + (border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
+        @rendered_border ||= Gosu.render((_width + (border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
           @textobject.send(method, @text, _x - @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
           @textobject.send(method, @text, _x - @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
 

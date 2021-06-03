@@ -61,7 +61,7 @@ module CyberarmEngine
         Gosu::Color::WHITE
       )
 
-      @title.x = window.width / 2 - @title.width / 2
+      @title.x = window.width / 2 - @title.text_width / 2
       @title.y = (window.height / 2 + (@spacer_height / 2) + @padding) * @animators[1].transition
       @title.text = "Powered By"
 
@@ -115,14 +115,14 @@ module CyberarmEngine
       height = @title_size + @caption_size + @spacer_height + 2 * @padding + @spacer_height
 
       Gosu.record(width.ceil, height.ceil) do
-        @title.x = (width - @padding * 2) / 2 - @title.width / 2
+        @title.x = (width - @padding * 2) / 2 - @title.text_width / 2
         @title.y = @padding
         @title.draw
 
         Gosu.draw_rect(0, @padding + @title_size + @padding, @spacer_width, @spacer_height, Gosu::Color::WHITE)
         Gosu.draw_rect(1, @padding + @title_size + @padding + 1, @spacer_width - 2, @spacer_height - 2, color_hint)
 
-        @caption.x =  (width - @padding * 2) / 2 - @caption.width / 2
+        @caption.x =  (width - @padding * 2) / 2 - @caption.text_width / 2
         @caption.y = @padding + @title_size + @padding + @spacer_height + @padding
         @caption.draw
       end
