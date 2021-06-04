@@ -36,7 +36,8 @@ module CyberarmEngine
       @style.height = default(:height) || nil
 
       @style.background_canvas = Background.new
-      @style.border_canvas     = BorderCanvas.new(element: self)
+      @style.background_nine_slice_canvas = BackgroundNineSlice.new
+      @style.border_canvas = BorderCanvas.new(element: self)
 
       @style_event = :default
 
@@ -54,6 +55,7 @@ module CyberarmEngine
       set_margin
 
       set_background
+      set_background_nine_slice
 
       set_border_thickness
       set_border_color
@@ -72,6 +74,21 @@ module CyberarmEngine
       @style.background = safe_style_fetch(:background)
 
       @style.background_canvas.background = @style.background
+    end
+
+    def set_background_nine_slice
+      @style.background_nine_slice = safe_style_fetch(:background_nine_slice)
+
+      @style.background_nine_slice_mode = safe_style_fetch(:background_nine_slice_mode) || :stretch
+      @style.background_nine_slice_color = safe_style_fetch(:background_nine_slice_color) || Gosu::Color::WHITE
+      @style.background_nine_slice_canvas.color = @style.background_nine_slice_color
+
+      @style.background_nine_slice_from_edge = safe_style_fetch(:background_nine_slice_from_edge)
+
+      @style.background_nine_slice_left      = safe_style_fetch(:background_nine_slice_left)   || @style.background_nine_slice_from_edge
+      @style.background_nine_slice_top       = safe_style_fetch(:background_nine_slice_top)    || @style.background_nine_slice_from_edge
+      @style.background_nine_slice_right     = safe_style_fetch(:background_nine_slice_right)  || @style.background_nine_slice_from_edge
+      @style.background_nine_slice_bottom    = safe_style_fetch(:background_nine_slice_bottom) || @style.background_nine_slice_from_edge
     end
 
     def set_border_thickness
@@ -250,6 +267,7 @@ module CyberarmEngine
       return unless visible?
 
       @style.background_canvas.draw
+      @style.background_nine_slice_canvas.draw
       @style.border_canvas.draw
 
       Gosu.clip_to(@x, @y, width, height) do
@@ -390,8 +408,32 @@ module CyberarmEngine
       @style.background_canvas.height = height
 
       @style.background_canvas.update
-
+      update_background_nine_slice
       @style.border_canvas.update
+    end
+
+    def background_nine_slice=(_image_path)
+      @style.background_nine_slice_canvas.image = _image_path
+      update_background_nine_slice
+    end
+
+    def update_background_nine_slice
+      @style.background_nine_slice_canvas.x = @x
+      @style.background_nine_slice_canvas.y = @y
+      @style.background_nine_slice_canvas.z = @z
+      @style.background_nine_slice_canvas.width = width
+      @style.background_nine_slice_canvas.height = height
+
+      @style.background_nine_slice_canvas.mode = @style.background_nine_slice_mode
+
+      @style.background_nine_slice_canvas.color = @style.background_nine_slice_color
+
+      @style.background_nine_slice_canvas.left   = @style.background_nine_slice_left
+      @style.background_nine_slice_canvas.top    = @style.background_nine_slice_top
+      @style.background_nine_slice_canvas.right  = @style.background_nine_slice_right
+      @style.background_nine_slice_canvas.bottom = @style.background_nine_slice_bottom
+
+      @style.background_nine_slice_canvas.image = @style.background_nine_slice
     end
 
     def root

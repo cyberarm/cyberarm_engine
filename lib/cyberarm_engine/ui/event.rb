@@ -15,11 +15,18 @@ module CyberarmEngine
 
       return unless enabled?
 
-      return :handled if respond_to?(event) && (send(event, self, *args) == :handled)
+      was_handled = false
+
+      was_handled = true if respond_to?(event) && (send(event, self, *args) == :handled)
 
       @event_handler[event].reverse_each do |handler|
-        return :handled if handler.call(self, *args) == :handled
+        if handler.call(self, *args) == :handled
+          was_handled = true
+          break
+        end
       end
+
+      return :handled if was_handled
 
       parent.publish(event, *args) if parent
       nil
