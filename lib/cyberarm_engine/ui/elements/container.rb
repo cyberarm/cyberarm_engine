@@ -75,6 +75,8 @@ module CyberarmEngine
       end
 
       def hit_element?(x, y)
+        return unless hit?(x, y)
+
         @children.reverse_each do |child|
           next unless child.visible?
 
