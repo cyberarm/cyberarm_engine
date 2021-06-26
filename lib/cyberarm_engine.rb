@@ -30,6 +30,11 @@ require_relative "cyberarm_engine/text"
 require_relative "cyberarm_engine/timer"
 require_relative "cyberarm_engine/config_file"
 
+require_relative "cyberarm_engine/console"
+require_relative "cyberarm_engine/console/command"
+require_relative "cyberarm_engine/console/subcommand"
+require_relative "cyberarm_engine/console/commands/help_command"
+
 require_relative "cyberarm_engine/ui/dsl"
 
 require_relative "cyberarm_engine/ui/theme"

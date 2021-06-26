@@ -97,5 +97,17 @@ module CyberarmEngine
     def window
       $window
     end
+
+    def control_down?
+      Gosu.button_down?(Gosu::KB_LEFT_CONTROL) || Gosu.button_down?(Gosu::KB_RIGHT_CONTROL)
+    end
+
+    def shift_down?
+      Gosu.button_down?(Gosu::KB_LEFT_SHIFT) || Gosu.button_down?(Gosu::KB_RIGHT_SHIFT)
+    end
+
+    def alt_down?
+      Gosu.button_down?(Gosu::KB_LEFT_ALT) || Gosu.button_down?(Gosu::KB_RIGHT_ALT)
+    end
   end
 end
