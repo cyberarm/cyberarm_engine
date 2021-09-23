@@ -46,6 +46,12 @@ module CyberarmEngine
         :handled
       end
 
+      def clicked_left_mouse_button(_sender, _x, _y)
+        @block&.call(self.value) if @enabled
+
+        :handled
+      end
+
       def show_menu
         @menu.clear
 
@@ -61,7 +67,7 @@ module CyberarmEngine
             },
             proc do
               self.choose = item
-              @block&.call(item)
+              @block&.call(self.value)
             end
           )
 
