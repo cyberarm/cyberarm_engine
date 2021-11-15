@@ -25,6 +25,7 @@ module CyberarmEngine
       @last_mouse_pos = nil
       @dragging_element = nil
       @pending_recalculate_request = false
+      @pending_element_recalculate_requests = []
 
       @menu = nil
       @min_drag_distance = 0
@@ -56,6 +57,7 @@ module CyberarmEngine
 
       if @tip.value.length.positive?
         Gosu.flush
+
         @tip.draw
       end
 
@@ -73,7 +75,10 @@ module CyberarmEngine
         @root_container.recalculate
 
         @pending_recalculate_request = false
+        @pending_element_recalculate_requests.clear # GUI has already been recalculated
       end
+
+      @pending_element_recalculate_requests.each(&:recalculate)
 
       if @pending_focus_request
         @pending_focus_request = false
@@ -229,6 +234,13 @@ module CyberarmEngine
     # Schedule a full GUI recalculation on next update
     def request_recalculate
       @pending_recalculate_request = true
+    end
+
+    def request_recalculate_for(element)
+      # element is already queued
+      return if @pending_element_recalculate_requests.detect { |e| e == element }
+
+      @pending_element_recalculate_requests << element
     end
 
     def request_focus(element)

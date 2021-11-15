@@ -47,7 +47,7 @@ module CyberarmEngine
       end
 
       def clicked_left_mouse_button(_sender, _x, _y)
-        @block&.call(self.value) if @enabled
+        # @block&.call(self.value) if @enabled
 
         :handled
       end
@@ -56,6 +56,8 @@ module CyberarmEngine
         @menu.clear
 
         @items.each do |item|
+          next if item == self.value
+
           btn = Button.new(
             item,
             {
