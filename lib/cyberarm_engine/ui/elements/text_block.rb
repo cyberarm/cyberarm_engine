@@ -66,41 +66,47 @@ module CyberarmEngine
         wrap_behavior = style.text_wrap
         copy = @raw_text.to_s.dup
 
-        if line_width(copy[0]) <= max_width && line_width(copy) > max_width && wrap_behavior != :none
-          breaks = []
+        # Only perform text wrapping: if it is enabled, is possible to wrap, and text is too long to fit on one line
+        if wrap_behavior != :none && line_width(copy[0]) <= max_width && line_width(copy) > max_width
+          breaks = [] # list of indexes to insert a line break
           line_start = 0
-          line_end   = copy.length
+          line_end = copy.length
 
-          while line_start != copy.length
-            if line_width(copy[line_start...line_end]) > max_width
-              line_end = ((line_end - line_start) / 2.0)
-              line_end = 1.0 if line_end <= 1
-            elsif line_end < copy.length && line_width(copy[line_start...line_end + 1]) < max_width
-              # To small, grow!
-              # TODO: find a more efficient way
-              line_end += 1
+          # find length of lines
+          while line_width(copy[line_start..line_end]) > max_width
+            search_start = line_start
+            search_end = line_end
 
-            else # FOUND IT!
-              entering_line_end = line_end.floor
-              max_reach = line_end.floor - line_start < 63 ? line_end.floor - line_start : 63
-              reach = 0
+            # Perform a binary search to find length of line
+            while search_start < search_end
+              midpoint = ((search_start.to_f + search_end) / 2.0).floor
 
-              if wrap_behavior == :word_wrap
-                max_reach.times do |i|
-                  reach = i
-                  break if copy[line_end.floor - i].to_s.match(/[[:punct:]]| /)
+              if line_width(copy[line_start..midpoint]) > max_width
+                search_end = midpoint
+              else
+                search_start = midpoint + 1
+              end
+            end
+
+            if wrap_behavior == :word_wrap
+              word_search_end = search_end
+              failed = false
+
+              until(copy[word_search_end].to_s.match(/[[:punct:]]| /))
+                word_search_end -= 1
+
+                if word_search_end <= 1 || word_search_end < line_start
+                  failed = true
+                  break
                 end
-
-                # puts "Max width: #{max_width}/#{line_width(@raw_text)} Reach: {#{reach}/#{max_reach}} Line Start: #{line_start}/#{line_end.floor} (#{copy.length}|#{@raw_text.length}) [#{entering_line_end}] '#{copy}' {#{copy[line_start...line_end]}}"
-                line_end = line_end.floor - reach + 1 if reach != max_reach # Add +1 to walk in front of punctuation
               end
 
-              breaks << line_end.floor
-              line_start = line_end.floor
-              line_end = copy.length
-
-              break if entering_line_end == copy.length || reach == max_reach
+              line_start = failed ? search_end : word_search_end + 1 # walk in front of punctuation
+            else
+              line_start = search_end
             end
+
+            breaks << line_start
           end
 
           breaks.each_with_index do |pos, index|

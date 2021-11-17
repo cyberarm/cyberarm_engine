@@ -27,8 +27,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = %w[lib assets]
 
-  spec.add_dependency "clipboard", "~> 1.3.5"
-  spec.add_dependency "excon", "~> 0.78.0"
+  spec.add_dependency "clipboard", "~> 1.3"
+  spec.add_dependency "excon", "~> 0.88"
   spec.add_dependency "gosu", "~> 1.1"
   spec.add_dependency "gosu_more_drawables", "~> 0.3"
   # spec.add_dependency "ffi", :platforms => [:mswin, :mingw] # Required by Clipboard on Windows
