@@ -47,8 +47,8 @@ module CyberarmEngine
           when :left
             @text.x = @style.border_thickness_left + @style.padding_left + @x
           when :center
-            @text.x = if @text.width <= outer_width
-                        @x + outer_width / 2 - @text.width / 2
+            @text.x = if @text.width <= width
+                        @x + width / 2 - @text.width / 2
                       else # Act as left aligned
                         @style.border_thickness_left + @style.padding_left + @x
                       end
@@ -61,7 +61,7 @@ module CyberarmEngine
       end
 
       def handle_text_wrapping(max_width)
-        max_width ||= @parent&.width
+        max_width ||= @parent&.content_width
         max_width ||= @x - (window.width + noncontent_width)
         wrap_behavior = style.text_wrap
         copy = @raw_text.to_s.dup
