@@ -51,6 +51,9 @@ module CyberarmEngine
     def stylize
       set_static_position
 
+      set_color
+      set_font
+
       set_padding
       set_margin
 
@@ -68,6 +71,15 @@ module CyberarmEngine
     def set_static_position
       @x = @style.x if @style.x != 0
       @y = @style.y if @style.y != 0
+    end
+
+    def set_color
+      @style.color = safe_style_fetch(:color)
+      @text&.color = @style.color
+    end
+
+    def set_font
+      @text&.swap_font(safe_style_fetch(:text_size), safe_style_fetch(:font))
     end
 
     def set_background
@@ -138,13 +150,7 @@ module CyberarmEngine
       old_width = width
       old_height = height
 
-      _style = @style.send(event)
       @style_event = event
-
-      if @text.is_a?(CyberarmEngine::Text)
-        @text.color = _style&.dig(:color) || @style.default[:color]
-        @text.swap_font(_style&.dig(:text_size) || @style.default[:text_size], _style&.dig(:font) || @style.default[:font])
-      end
 
       return if self.is_a?(ToolTip)
 
