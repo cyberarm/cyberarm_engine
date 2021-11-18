@@ -72,8 +72,13 @@ module CyberarmEngine
           line_start = 0
           line_end = copy.length
 
+          stalled = false
+          stalled_interations = 0
+          max_stalled_iterations = 10
+          checked_copy_length = line_width(copy[line_start..line_end])
+
           # find length of lines
-          while line_width(copy[line_start..line_end]) > max_width
+          while line_width(copy[line_start..line_end]) > max_width && stalled_interations < max_stalled_iterations
             search_start = line_start
             search_end = line_end
 
@@ -107,6 +112,13 @@ module CyberarmEngine
             end
 
             breaks << line_start
+
+            # Prevent locking up due to outer while loop text width < max_width check not being satisfied.
+            stalled = checked_copy_length == line_width(copy[line_start..line_end])
+            checked_copy_length = line_width(copy[line_start..line_end])
+
+            stalled_interations += 1 if stalled
+            stalled_interations = 0 unless stalled
           end
 
           breaks.each_with_index do |pos, index|
