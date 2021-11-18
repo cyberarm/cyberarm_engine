@@ -4,7 +4,7 @@ module CyberarmEngine
     include Event
     include Common
 
-    attr_accessor :x, :y, :z, :enabled, :tip
+    attr_accessor :x, :y, :z, :tip
     attr_reader :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
@@ -242,6 +242,14 @@ module CyberarmEngine
       end
 
       :handled
+    end
+
+    def enabled=(boolean)
+      @enabled = boolean
+
+      recalculate
+
+      @enabled
     end
 
     def enabled?
