@@ -370,19 +370,42 @@ module CyberarmEngine
     end
 
     def scroll_width
-      @children.sum(&:width) + noncontent_width
+      @children.sum(&:outer_width)
     end
 
     def scroll_height
-      @children.sum(&:height) + noncontent_height
+      if is_a?(CyberarmEngine::Element::Flow)
+        return 0 if @children.size.zero?
+
+        pairs_ = []
+        sorted_children_ = @children.sort_by(&:y)
+        a_ = []
+        y_position_ = sorted_children_.first.y
+
+        sorted_children_.each do |child|
+          unless child.y == y_position_
+            y_position_ = child.y
+            pairs_ << a_
+            a_ = []
+          end
+
+          a_ << child
+        end
+
+        pairs_ << a_ unless pairs_.last == a_
+
+        pairs_.sum { |pair| pair.map(&:outer_height).max } + @style.padding_bottom + @style.border_thickness_bottom
+      else
+        @children.sum(&:outer_height) + @style.padding_bottom + @style.border_thickness_bottom
+      end
     end
 
     def max_scroll_width
-      scroll_width - width
+      scroll_width - outer_width
     end
 
     def max_scroll_height
-      scroll_height - height
+      scroll_height - outer_height
     end
 
     def dimensional_size(size, dimension)
