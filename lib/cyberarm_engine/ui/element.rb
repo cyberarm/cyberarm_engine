@@ -284,9 +284,7 @@ module CyberarmEngine
       @style.background_nine_slice_canvas.draw
       @style.border_canvas.draw
 
-      Gosu.clip_to(@x, @y, width, height) do
-        render
-      end
+      render
     end
 
     def debug_draw
