@@ -75,10 +75,10 @@ module CyberarmEngine
         @root_container.recalculate
 
         @pending_recalculate_request = false
-        @pending_element_recalculate_requests.clear # GUI has already been recalculated
       end
 
       @pending_element_recalculate_requests.each(&:recalculate)
+      @pending_element_recalculate_requests.clear
 
       if @pending_focus_request
         @pending_focus_request = false

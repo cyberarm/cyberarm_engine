@@ -45,7 +45,7 @@ module CyberarmEngine
         root.gui_state.request_recalculate
       end
 
-      def apend(&block)
+      def append(&block)
         old_container = $__current_container__
 
         $__current_container__ = self
@@ -194,9 +194,8 @@ module CyberarmEngine
         if @scroll_position.y < 0
           @scroll_position.y += @scroll_speed
           @scroll_position.y = 0 if @scroll_position.y > 0
-          # recalculate
-          root.gui_state.request_recalculate_for(self)
 
+          root.gui_state.request_recalculate_for(self)
 
           return :handled
         end
@@ -210,9 +209,8 @@ module CyberarmEngine
         if @scroll_position.y.abs < max_scroll_height
           @scroll_position.y -= @scroll_speed
           @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
-          # recalculate
-          root.gui_state.request_recalculate_for(self)
 
+          root.gui_state.request_recalculate_for(self)
 
           return :handled
         end

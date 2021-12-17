@@ -142,9 +142,12 @@ module CyberarmEngine
 
         old_width = width
         old_height = height
-        recalculate
 
-        root.gui_state.request_recalculate if old_width != width || old_height != height
+        if old_width != width || old_height != height
+          root.gui_state.request_recalculate
+        else
+          recalculate
+        end
 
         publish(:changed, self.value)
       end
