@@ -13,9 +13,9 @@ module CyberarmEngine
       @options = options
       @block = block
 
-      @focus   = @options[:focus].nil?   ? false : @options[:focus]
-      @enabled = @options[:enabled].nil? ? true  : @options[:enabled]
-      @visible = @options[:visible].nil? ? true  : @options[:visible]
+      @focus   = !@options.key?(:focus)   ? false : @options[:focus]
+      @enabled = !@options.key?(:enabled) ? true  : @options[:enabled]
+      @visible = !@options.key?(:visible) ? true  : @options[:visible]
       @tip     = @options[:tip] || ""
 
       @debug_color = @options[:debug_color].nil? ? Gosu::Color::RED : @options[:debug_color]
