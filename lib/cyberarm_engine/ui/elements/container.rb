@@ -129,6 +129,9 @@ module CyberarmEngine
           child.reposition # TODO: Implement top,bottom,left,center, and right positioning
 
           Stats.increment(:gui_recalculations_last_frame, 1)
+
+          child.element_visible = child.x >= @x - child.width && child.x <= @x + width &&
+                                  child.y >= @y - child.height && child.y <= @y + height
         end
 
         update_background

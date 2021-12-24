@@ -4,7 +4,7 @@ module CyberarmEngine
     include Event
     include Common
 
-    attr_accessor :x, :y, :z, :tip
+    attr_accessor :x, :y, :z, :tip, :element_visible
     attr_reader :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
@@ -24,6 +24,7 @@ module CyberarmEngine
 
       @root ||= nil
       @gui_state ||= nil
+      @element_visible = true
 
       @x = @style.x
       @y = @style.y
@@ -260,6 +261,10 @@ module CyberarmEngine
       @visible
     end
 
+    def element_visible?
+      @element_visible
+    end
+
     def toggle
       @visible = !@visible
       root.gui_state.request_recalculate
@@ -279,6 +284,7 @@ module CyberarmEngine
 
     def draw
       return unless visible?
+      return unless element_visible?
 
       @style.background_canvas.draw
       @style.background_nine_slice_canvas.draw
