@@ -57,7 +57,12 @@ module CyberarmEngine
       end
 
       def render
-        Gosu.clip_to(@x, @y, width, height) do
+        Gosu.clip_to(
+          @x + @style.border_thickness_left + @style.padding_left,
+          @y + @style.border_thickness_top + @style.padding_top,
+          content_width + 1,
+          content_height + 1
+        ) do
           @children.each(&:draw)
         end
       end
@@ -103,6 +108,8 @@ module CyberarmEngine
 
         stylize
 
+        # s = Gosu.milliseconds
+
         layout
 
         if is_root?
@@ -133,6 +140,8 @@ module CyberarmEngine
           child.element_visible = child.x >= @x - child.width && child.x <= @x + width &&
                                   child.y >= @y - child.height && child.y <= @y + height
         end
+
+        # puts "TOOK: #{Gosu.milliseconds - s}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}"
 
         update_background
       end
