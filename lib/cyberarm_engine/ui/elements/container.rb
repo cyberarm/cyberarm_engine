@@ -124,6 +124,27 @@ module CyberarmEngine
 
           @width  = _width  || (@children.map { |c| c.x + c.outer_width }.max || 0).round
           @height = _height || (@children.map { |c| c.y + c.outer_height }.max || 0).round
+
+          # min width/height
+          @width = @style.min_width if @style.min_width && @width < @style.min_width
+          @height = @style.min_height if @style.min_height && @height < @style.min_height
+
+          # max width/height
+          @width = @style.max_width if @style.max_width && @width > @style.max_width
+          @height = @style.max_height if @style.max_height && @height > @style.max_height
+
+          # FIXME: Detect if other siblings (parents children) also want to fill and share space with them
+          if @parent && @style.fill
+            fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
+
+            space_available_width = (@parent.content_width - (@parent.children.map(&:outer_width).sum - outer_width)) / fill_siblings
+            space_available_height = (@parent.content_height - (@parent.children.map(&:outer_height).sum - outer_height)) / fill_siblings
+
+            @width = space_available_width if @parent.is_a?(Flow)
+            @height = space_available_height if @parent.is_a?(Stack)
+
+            # pp ["siblings: #{fill_siblings}", "parent is flow: #{@parent.is_a?(Flow)}", "parent is stack: #{@parent.is_a?(Stack)}", [@parent.content_width, space_available_width, @width, outer_width], [@parent.content_height, space_available_height, @height, outer_height]]
+          end
         end
 
         # Move child to parent after positioning
