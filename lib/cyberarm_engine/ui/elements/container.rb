@@ -137,11 +137,11 @@ module CyberarmEngine
           if @parent && @style.fill
             fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
 
-            space_available_width = (@parent.content_width - (@parent.children.map(&:outer_width).sum - outer_width)) / fill_siblings
-            space_available_height = (@parent.content_height - (@parent.children.map(&:outer_height).sum - outer_height)) / fill_siblings
+            space_available_width = ((@parent.content_width - (@parent.children.map(&:outer_width).sum - outer_width)) / fill_siblings).floor
+            space_available_height = ((@parent.content_height - (@parent.children.map(&:outer_height).sum - outer_height)) / fill_siblings).floor
 
-            @width = space_available_width if @parent.is_a?(Flow)
-            @height = space_available_height if @parent.is_a?(Stack)
+            @width = space_available_width - inner_width if @parent.is_a?(Flow)
+            @height = space_available_height - inner_height if @parent.is_a?(Stack)
 
             # pp ["siblings: #{fill_siblings}", "parent is flow: #{@parent.is_a?(Flow)}", "parent is stack: #{@parent.is_a?(Stack)}", [@parent.content_width, space_available_width, @width, outer_width], [@parent.content_height, space_available_height, @height, outer_height]]
           end
@@ -172,12 +172,14 @@ module CyberarmEngine
       end
 
       def max_width
-        _width = dimensional_size(@style.width, :width)
-        if _width
-          outer_width
-        else
-          window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
-        end
+        # _width = dimensional_size(@style.width, :width)
+        # if _width
+        #   outer_width
+        # else
+        #   window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
+        # end
+
+        outer_width
       end
 
       def fits_on_line?(element) # Flow
