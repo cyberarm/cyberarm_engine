@@ -139,8 +139,8 @@ module CyberarmEngine
             space_available_width = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings).round
             space_available_height = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings).round
 
-            @width = space_available_width - inner_width if @parent.is_a?(Flow)
-            @height = space_available_height - inner_height if @parent.is_a?(Stack)
+            @width = space_available_width - noncontent_width if @parent.is_a?(Flow)
+            @height = space_available_height - noncontent_height if @parent.is_a?(Stack)
 
             # pp ["siblings: #{fill_siblings}", "parent is #{@parent.inspect}", [@parent.content_width, space_available_width, @width, outer_width], [@parent.content_height, space_available_height, @height, outer_height]]
           end
