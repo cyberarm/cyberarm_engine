@@ -429,11 +429,30 @@ module CyberarmEngine
     def dimensional_size(size, dimension)
       raise "dimension must be either :width or :height" unless %i[width height].include?(dimension)
 
-      if size.is_a?(Numeric) && size.between?(0.0, 1.0)
+      new_size = if size.is_a?(Numeric) && size.between?(0.0, 1.0)
         (@parent.send(:"content_#{dimension}") * size).round - send(:"noncontent_#{dimension}").round
       else
         size
       end
+
+      if @parent && @style.fill # Handle fill behavior
+        fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
+
+        if dimension == :width && @parent.is_a?(Flow)
+          space_available_width = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings).round
+          return space_available_width - noncontent_width
+
+        elsif dimension == :height && @parent.is_a?(Stack)
+          space_available_height = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings).round
+          return space_available_height - noncontent_height
+        end
+
+      else # Handle min_width/height and max_width/height
+        return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size < @style.send(:"min_#{dimension}")
+        return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size > @style.send(:"max_#{dimension}")
+      end
+
+      new_size
     end
 
     def background=(_background)
