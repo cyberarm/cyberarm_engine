@@ -18,7 +18,14 @@ module CyberarmEngine
       end
 
       def render
-        @text.draw
+        # Gosu.clip_to is too expensive to always use so check if we actually need it.
+        if @text.width > width || @text.height > height
+          Gosu.clip_to(@x, @y, width, height) do
+            @text.draw
+          end
+        else
+          @text.draw
+        end
       end
 
       def recalculate

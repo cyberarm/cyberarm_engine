@@ -24,6 +24,7 @@ require_relative "cyberarm_engine/transform"
 require_relative "cyberarm_engine/ray"
 require_relative "cyberarm_engine/background"
 require_relative "cyberarm_engine/background_nine_slice"
+require_relative "cyberarm_engine/background_image"
 require_relative "cyberarm_engine/animator"
 
 require_relative "cyberarm_engine/text"

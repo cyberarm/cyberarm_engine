@@ -38,6 +38,7 @@ module CyberarmEngine
 
       @style.background_canvas = Background.new
       @style.background_nine_slice_canvas = BackgroundNineSlice.new
+      @style.background_image_canvas = BackgroundImage.new
       @style.border_canvas = BorderCanvas.new(element: self)
 
       @style_event = :default
@@ -60,6 +61,7 @@ module CyberarmEngine
 
       set_background
       set_background_nine_slice
+      set_background_image
 
       set_border_thickness
       set_border_color
@@ -102,6 +104,14 @@ module CyberarmEngine
       @style.background_nine_slice_top       = safe_style_fetch(:background_nine_slice_top)    || @style.background_nine_slice_from_edge
       @style.background_nine_slice_right     = safe_style_fetch(:background_nine_slice_right)  || @style.background_nine_slice_from_edge
       @style.background_nine_slice_bottom    = safe_style_fetch(:background_nine_slice_bottom) || @style.background_nine_slice_from_edge
+    end
+
+    def set_background_image
+      @style.background_image = safe_style_fetch(:background_image)
+      @style.background_image_mode = safe_style_fetch(:background_image_mode) || :stretch
+      @style.background_image_color = safe_style_fetch(:background_image_color) || Gosu::Color::WHITE
+      @style.background_image_canvas.mode = @style.background_image_mode
+      @style.background_image_canvas.color = @style.background_image_color
     end
 
     def set_border_thickness
@@ -288,6 +298,7 @@ module CyberarmEngine
 
       @style.background_canvas.draw
       @style.background_nine_slice_canvas.draw
+      @style.background_image_canvas.draw
       @style.border_canvas.draw
 
       render
@@ -469,6 +480,7 @@ module CyberarmEngine
 
       @style.background_canvas.update
       update_background_nine_slice
+      update_background_image
       @style.border_canvas.update
     end
 
@@ -494,6 +506,26 @@ module CyberarmEngine
       @style.background_nine_slice_canvas.bottom = @style.background_nine_slice_bottom
 
       @style.background_nine_slice_canvas.image = @style.background_nine_slice
+    end
+
+    def background_image=(image_path)
+      pp @style.background_image_canvas.image
+
+      @style.background_image = image_path.is_a?(Gosu::Image) ? image_path : get_image(image_path)
+      update_background_image
+    end
+
+    def update_background_image
+      @style.background_image_canvas.x = @x
+      @style.background_image_canvas.y = @y
+      @style.background_image_canvas.z = @z
+      @style.background_image_canvas.width = width
+      @style.background_image_canvas.height = height
+
+      @style.background_image_canvas.mode = @style.background_image_mode
+      @style.background_image_canvas.color = @style.background_image_color
+
+      @style.background_image_canvas.image = @style.background_image
     end
 
     def root
