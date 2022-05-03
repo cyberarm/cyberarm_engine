@@ -43,8 +43,8 @@ module CyberarmEngine
 
         handle_text_wrapping(_width)
 
-        @width  = _width  || @text.width.round
-        @height = _height || @text.height.round
+        @width  = _width  || @text.width.floor
+        @height = _height || @text.height.floor
 
         @text.y = @style.border_thickness_top + @style.padding_top + @y
         @text.z = @z + 3

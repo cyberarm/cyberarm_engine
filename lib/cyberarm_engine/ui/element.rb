@@ -441,7 +441,7 @@ module CyberarmEngine
       raise "dimension must be either :width or :height" unless %i[width height].include?(dimension)
 
       new_size = if size.is_a?(Numeric) && size.between?(0.0, 1.0)
-        (@parent.send(:"content_#{dimension}") * size).round - send(:"noncontent_#{dimension}").round
+        (@parent.send(:"content_#{dimension}") * size).floor - send(:"noncontent_#{dimension}").floor
       else
         size
       end
@@ -450,11 +450,15 @@ module CyberarmEngine
         fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
 
         if dimension == :width && @parent.is_a?(Flow)
-          space_available_width = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings).round
+          space_available_width = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings)
+          space_available_width = space_available_width.nan? ? 0 : space_available_width.floor # The parent element might not have its dimensions, yet.
+
           return space_available_width - noncontent_width
 
         elsif dimension == :height && @parent.is_a?(Stack)
-          space_available_height = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings).round
+          space_available_height = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings)
+          space_available_height = space_available_height.nan? ? 0 : space_available_height.floor # The parent element might not have its dimensions, yet.
+
           return space_available_height - noncontent_height
         end
 
@@ -509,8 +513,6 @@ module CyberarmEngine
     end
 
     def background_image=(image_path)
-      pp @style.background_image_canvas.image
-
       @style.background_image = image_path.is_a?(Gosu::Image) ? image_path : get_image(image_path)
       update_background_image
     end

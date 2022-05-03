@@ -98,7 +98,7 @@ module CyberarmEngine
       end
 
       def row_at(y)
-        ((y - @text.y) / @text.textobject.height).round
+        ((y - @text.y) / @text.textobject.height).floor
       end
 
       def column_at(x, y)
