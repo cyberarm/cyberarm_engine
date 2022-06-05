@@ -12,7 +12,7 @@ module CyberarmEngine
 
       @root_container = Element::Stack.new(gui_state: self)
       @game_objects << @root_container
-      $__current_container__ = @root_container
+      CyberarmEngine::Element::Container.current_container = @root_container
 
       @active_width  = window.width
       @active_height = window.height
@@ -90,6 +90,8 @@ module CyberarmEngine
       @menu&.update
       super
 
+      return unless window.has_focus?
+
       new_mouse_over = @menu.hit_element?(window.mouse_x, window.mouse_y) if @menu
       new_mouse_over ||= @root_container.hit_element?(window.mouse_x, window.mouse_y)
 
@@ -135,10 +137,6 @@ module CyberarmEngine
       @active_height = window.height
     end
 
-    def tool_tip_delay
-      250 # ms
-    end
-
     def button_down(id)
       super
 
@@ -173,6 +171,10 @@ module CyberarmEngine
       end
 
       @focus.button_up(id) if @focus.respond_to?(:button_up)
+    end
+
+    def tool_tip_delay
+      @tip.style.delay || 250 # ms
     end
 
     def redirect_mouse_button(button)

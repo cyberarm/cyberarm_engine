@@ -6,6 +6,16 @@ module CyberarmEngine
       attr_accessor :stroke_color, :fill_color
       attr_reader :children, :gui_state, :scroll_position
 
+      def self.current_container
+        @@current_container
+      end
+
+      def self.current_container=(container)
+        raise ArgumentError, "Expected container to an an instance of CyberarmEngine::Element::Container, got #{container.class}" unless container.is_a?(CyberarmEngine::Element::Container)
+
+        @@current_container = container
+      end
+
       def initialize(options = {}, block = nil)
         @gui_state = options.delete(:gui_state)
         super
@@ -35,23 +45,23 @@ module CyberarmEngine
       def clear(&block)
         @children.clear
 
-        old_container = $__current_container__
+        old_container = CyberarmEngine::Element::Container.current_container
 
-        $__current_container__ = self
+        CyberarmEngine::Element::Container.current_container = self
         block.call(self) if block
 
-        $__current_container__ = old_container
+        CyberarmEngine::Element::Container.current_container = old_container
 
         root.gui_state.request_recalculate
       end
 
       def append(&block)
-        old_container = $__current_container__
+        old_container = CyberarmEngine::Element::Container.current_container
 
-        $__current_container__ = self
+        CyberarmEngine::Element::Container.current_container = self
         block.call(self) if block
 
-        $__current_container__ = old_container
+        CyberarmEngine::Element::Container.current_container = old_container
 
         root.gui_state.request_recalculate
       end

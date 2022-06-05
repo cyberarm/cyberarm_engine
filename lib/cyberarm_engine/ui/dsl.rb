@@ -116,7 +116,7 @@ module CyberarmEngine
     end
 
     private def element_parent
-      $__current_container__
+      CyberarmEngine::Element::Container.current_container
     end
 
     private def container(klass, options = {}, &block)
@@ -126,12 +126,12 @@ module CyberarmEngine
       _container = klass.new(options, block)
 
       old_parent = element_parent
-      $__current_container__ = _container
+      CyberarmEngine::Element::Container.current_container = _container
 
       _container.build
       _container.parent.add(_container)
 
-      $__current_container__ = old_parent
+      CyberarmEngine::Element::Container.current_container = old_parent
 
       _container
     end

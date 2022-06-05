@@ -154,6 +154,7 @@ module CyberarmEngine
       },
 
       ToolTip: { # < TextBlock
+        delay: 100, # ms
         color: Gosu::Color::WHITE,
         padding_top: 4,
         padding_bottom: 4,

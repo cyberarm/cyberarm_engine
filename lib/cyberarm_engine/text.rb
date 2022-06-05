@@ -43,9 +43,9 @@ module CyberarmEngine
         when :left
           @x = 0 + BUTTON_PADDING
         when :center
-          @x = ($window.width / 2) - (@textobject.text_width(@text) / 2)
+          @x = (CyberarmEngine::Window.instance.width / 2) - (@textobject.text_width(@text) / 2)
         when :right
-          @x = $window.width - BUTTON_PADDING - @textobject.text_width(@text)
+          @x = CyberarmEngine::Window.instance.width - BUTTON_PADDING - @textobject.text_width(@text)
         end
       end
     end

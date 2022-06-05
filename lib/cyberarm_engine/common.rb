@@ -95,7 +95,7 @@ module CyberarmEngine
     end
 
     def window
-      $window
+      CyberarmEngine::Window.instance
     end
 
     def control_down?

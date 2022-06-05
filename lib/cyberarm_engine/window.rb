@@ -8,21 +8,33 @@ module CyberarmEngine
 
     attr_accessor :show_cursor
     attr_writer :exit_on_opengl_error
-    attr_reader :last_frame_time
+    attr_reader :last_frame_time, :states
 
     def self.now
       Gosu.milliseconds
     end
 
     def self.dt
-      $window.last_frame_time / 1000.0
+      instance.last_frame_time / 1000.0
+    end
+
+    def self.instance=(window)
+      raise ArgumentError, "Expected window to be a subclass of CyberarmEngine::Window, got: #{window.class}" unless window.is_a?(CyberarmEngine::Window)
+
+      @@instance = window
+    end
+
+    def self.instance
+      @@instance
     end
 
     def initialize(width: 800, height: 600, fullscreen: false, update_interval: 1000.0 / 60, resizable: false, borderless: false)
       @show_cursor = false
+      @has_focus = false
 
       super(width, height, fullscreen: fullscreen, update_interval: update_interval, resizable: resizable, borderless: borderless)
-      $window = self
+      Window.instance = self
+
       @last_frame_time = Gosu.milliseconds - 1
       @current_frame_time = Gosu.milliseconds
       self.caption = "CyberarmEngine #{CyberarmEngine::VERSION} #{Gosu.language}"
@@ -34,19 +46,62 @@ module CyberarmEngine
     end
 
     def draw
-      current_state.draw if current_state
+      current_state&.draw
     end
 
     def update
       Stats.clear
 
-      current_state.update if current_state
+      current_state&.update
+
       @last_frame_time = Gosu.milliseconds - @current_frame_time
       @current_frame_time = Gosu.milliseconds
     end
 
     def needs_cursor?
       @show_cursor
+    end
+
+    def needs_redraw?
+      current_state ? current_state.needs_redraw? : true
+    end
+
+    def drop(filename)
+      current_state&.drop(filename)
+    end
+
+    def gamepad_connected(index)
+      current_state&.gamepad_connected(index)
+    end
+
+    def gamepad_disconnected(index)
+      current_state&.gamepad_disconnected(index)
+    end
+
+    def gain_focus
+      @has_focus = true
+
+      current_state&.gain_focus
+    end
+
+    def lose_focus
+      @has_focus = false
+
+      current_state&.lose_focus
+    end
+
+    def button_down(id)
+      super
+      current_state&.button_down(id)
+    end
+
+    def button_up(id)
+      super
+      current_state&.button_up(id)
+    end
+
+    def close
+      current_state ? current_state.close : super
     end
 
     def dt
@@ -59,16 +114,6 @@ module CyberarmEngine
 
     def exit_on_opengl_error?
       @exit_on_opengl_error
-    end
-
-    def button_down(id)
-      super
-      current_state.button_down(id) if current_state
-    end
-
-    def button_up(id)
-      super
-      current_state.button_up(id) if current_state
     end
 
     def push_state(klass, options = {})
@@ -106,6 +151,10 @@ module CyberarmEngine
 
     def shift_state
       @states.shift
+    end
+
+    def has_focus?
+      @has_focus
     end
 
     # Sourced from https://gist.github.com/ippa/662583

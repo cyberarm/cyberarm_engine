@@ -35,7 +35,7 @@ module CyberarmEngine
         super
 
         w = @text.textobject.text_width("▼")
-        @text.textobject.draw("▼", @x + content_width - w, @y + @style.padding_top, @z, 1, 1, @text.color)
+        @text.textobject.draw_text("▼", @x + content_width - w, @y + @style.padding_top, @z, 1, 1, @text.color)
       end
 
       def choose=(item)
