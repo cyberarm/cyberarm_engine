@@ -13,7 +13,7 @@ module CyberarmEngine
         @style.background_canvas.background = default(:background)
 
         # TODO: "Clean Up" into own class?
-        @menu = Stack.new(parent: parent, width: @options[:width], theme: @options[:theme])
+        @menu = Stack.new(parent: self, theme: @options[:theme])
         @menu.define_singleton_method(:recalculate_menu) do
           @x = @__list_box.x
           @y = @__list_box.y + @__list_box.height
@@ -63,6 +63,8 @@ module CyberarmEngine
 
       def show_menu
         @menu.clear
+
+        @menu.style.width = width
 
         @items.each do |item|
           next if item == self.value

@@ -171,6 +171,9 @@ module CyberarmEngine
       end
 
       @focus.button_up(id) if @focus.respond_to?(:button_up)
+
+      # Prevents menu from popping back up if the listbox is clicked to hide it.
+      @hid_menu_for = nil
     end
 
     def tool_tip_delay
@@ -185,7 +188,7 @@ module CyberarmEngine
         @focus = nil
       end
 
-      if @mouse_over
+      if @mouse_over && @hid_menu_for != @mouse_over
         @mouse_down_position[button] = Vector.new(window.mouse_x, window.mouse_y)
         @mouse_down_on[button]       = @mouse_over
 
@@ -199,7 +202,7 @@ module CyberarmEngine
     def redirect_released_mouse_button(button)
       hide_menu if @menu && (@menu == @mouse_over) || (@mouse_over&.parent == @menu)
 
-      if @mouse_over
+      if @mouse_over && @hid_menu_for != @mouse_over
         @mouse_over.publish(:"released_#{button}_mouse_button", window.mouse_x, window.mouse_y)
         if @mouse_over == @mouse_down_on[button]
           @mouse_over.publish(:"clicked_#{button}_mouse_button", window.mouse_x,
@@ -255,6 +258,9 @@ module CyberarmEngine
     end
 
     def hide_menu
+      return unless @menu
+
+      @hid_menu_for = @menu.parent
       @menu = nil
     end
 
