@@ -447,18 +447,10 @@ module CyberarmEngine
       end
 
       if @parent && @style.fill # Handle fill behavior
-        fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
-
         if dimension == :width && @parent.is_a?(Flow)
-          space_available_width = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings)
-          space_available_width = space_available_width.nan? ? 0 : space_available_width.floor # The parent element might not have its dimensions, yet.
-
           return space_available_width - noncontent_width
 
         elsif dimension == :height && @parent.is_a?(Stack)
-          space_available_height = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings)
-          space_available_height = space_available_height.nan? ? 0 : space_available_height.floor # The parent element might not have its dimensions, yet.
-
           return space_available_height - noncontent_height
         end
 
@@ -468,6 +460,22 @@ module CyberarmEngine
       end
 
       new_size
+    end
+
+    def space_available_width
+      # TODO: This may get expensive if there are a lot of children, probably should cache it somehow
+      fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
+
+      available_space = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings)
+      (available_space.nan? || available_space.infinite?) ? 0 : available_space.floor # The parent element might not have its dimensions, yet.
+    end
+
+    def space_available_height
+      # TODO: This may get expensive if there are a lot of children, probably should cache it somehow
+      fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
+
+      available_space = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings)
+      (available_space.nan? || available_space.infinite?) ? 0 : available_space.floor # The parent element might not have its dimensions, yet.
     end
 
     def background=(_background)

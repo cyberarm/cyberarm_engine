@@ -139,12 +139,6 @@ module CyberarmEngine
       @states.last
     end
 
-    def previous_state
-      if @states.size > 1 && (state = @states[@states.size - 2])
-        state
-      end
-    end
-
     def pop_state
       @states.pop
     end

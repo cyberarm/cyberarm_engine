@@ -136,7 +136,31 @@ module CyberarmEngine
           @height = _height || (@children.map { |c| c.y + c.outer_height }.max || 0).floor
         end
 
-        # Move child to parent after positioning
+        # FIXME: Correctly handle alignment when element has siblings
+        # FIXME: Enable alignment for any element, not just containers
+        if @style.v_align
+          space = space_available_height
+
+          case @style.v_align
+          when :center
+            @y = parent.height / 2 - height / 2
+          when :bottom
+            @y = parent.height - height
+          end
+        end
+
+        if @style.h_align
+          space = space_available_width
+
+          case @style.h_align
+          when :center
+            @x = parent.width / 2 - width / 2
+          when :right
+            @x = parent.width - width
+          end
+        end
+
+        # Move children to parent after positioning
         @children.each do |child|
           child.x += (@x + @style.border_thickness_left) - style.margin_left
           child.y += (@y + @style.border_thickness_top) - style.margin_top

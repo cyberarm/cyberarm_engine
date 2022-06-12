@@ -8,8 +8,11 @@ module CyberarmEngine
       window.current_state
     end
 
-    def previous_state
-      window.previous_state
+    def previous_state(state = nil)
+      raise "Only available for CyberarmEngine::GameState and subclasses" unless is_a?(CyberarmEngine::GameState) || state.is_a?(CyberarmEngine::GameState)
+
+      i = window.states.index(state || self)
+      window.states[i - 1] unless (i - 1).negative?
     end
 
     def pop_state
