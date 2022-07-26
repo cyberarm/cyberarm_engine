@@ -42,7 +42,7 @@ module CyberarmEngine
         @step_size = @options[:step] || 0.1
         @value     = @options[:value] || (@range.first + @range.last) / 2
 
-        @handle = Handle.new("", parent: self, width: 8, height: 1.0) { close }
+        @handle = Handle.new("", parent: self, theme: options[:theme], width: 8, height: 1.0) { close }
         add(@handle)
       end
 
@@ -61,10 +61,10 @@ module CyberarmEngine
       end
 
       def position_handle
-        @handle.x = @x + @style.padding_left + @style.border_thickness_left +
+        @handle.x = @x + @handle.style.margin_left + @style.padding_left + @style.border_thickness_left +
                     ((content_width - @handle.outer_width) * (@value - @range.min) / (@range.max - @range.min).to_f)
 
-        @handle.y = @y + @style.border_thickness_top + @style.padding_top
+        @handle.y = @y + @handle.style.margin_top + @style.border_thickness_top + @style.padding_top
       end
 
       def draw
