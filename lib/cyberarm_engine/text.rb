@@ -22,19 +22,21 @@ module CyberarmEngine
       else
         @color = Gosu::Color::WHITE
       end
-      @mode     = options[:mode]      || :default
+      @mode      = options[:mode]      || :default
       @alignment = options[:alignment] || nil
 
       @border   = options[:border]
       @border   = true if options[:border].nil?
       @border_size = options[:border_size] || 1
       @border_alpha = options[:border_alpha] || 30
-      @border_color = options[:border_color]
+      @border_color = options[:border_color] || Gosu::Color::BLACK
 
       @shadow = options[:shadow]
       @shadow_size = options[:shadow_size] || 2
       @shadow_alpha = options[:shadow_alpha] || 30
-      @shadow_color = options[:shadow_color]
+      @shadow_color = options[:shadow_color] || Gosu::Color::BLACK
+
+      @static = options[:static] || (options[:static].nil? || options[:static] == false ? false : true)
 
       @textobject = check_cache(@size, @font)
 
@@ -84,46 +86,49 @@ module CyberarmEngine
     end
 
     def text=(string)
-      @rendered_border = nil
+      invalidate_cache! if @text != string
       @text = string
     end
 
     def factor_x=(n)
-      @rendered_border = nil
+      invalidate_cache! if @factor_x != n
       @factor_x = n
     end
 
     def factor_y=(n)
-      @rendered_border = nil
+      invalidate_cache! if @factor_y != n
       @factor_y = n
     end
 
     def color=(color)
-      @rendered_border = nil
+      old_color = @color
+
       if color
         @color = color.is_a?(Gosu::Color) ? color : Gosu::Color.new(color)
       else
         raise "color cannot be nil"
       end
+
+      invalidate_cache! if old_color != color
     end
 
     def border=(boolean)
-      @rendered_border = nil
+      invalidate_cache! if @border != boolean
       @border = boolean
     end
 
     def border_size=(n)
-      @rendered_border = nil
+      invalidate_cache! if @border_size != n
       @border_size = n
     end
 
     def border_alpha=(n)
-      @rendered_border = nil
+      invalidate_cache! if @border_alpha != n
       @border_alpha = n
     end
 
     def border_color=(n)
-      @rendered_border = nil
+      invalidate_cache! if @border_color != n
       @border_color = n
     end
 
@@ -132,11 +137,27 @@ module CyberarmEngine
     end
 
     def text_width(text = @text)
-      textobject.text_width(text) + @border_size + @shadow_size
+      spacing = 0
+      spacing += @border_size if @border
+      spacing += @shadow_size if @shadow
+
+      if text == @text && @static && @gosu_cached_text_image
+        @gosu_cached_text_image&.width + spacing
+      else
+        textobject.text_width(text) + spacing
+      end
     end
 
     def markup_width(text = @text)
-      textobject.markup_width(text) + @border_size + @shadow_size
+      spacing = 0
+      spacing += @border_size if @border
+      spacing += @shadow_size if @shadow
+
+      if text == @text && @static && @gosu_cached_text_image
+        @gosu_cached_text_image&.width + spacing
+      else
+        textobject.markup_width(text) + spacing
+      end
     end
 
     def height(text = @text)
@@ -148,39 +169,72 @@ module CyberarmEngine
     end
 
     def draw(method = :draw_markup)
-      if @border && !ARGV.join.include?("--no-border")
-        border_alpha = @color.alpha <= 30 ? @color.alpha : @border_alpha
-        border_color = @border_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue,
-                                                         border_alpha)
-        white = Gosu::Color::WHITE
+      if @static
+        if @border && !@cached_text_border_image
+          _x = @border_size
+          _y = @border_size
+          _width = method == :draw_markup ? text_width : markup_width
+          img = Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font)
 
-        _x = @border_size
-        _y = @border_size
-        _width = method == :draw_markup ? text_width : markup_width
+          @cached_text_border_image = Gosu.render((_width + (@border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
+            img.draw(-_x, 0, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(-_x, -_y, @z, @factor_x, @factor_y, @border_color, @mode)
 
-        @rendered_border ||= Gosu.render((_width + (border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
-          @textobject.send(method, @text, _x - @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
-          @textobject.send(method, @text, _x - @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
+            img.draw(0, -_y, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(_x, -_y, @z, @factor_x, @factor_y, @border_color, @mode)
 
-          @textobject.send(method, @text, _x, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
-          @textobject.send(method, @text, _x + @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
+            img.draw(_x, 0, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(_x, _y, @z, @factor_x, @factor_y, @border_color, @mode)
 
-          @textobject.send(method, @text, _x, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
-          @textobject.send(method, @text, _x - @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
-
-          @textobject.send(method, @text, _x + @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
-          @textobject.send(method, @text, _x + @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
+            img.draw(0, _y, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(-_x, _y, @z, @factor_x, @factor_y, @border_color, @mode)
+          end
         end
 
-        @rendered_border.draw(@x - @border_size, @y - @border_size, @z, @factor_x, @factor_y, border_color)
-      end
+        @cached_text_shadow_image ||= Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font) if @shadow
 
-      if @shadow
-        shadow_color = @shadow_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha)
-        @textobject.send(method, @text, @x + @shadow_size, @y + @shadow_size, @z, @factor_x, @factor_y, shadow_color, @mode)
-      end
+        @gosu_cached_text_image ||= Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font)
 
-      @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color, @mode)
+        @cached_text_border_image.draw(@x, @y, @z, @factor_x, @factor_y, @border_color, @mode) if @border
+
+        @cached_text_shadow_image.draw(@x + @shadow_size, @y + @shadow_size, @z, @factor_x, @factor_y, @shadow_color, @mode) if @shadow
+
+        @gosu_cached_text_image.draw(@x, @y, @z, @factor_x, @factor_y, @color, @mode)
+      else
+        if @border && !ARGV.join.include?("--no-border")
+          border_alpha = @color.alpha <= 30 ? @color.alpha : @border_alpha
+          border_color = @border_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue,
+                                                          border_alpha)
+          white = Gosu::Color::WHITE
+
+          _x = @border_size
+          _y = @border_size
+          _width = method == :draw_markup ? text_width : markup_width
+
+          @cached_text_border_image ||= Gosu.render((_width + (border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
+            @textobject.send(method, @text, _x - @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
+            @textobject.send(method, @text, _x - @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
+
+            @textobject.send(method, @text, _x, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
+            @textobject.send(method, @text, _x + @border_size, _y - @border_size, @z, @factor_x, @factor_y, white, @mode)
+
+            @textobject.send(method, @text, _x, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
+            @textobject.send(method, @text, _x - @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
+
+            @textobject.send(method, @text, _x + @border_size, _y, @z, @factor_x, @factor_y, white, @mode)
+            @textobject.send(method, @text, _x + @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
+          end
+
+          @cached_text_border_image.draw(@x - @border_size, @y - @border_size, @z, @factor_x, @factor_y, border_color)
+        end
+
+        if @shadow
+          shadow_color = @shadow_color || Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha)
+          @textobject.send(method, @text, @x + @shadow_size, @y + @shadow_size, @z, @factor_x, @factor_y, shadow_color, @mode)
+        end
+
+        @textobject.send(method, @text, @x, @y, @z, @factor_x, @factor_y, @color, @mode)
+      end
     end
 
     def alpha=(n)
@@ -192,6 +246,12 @@ module CyberarmEngine
     end
 
     def update
+    end
+
+    def invalidate_cache!
+      @cached_text_border_image = nil
+      @cached_text_shadow_image = nil
+      @gosu_cached_text_image = nil
     end
   end
 end

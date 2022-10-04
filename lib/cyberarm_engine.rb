@@ -8,7 +8,6 @@ end
 require "json"
 require "excon"
 require "gosu_more_drawables"
-require "clipboard"
 
 require_relative "cyberarm_engine/version"
 require_relative "cyberarm_engine/stats"

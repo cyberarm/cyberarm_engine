@@ -7,6 +7,7 @@ module CyberarmEngine
         @text = Text.new(
           text, font: @options[:font], z: @z, color: @options[:color],
                 size: @options[:text_size], shadow: @options[:text_shadow],
+                static: @options[:text_static],
                 shadow_size: @options[:text_shadow_size],
                 shadow_color: @options[:text_shadow_color],
                 border: @options[:text_border],
@@ -62,6 +63,10 @@ module CyberarmEngine
           when :right
             @text.x = @x + outer_width - (@text.width + @style.border_thickness_right + @style.padding_right)
           end
+        end
+
+        if is_a?(Button)
+          @text.y = @y + height / 2 - @text.height / 2
         end
 
         update_background

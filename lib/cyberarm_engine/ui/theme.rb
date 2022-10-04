@@ -102,7 +102,8 @@ module CyberarmEngine
         caret_color: Gosu::Color::WHITE,
         caret_interval: 500,
         selection_color: Gosu::Color.rgba(255, 128, 50, 200),
-        text_align: :left
+        text_align: :left,
+        text_static: false # static text causes issues correctly displaying caret position
       },
 
       Image: { # < Element

@@ -1,6 +1,20 @@
 module CyberarmEngine
   class Element
     class EditLine < Button
+      class TextInput < Gosu::TextInput
+        def filter=(filter)
+          @filter = filter
+        end
+
+        def filter(text_in)
+          if @filter
+            @filter.call(text_in)
+          else
+            text_in
+          end
+        end
+      end
+
       def initialize(text, options = {}, block = nil)
         @filter = options.delete(:filter)
         super(text, options, block)
@@ -14,17 +28,10 @@ module CyberarmEngine
         @caret_last_interval = Gosu.milliseconds
         @show_caret = true
 
-        @text_input = Gosu::TextInput.new
+        @text_input = TextInput.new
+        @text_input.filter = @filter
         @text_input.text = text
         @last_text_value = text
-
-        if @filter && @filter.respond_to?(:call)
-          @text_input.instance_variable_set(:@filter, @filter)
-
-          def @text_input.filter(text_in)
-            @filter.call(text_in)
-          end
-        end
 
         @offset_x = 0
         @offset_y = 0
@@ -98,20 +105,20 @@ module CyberarmEngine
             @text_input.caret_pos = @text_input.text.length
 
           when Gosu::KB_C
-            if @text_input.selection_start < @text_input.caret_pos
-              Clipboard.copy(@text_input.text[@text_input.selection_start...@text_input.caret_pos])
-            else
-              Clipboard.copy(@text_input.text[@text_input.caret_pos...@text_input.selection_start])
-            end
+            Gosu.clipboard = if @text_input.selection_start < @text_input.caret_pos
+                               @text_input.text[@text_input.selection_start...@text_input.caret_pos]
+                             else
+                               @text_input.text[@text_input.caret_pos...@text_input.selection_start]
+                             end
 
           when Gosu::KB_X
             chars = @text_input.text.chars
 
             if @text_input.selection_start < @text_input.caret_pos
-              Clipboard.copy(@text_input.text[@text_input.selection_start...@text_input.caret_pos])
+              Gosu.clipboard = @text_input.text[@text_input.selection_start...@text_input.caret_pos]
               chars.slice!(@text_input.selection_start, @text_input.caret_pos)
             else
-              Clipboard.copy(@text_input.text[@text_input.caret_pos...@text_input.selection_start])
+              Gosu.clipboard = @text_input.text[@text_input.caret_pos...@text_input.selection_start]
               chars.slice!(@text_input.caret_pos, @text_input.selection_start)
             end
 
@@ -119,10 +126,9 @@ module CyberarmEngine
 
           when Gosu::KB_V
             if instance_of?(EditLine) # EditLine assumes a single line of text
-              @text_input.text = @text_input.text.insert(@text_input.caret_pos,
-                                                         Clipboard.paste.encode("UTF-8").gsub("\n", ""))
+              @text_input.insert_text(Gosu.clipboard.encode("UTF-8").gsub("\n", ""))
             else
-              @text_input.text = @text_input.text.insert(@text_input.caret_pos, Clipboard.paste.encode("UTF-8"))
+              @text_input.insert_text(Gosu.clipboard.encode("UTF-8"))
             end
           end
         end
@@ -180,7 +186,7 @@ module CyberarmEngine
         if @type == :password
           @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length)
         else
-          @text.x + @text.width(@text_input.text[0...@text_input.send(method)])
+          @text.x + @text.width(@text_input.text[0...@text_input.send(method)]) - @style.border_thickness_left
         end
       end
 
