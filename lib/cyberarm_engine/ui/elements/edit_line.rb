@@ -126,9 +126,9 @@ module CyberarmEngine
 
           when Gosu::KB_V
             if instance_of?(EditLine) # EditLine assumes a single line of text
-              @text_input.insert_text(Gosu.clipboard.encode("UTF-8").gsub("\n", ""))
+              @text_input.insert_text(Gosu.clipboard.gsub("\n", ""))
             else
-              @text_input.insert_text(Gosu.clipboard.encode("UTF-8"))
+              @text_input.insert_text(Gosu.clipboard)
             end
           end
         end
