@@ -196,7 +196,6 @@ module CyberarmEngine
       end
 
       def fits_on_line?(element) # Flow
-        p [@options[:id], @width] if @options[:id]
         @current_position.x + element.outer_width <= max_width &&
           @current_position.x + element.outer_width <= window.width
       end
@@ -206,7 +205,6 @@ module CyberarmEngine
         element.y = element.style.margin_top  + @current_position.y
 
         @current_position.x += element.outer_width
-        @current_position.x = @style.margin_left + @style.padding_left if @current_position.x >= max_width
       end
 
       def tallest_neighbor(querier, _y_position) # Flow
