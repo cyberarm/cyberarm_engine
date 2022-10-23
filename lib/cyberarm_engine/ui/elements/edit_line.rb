@@ -32,6 +32,7 @@ module CyberarmEngine
         @text_input.filter = @filter
         @text_input.text = text
         @last_text_value = text
+        @last_caret_position = @text_input.caret_pos
 
         @offset_x = 0
         @offset_y = 0
@@ -80,6 +81,12 @@ module CyberarmEngine
           @caret_last_interval = Gosu.milliseconds
 
           publish(:changed, value)
+        end
+
+        if @last_caret_position != @text_input.caret_pos
+          @last_caret_position = @text_input.caret_pos
+          @show_caret = true
+          @caret_last_interval = Gosu.milliseconds
         end
 
         if Gosu.milliseconds >= @caret_last_interval + @caret_interval
@@ -203,20 +210,35 @@ module CyberarmEngine
       end
 
       def focus(sender)
-        super
-
+        @focus = true
         window.text_input = @text_input
         @text_input.caret_pos = @text_input.selection_start = @text_input.text.length
+
+        update_styles(:active)
 
         :handled
       end
 
       def enter(sender)
-        _has_focus = @focus
+        if @enabled && @focus
+          update_styles(:active)
+        elsif @enabled && !@focus
+          update_styles(:hover)
+        else
+          update_styles(:disabled)
+        end
 
-        super
+        :handled
+      end
 
-        @focus = _has_focus
+      def leave(sender)
+        if @enabled && @focus
+          update_styles(:active)
+        elsif @enabled && !@focus
+          update_styles
+        else
+          update_styles(:disabled)
+        end
 
         :handled
       end

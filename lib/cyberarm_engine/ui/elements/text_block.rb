@@ -50,7 +50,7 @@ module CyberarmEngine
         @text.y = @style.border_thickness_top + @style.padding_top + @y
         @text.z = @z + 3
 
-        if (text_alignment = @options[:text_align])
+        if (text_alignment = @options[:text_align] || @options[:text_h_align])
           case text_alignment
           when :left
             @text.x = @style.border_thickness_left + @style.padding_left + @x
@@ -65,8 +65,17 @@ module CyberarmEngine
           end
         end
 
-        if is_a?(Button)
-          @text.y = @y + height / 2 - @text.height / 2
+        if (vertical_alignment = @options[:text_v_align])
+          case vertical_alignment
+          when :center
+            @text.y = if @text.height <= height
+                        @y + height / 2 - @text.height / 2
+                      else
+                        @style.border_thickness_top + @style.padding_top + @y
+                      end
+          when :bottom
+            @text.y = @y + outer_height - (@text.height + @style.border_thickness_bottom + @style.padding_bottom)
+          end
         end
 
         update_background

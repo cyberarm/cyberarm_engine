@@ -455,8 +455,8 @@ module CyberarmEngine
         end
 
       else # Handle min_width/height and max_width/height
-        return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size < @style.send(:"min_#{dimension}")
-        return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size > @style.send(:"max_#{dimension}")
+        return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size.to_f < @style.send(:"min_#{dimension}")
+        return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size.to_f > @style.send(:"max_#{dimension}")
       end
 
       new_size

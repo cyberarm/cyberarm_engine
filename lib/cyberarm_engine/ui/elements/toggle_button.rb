@@ -5,7 +5,7 @@ module CyberarmEngine
 
       def initialize(options, block = nil)
         if options.dig(:theme, :ToggleButton, :checkmark_image)
-          options[:theme][:ToggleButton][:image_width] ||= options[:theme][:Label][:text_size]
+          options[:theme][:ToggleButton][:image_width] ||= options[:theme][:TextBlock][:text_size]
           super(get_image(options.dig(:theme, :ToggleButton, :checkmark_image)), options, block)
 
           @_image = @image

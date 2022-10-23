@@ -76,6 +76,7 @@ module CyberarmEngine
         border_radius: 0,
         background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
         text_align: :center,
+        text_v_align: :center,
         text_wrap: :none,
 
         hover: {
@@ -104,6 +105,10 @@ module CyberarmEngine
         selection_color: Gosu::Color.rgba(255, 128, 50, 200),
         text_align: :left,
         text_static: false # static text causes issues correctly displaying caret position
+      },
+
+      EditBox: { # < EditLine
+        text_v_align: :top
       },
 
       Image: { # < Element
