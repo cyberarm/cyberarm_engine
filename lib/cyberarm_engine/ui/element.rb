@@ -440,21 +440,21 @@ module CyberarmEngine
     def dimensional_size(size, dimension)
       raise "dimension must be either :width or :height" unless %i[width height].include?(dimension)
 
-      new_size = if size.is_a?(Numeric) && size.between?(0.0, 1.0)
-        (@parent.send(:"content_#{dimension}") * size).floor - send(:"noncontent_#{dimension}").floor
+      new_size = if size.is_a?(Float) && size.between?(0.0, 1.0)
+                   (@parent.send(:"content_#{dimension}") * size).floor - send(:"noncontent_#{dimension}").floor
+                 else
+                   size
+                 end
+
+      # Handle fill behavior
+      if @parent && @style.fill &&
+         (dimension == :width && @parent.is_a?(Flow) ||
+          dimension == :height && @parent.is_a?(Stack))
+        return space_available_width - noncontent_width if dimension == :width && @parent.is_a?(Flow)
+        return space_available_height - noncontent_height if dimension == :height && @parent.is_a?(Stack)
+
+      # Handle min_width/height and max_width/height
       else
-        size
-      end
-
-      if @parent && @style.fill # Handle fill behavior
-        if dimension == :width && @parent.is_a?(Flow)
-          return space_available_width - noncontent_width
-
-        elsif dimension == :height && @parent.is_a?(Stack)
-          return space_available_height - noncontent_height
-        end
-
-      else # Handle min_width/height and max_width/height
         return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size.to_f < @style.send(:"min_#{dimension}")
         return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size.to_f > @style.send(:"max_#{dimension}")
       end
