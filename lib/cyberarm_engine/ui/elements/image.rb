@@ -45,8 +45,8 @@ module CyberarmEngine
           @scale_y = 1
         end
 
-        @width = _width || @image.width.floor * @scale_x
-        @height = _height || @image.height.floor * @scale_y
+        @width = _width || (@image.width * @scale_x).floor
+        @height = _height || (@image.height * @scale_y).floor
 
         update_background
       end
