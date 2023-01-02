@@ -423,9 +423,9 @@ module CyberarmEngine
 
         pairs_ << a_ unless pairs_.last == a_
 
-        pairs_.sum { |pair| pair.map(&:outer_height).max } + @style.padding_bottom + @style.border_thickness_bottom
+        pairs_.sum { |pair|  + @style.padding_top + @style.border_thickness_top + pair.map(&:outer_height).max } + @style.padding_bottom + @style.border_thickness_bottom
       else
-        @children.sum(&:outer_height) + @style.padding_bottom + @style.border_thickness_bottom
+        @style.padding_top + @style.border_thickness_top + @children.sum(&:outer_height) + @style.padding_bottom + @style.border_thickness_bottom
       end
     end
 
