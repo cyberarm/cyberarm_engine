@@ -65,6 +65,8 @@ module CyberarmEngine
 
       set_border_thickness
       set_border_color
+
+      root.gui_state.request_repaint
     end
 
     def safe_style_fetch(*args)
@@ -166,10 +168,10 @@ module CyberarmEngine
       return if self.is_a?(ToolTip)
 
       if old_width != width || old_height != height
-        (root&.gui_state || @gui_state).request_recalculate
-      else
-        stylize
+        root.gui_state.request_recalculate
       end
+
+      stylize
     end
 
     def default_events
@@ -267,6 +269,10 @@ module CyberarmEngine
       @enabled
     end
 
+    def focused?
+      @focus
+    end
+
     def visible?
       @visible
     end
@@ -278,18 +284,21 @@ module CyberarmEngine
     def toggle
       @visible = !@visible
       root.gui_state.request_recalculate
+      root.gui_state.request_repaint
     end
 
     def show
       bool = visible?
       @visible = true
       root.gui_state.request_recalculate unless bool
+      root.gui_state.request_repaint unless bool
     end
 
     def hide
       bool = visible?
       @visible = false
       root.gui_state.request_recalculate if bool
+      root.gui_state.request_repaint if bool
     end
 
     def draw
@@ -479,6 +488,8 @@ module CyberarmEngine
     end
 
     def background=(_background)
+      root.gui_state.request_repaint
+
       @style.background_canvas.background = _background
       update_background
     end
@@ -497,6 +508,8 @@ module CyberarmEngine
     end
 
     def background_nine_slice=(_image_path)
+      root.gui_state.request_repaint
+
       @style.background_nine_slice_canvas.image = _image_path
       update_background_nine_slice
     end
@@ -521,6 +534,8 @@ module CyberarmEngine
     end
 
     def background_image=(image_path)
+      root.gui_state.request_repaint
+
       @style.background_image = image_path.is_a?(Gosu::Image) ? image_path : get_image(image_path)
       update_background_image
     end

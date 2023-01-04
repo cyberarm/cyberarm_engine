@@ -122,6 +122,9 @@ module CyberarmEngine
 
         layout
 
+        old_width  = @width
+        old_height = @height
+
         if is_root?
           @width  = @style.width  = window.width
           @height = @style.height = window.height
@@ -178,6 +181,8 @@ module CyberarmEngine
         # puts "TOOK: #{Gosu.milliseconds - s}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}"
 
         update_background
+
+        root.gui_state.request_repaint if @width != old_width || @height != old_height
       end
 
       def layout
@@ -242,6 +247,7 @@ module CyberarmEngine
           @scroll_position.y = 0 if @scroll_position.y > 0
 
           root.gui_state.request_recalculate_for(self)
+          root.gui_state.request_repaint
 
           return :handled
         end
@@ -257,6 +263,7 @@ module CyberarmEngine
           @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
 
           root.gui_state.request_recalculate_for(self)
+          root.gui_state.request_repaint
 
           return :handled
         end
@@ -278,7 +285,7 @@ module CyberarmEngine
       end
 
       def value
-        @children.map { |c| c.class }.join(", ")
+        @children.map(&:class).join(", ")
       end
 
       def to_s

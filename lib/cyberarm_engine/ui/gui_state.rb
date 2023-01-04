@@ -27,6 +27,8 @@ module CyberarmEngine
       @pending_recalculate_request = false
       @pending_element_recalculate_requests = []
 
+      @needs_repaint = false
+
       @menu = nil
       @min_drag_distance = 0
       @mouse_pos = Vector.new
@@ -66,6 +68,12 @@ module CyberarmEngine
 
         @root_container.debug_draw
       end
+
+      @needs_repaint = false
+    end
+
+    def needs_repaint?
+      @needs_repaint
     end
 
     def update
@@ -251,6 +259,12 @@ module CyberarmEngine
     def request_focus(element)
       @pending_focus_request = true
       @pending_focus_element = element
+    end
+
+    def request_repaint
+      # puts caller[0..4]
+      # puts
+      @needs_repaint = true
     end
 
     def show_menu(list_box)

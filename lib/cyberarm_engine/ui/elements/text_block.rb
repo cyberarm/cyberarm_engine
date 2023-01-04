@@ -36,6 +36,9 @@ module CyberarmEngine
           @text.color = @style.color
         end
 
+        old_width  = @width
+        old_height = @height
+
         @width  = 0
         @height = 0
 
@@ -79,6 +82,8 @@ module CyberarmEngine
         end
 
         update_background
+
+        root.gui_state.request_repaint if @width != old_width || @height != old_height
       end
 
       def handle_text_wrapping(max_width)
@@ -159,6 +164,7 @@ module CyberarmEngine
       end
 
       def value=(value)
+        old_value = @raw_text
         @raw_text = value.to_s.chomp
 
         old_width = width
@@ -169,6 +175,8 @@ module CyberarmEngine
         else
           recalculate
         end
+
+        root.gui_state.request_repaint if old_value != @raw_text
 
         publish(:changed, self.value)
       end
