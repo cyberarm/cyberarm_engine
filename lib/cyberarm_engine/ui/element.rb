@@ -258,6 +258,8 @@ module CyberarmEngine
     end
 
     def enabled=(boolean)
+      root.gui_state.request_repaint if @enabled != boolean
+
       @enabled = boolean
 
       recalculate

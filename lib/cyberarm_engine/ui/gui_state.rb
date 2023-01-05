@@ -57,7 +57,7 @@ module CyberarmEngine
         @menu.draw
       end
 
-      if @tip.value.length.positive?
+      if @tip && @tip.value.length.positive?
         Gosu.flush
 
         @tip.draw

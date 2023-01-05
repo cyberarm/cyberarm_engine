@@ -77,8 +77,12 @@ module CyberarmEngine
       def value=(decimal)
         raise "value must be number" unless decimal.is_a?(Numeric)
 
+        old_value = @fraction
+
         @fraction = decimal.clamp(0.0, 1.0)
         update_background
+
+        root.gui_state.request_repaint if @fraction != old_value
 
         publish(:changed, @fraction)
         @fraction

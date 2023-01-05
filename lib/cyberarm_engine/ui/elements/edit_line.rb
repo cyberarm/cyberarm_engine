@@ -80,16 +80,22 @@ module CyberarmEngine
           @show_caret = true
           @caret_last_interval = Gosu.milliseconds
 
+          root.gui_state.request_repaint
+
           publish(:changed, value)
         end
 
         if @last_caret_position != @text_input.caret_pos
           @last_caret_position = @text_input.caret_pos
+          root.gui_state.request_repaint
+
           @show_caret = true
           @caret_last_interval = Gosu.milliseconds
         end
 
         if Gosu.milliseconds >= @caret_last_interval + @caret_interval
+          root.gui_state.request_repaint
+
           @caret_last_interval = Gosu.milliseconds
 
           @show_caret = !@show_caret
