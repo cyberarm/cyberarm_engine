@@ -141,10 +141,14 @@ module CyberarmEngine
 
     def pop_state
       @states.pop
+
+      current_state.request_repaint if current_state&.is_a?(GuiState)
     end
 
     def shift_state
       @states.shift
+
+      current_state.request_repaint if current_state&.is_a?(GuiState)
     end
 
     def has_focus?
