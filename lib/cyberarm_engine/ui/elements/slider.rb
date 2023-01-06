@@ -97,6 +97,8 @@ module CyberarmEngine
         position_handle
         @handle.recalculate
 
+        root.gui_state.request_repaint
+
         publish(:changed, @value)
       end
     end
