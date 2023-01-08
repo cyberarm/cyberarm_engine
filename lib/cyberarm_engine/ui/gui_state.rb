@@ -96,9 +96,19 @@ module CyberarmEngine
       end
 
       @menu&.update
+
       super
 
+      if @active_width != window.width || @active_height != window.height
+        request_recalculate
+        @root_container.publish(:window_size_changed)
+      end
+
+      @active_width  = window.width
+      @active_height = window.height
+
       return unless window.has_focus?
+      return unless window.current_state == self
 
       new_mouse_over = @menu.hit_element?(window.mouse_x, window.mouse_y) if @menu
       new_mouse_over ||= @root_container.hit_element?(window.mouse_x, window.mouse_y)
@@ -135,14 +145,6 @@ module CyberarmEngine
 
       @last_mouse_pos = Vector.new(window.mouse_x, window.mouse_y)
       @mouse_pos = @last_mouse_pos.clone
-
-      if @active_width != window.width || @active_height != window.height
-        request_recalculate
-        @root_container.publish(:window_size_changed)
-      end
-
-      @active_width  = window.width
-      @active_height = window.height
     end
 
     def button_down(id)
