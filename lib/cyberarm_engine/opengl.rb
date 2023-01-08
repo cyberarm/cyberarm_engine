@@ -11,7 +11,19 @@ module CyberarmEngine
     if e != GL_NO_ERROR
       warn "OpenGL error detected by handler at: #{caller[0]}"
       warn "    #{gluErrorString(e)} (#{e})\n"
-      exit if window.exit_on_opengl_error?
+      exit if Window.instance&.exit_on_opengl_error?
+    end
+  end
+
+  def preload_default_shaders
+    shaders = %w[g_buffer lighting]
+    shaders.each do |shader|
+      Shader.new(
+        name: shader,
+        includes_dir: "#{CYBERARM_ENGINE_ROOT_PATH}/assets/shaders/include",
+        vertex: "#{CYBERARM_ENGINE_ROOT_PATH}/assets/shaders/vertex/#{shader}.glsl",
+        fragment: "#{CYBERARM_ENGINE_ROOT_PATH}/assets/shaders/fragment/#{shader}.glsl"
+      )
     end
   end
 end

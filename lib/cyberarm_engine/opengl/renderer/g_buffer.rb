@@ -1,6 +1,7 @@
 module CyberarmEngine
   class GBuffer
     attr_reader :screen_vbo, :vertices, :uvs
+    attr_reader :width, :height
 
     def initialize(width:, height:)
       @width = width

@@ -7,8 +7,8 @@ module CyberarmEngine
       @title_size = 56
       @caption_size = 24
 
-      @title = CyberarmEngine::Text.new("", size: @title_size, shadow_color: 0xaa_222222)
-      @caption = CyberarmEngine::Text.new("", size: @caption_size, shadow_color: 0xaa_222222)
+      @title = CyberarmEngine::Text.new("", size: @title_size, shadow_color: 0xaa_222222, static: true)
+      @caption = CyberarmEngine::Text.new("", size: @caption_size, shadow_color: 0xaa_222222, static: true)
 
       @spacer_width = 256
       @spacer_height = 6

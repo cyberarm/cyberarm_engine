@@ -41,6 +41,7 @@ module CyberarmEngine
 
       @states = []
       @exit_on_opengl_error = false
+      preload_default_shaders if respond_to?(:preload_default_shaders)
 
       setup if defined?(setup)
     end
