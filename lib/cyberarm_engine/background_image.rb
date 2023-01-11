@@ -75,7 +75,7 @@ module CyberarmEngine
     end
 
     def draw_fill
-      if @width * width_scale > height * height_scale
+      if (@image.width * width_scale) >= @width && (@image.height * width_scale) >= @height
         draw_fill_width
       else
         draw_fill_height

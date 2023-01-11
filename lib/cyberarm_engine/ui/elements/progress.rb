@@ -52,6 +52,7 @@ module CyberarmEngine
         @marquee_animation_time = Gosu.milliseconds if @marquee_offset > range
 
         update_background
+        root.gui_state.request_repaint
       end
 
       def type=(type)

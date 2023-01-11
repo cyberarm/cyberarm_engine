@@ -62,11 +62,11 @@ module CyberarmEngine
 
     def update
       # TOP
-      @top.x = @element.x # + @element.border_thickness_left
+      @top.x = @element.x + @element.style.border_thickness_left
       @top.y = @element.y
       @top.z = @element.z
 
-      @top.width  = @element.width
+      @top.width  = @element.width - @element.style.border_thickness_left
       @top.height = @element.style.border_thickness_top
 
       # RIGHT
