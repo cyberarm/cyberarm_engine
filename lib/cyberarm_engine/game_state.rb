@@ -34,6 +34,10 @@ module CyberarmEngine
       true
     end
 
+    def needs_repaint?
+      true
+    end
+
     def drop(filename)
     end
 

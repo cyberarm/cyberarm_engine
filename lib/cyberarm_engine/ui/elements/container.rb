@@ -42,6 +42,10 @@ module CyberarmEngine
         root.gui_state.request_recalculate
       end
 
+      def remove(element)
+        root.gui_state.request_recalculate if @children.delete(element)
+      end
+
       def clear(&block)
         @children.clear
 
