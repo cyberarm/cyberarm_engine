@@ -31,6 +31,18 @@ module CyberarmEngine
       window.show_cursor = boolean
     end
 
+    def find_element_by_tag(container, tag, list = [])
+      return unless container
+
+      container.children.each do |child|
+        list << child if child.style.tag == tag
+
+        find_element_by_tag(child, tag, list) if child.is_a?(CyberarmEngine::Element::Container)
+      end
+
+      list.first
+    end
+
     def draw_rect(x, y, width, height, color, z = 0, mode = :default)
       Gosu.draw_rect(x, y, width, height, color, z, mode)
     end
