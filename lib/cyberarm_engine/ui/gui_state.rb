@@ -276,6 +276,8 @@ module CyberarmEngine
     def hide_menu
       return unless @menu
 
+      request_repaint
+
       @hid_menu_for = @menu.parent
       @menu = nil
     end
