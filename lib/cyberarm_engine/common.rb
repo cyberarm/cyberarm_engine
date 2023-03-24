@@ -52,7 +52,7 @@ module CyberarmEngine
     end
 
     def lighten(color, amount = 25)
-      if defined?(color.alpha)
+      if color.respond_to?(:alpha)
         Gosu::Color.rgba(color.red + amount, color.green + amount, color.blue + amount, color.alpha)
       else
         Gosu::Color.rgb(color.red + amount, color.green + amount, color.blue + amount)
@@ -60,7 +60,7 @@ module CyberarmEngine
     end
 
     def darken(color, amount = 25)
-      if defined?(color.alpha)
+      if color.respond_to?(:alpha)
         Gosu::Color.rgba(color.red - amount, color.green - amount, color.blue - amount, color.alpha)
       else
         Gosu::Color.rgb(color.red - amount, color.green - amount, color.blue - amount)

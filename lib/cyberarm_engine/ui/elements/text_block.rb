@@ -156,7 +156,7 @@ module CyberarmEngine
       end
 
       def line_width(text)
-        (@text.textobject.markup_width(text) + noncontent_width)
+        (@text.textobject.markup_width(text.to_s) + noncontent_width)
       end
 
       def value

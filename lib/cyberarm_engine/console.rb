@@ -103,7 +103,7 @@ module CyberarmEngine
 
     def button_down(id)
       case id
-      when Gosu::KbEnter, Gosu::KbReturn
+      when Gosu::KB_ENTER, Gosu::KB_RETURN
         return unless @text_input.text.length.positive?
 
         @history.text += "\n<c=999999>> #{@text_input.text}</c>"
@@ -113,12 +113,12 @@ module CyberarmEngine
         handle_command
         @text_input.text = ""
 
-      when Gosu::KbUp
+      when Gosu::KB_UP
         @command_history_index -= 1
         @command_history_index = 0 if @command_history_index.negative?
         @text_input.text = @command_history[@command_history_index]
 
-      when Gosu::KbDown
+      when Gosu::KB_DOWN
         @command_history_index += 1
         if @command_history_index > @command_history.size - 1
           @text_input.text = "" unless @command_history_index > @command_history.size
@@ -127,7 +127,7 @@ module CyberarmEngine
           @text_input.text = @command_history[@command_history_index]
         end
 
-      when Gosu::KbTab
+      when Gosu::KB_TAB
         split = @text_input.text.split(" ")
 
         if !@text_input.text.end_with?(" ") && split.size == 1
@@ -142,7 +142,7 @@ module CyberarmEngine
           cmd.autocomplete(self)
         end
 
-      when Gosu::KbBacktick
+      when Gosu::KB_BACKTICK
         # Remove backtick character from input
         @text_input.text = if @text_input.text.size > 1
                              @text_input.text[0..@text_input.text.size - 2]
@@ -151,7 +151,7 @@ module CyberarmEngine
                            end
 
       # Copy
-      when Gosu::KbC
+      when Gosu::KB_C
         if control_down? && shift_down?
           @memory = @text_input.text[caret_start..caret_end - 1] if caret_start != caret_end
           p @memory
@@ -160,7 +160,7 @@ module CyberarmEngine
         end
 
       # Paste
-      when Gosu::KbV
+      when Gosu::KB_V
         if control_down? && shift_down?
           string = @text_input.text.chars.insert(caret_pos, @memory).join
           _caret_pos = caret_pos
@@ -170,7 +170,7 @@ module CyberarmEngine
         end
 
       # Cut
-      when Gosu::KbX
+      when Gosu::KB_X
         if control_down? && shift_down?
           @memory = @text_input.text[caret_start..caret_end - 1] if caret_start != caret_end
           string  = @text_input.text.chars
@@ -182,7 +182,7 @@ module CyberarmEngine
         end
 
       # Delete word to left of caret
-      when Gosu::KbW
+      when Gosu::KB_W
         if control_down?
           split = @text_input.text.split(" ")
           split.delete(split.last)
@@ -190,7 +190,7 @@ module CyberarmEngine
         end
 
       # Clear history
-      when Gosu::KbL
+      when Gosu::KB_L
         @history.text = "" if control_down?
       end
     end

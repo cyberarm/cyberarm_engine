@@ -37,13 +37,16 @@ module CyberarmEngine
 
       @last_frame_time = Gosu.milliseconds - 1
       @current_frame_time = Gosu.milliseconds
-      self.caption = "CyberarmEngine #{CyberarmEngine::VERSION} #{Gosu.language}"
+      self.caption = "CyberarmEngine #{CyberarmEngine::VERSION} #{Gosu.user_languages.join(', ')}"
 
       @states = []
       @exit_on_opengl_error = false
       preload_default_shaders if respond_to?(:preload_default_shaders)
 
-      setup if defined?(setup)
+      setup
+    end
+
+    def setup
     end
 
     def draw
@@ -120,7 +123,7 @@ module CyberarmEngine
     def push_state(klass, options = {})
       options = { setup: true }.merge(options)
 
-      if klass.instance_of?(klass.class) && defined?(klass.options)
+      if klass.instance_of?(klass.class) && klass.respond_to?(:options)
         @states << klass
         klass.setup if options[:setup]
         klass.post_setup if options[:setup]

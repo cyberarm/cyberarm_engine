@@ -196,7 +196,7 @@ module CyberarmEngine
     end
 
     def enter(_sender)
-      @focus = false unless window.button_down?(Gosu::MsLeft)
+      @focus = false unless Gosu.button_down?(Gosu::MS_LEFT)
 
       if !@enabled
         update_styles(:disabled)
@@ -316,7 +316,8 @@ module CyberarmEngine
     end
 
     def debug_draw
-      return if defined?(GUI_DEBUG_ONLY_ELEMENT) && self.class == GUI_DEBUG_ONLY_ELEMENT
+      # FIXME
+      return# if const_defined?(GUI_DEBUG_ONLY_ELEMENT) && self.class == GUI_DEBUG_ONLY_ELEMENT
 
       Gosu.draw_line(
         x, y, @debug_color,

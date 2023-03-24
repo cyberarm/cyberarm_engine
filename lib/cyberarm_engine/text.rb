@@ -149,6 +149,8 @@ module CyberarmEngine
     end
 
     def markup_width(text = @text)
+      text = text.to_s
+
       spacing = 0
       spacing += @border_size if @border
       spacing += @shadow_size if @shadow

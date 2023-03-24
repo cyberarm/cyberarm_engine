@@ -63,7 +63,8 @@ module CyberarmEngine
         @tip.draw
       end
 
-      if defined?(GUI_DEBUG)
+      # FIXME
+      if false# defined?(GUI_DEBUG)
         Gosu.flush
 
         @root_container.debug_draw
@@ -121,9 +122,9 @@ module CyberarmEngine
       @mouse_over.publish(:leave) if @mouse_over && new_mouse_over != @mouse_over
       @mouse_over = new_mouse_over
 
-      redirect_holding_mouse_button(:left) if @mouse_over && Gosu.button_down?(Gosu::MsLeft)
-      redirect_holding_mouse_button(:middle) if @mouse_over && Gosu.button_down?(Gosu::MsMiddle)
-      redirect_holding_mouse_button(:right) if @mouse_over && Gosu.button_down?(Gosu::MsRight)
+      redirect_holding_mouse_button(:left) if @mouse_over && Gosu.button_down?(Gosu::MS_LEFT)
+      redirect_holding_mouse_button(:middle) if @mouse_over && Gosu.button_down?(Gosu::MS_MIDDLE)
+      redirect_holding_mouse_button(:right) if @mouse_over && Gosu.button_down?(Gosu::MS_RIGHT)
 
       if Vector.new(window.mouse_x, window.mouse_y) == @last_mouse_pos
         if @mouse_over && (Gosu.milliseconds - @mouse_moved_at) > tool_tip_delay
@@ -151,13 +152,13 @@ module CyberarmEngine
       super
 
       case id
-      when Gosu::MsLeft
+      when Gosu::MS_LEFT
         redirect_mouse_button(:left)
-      when Gosu::MsMiddle
+      when Gosu::MS_MIDDLE
         redirect_mouse_button(:middle)
-      when Gosu::MsRight
+      when Gosu::MS_RIGHT
         redirect_mouse_button(:right)
-      when Gosu::KbF5
+      when Gosu::KB_F5
         request_recalculate
       end
 
@@ -168,15 +169,15 @@ module CyberarmEngine
       super
 
       case id
-      when Gosu::MsLeft
+      when Gosu::MS_LEFT
         redirect_released_mouse_button(:left)
-      when Gosu::MsMiddle
+      when Gosu::MS_MIDDLE
         redirect_released_mouse_button(:middle)
-      when Gosu::MsRight
+      when Gosu::MS_RIGHT
         redirect_released_mouse_button(:right)
-      when Gosu::MsWheelUp
+      when Gosu::MS_WHEEL_UP
         redirect_mouse_wheel(:up)
-      when Gosu::MsWheelDown
+      when Gosu::MS_WHEEL_DOWN
         redirect_mouse_wheel(:down)
       end
 

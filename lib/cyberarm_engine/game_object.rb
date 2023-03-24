@@ -42,7 +42,7 @@ module CyberarmEngine
         @radius = if options[:radius]
                     options[:radius]
                   else
-                    defined?(@image.width) ? ((@image.width + @image.height) / 4) * scale : 1
+                    @image.respond_to?(:width) ? ((@image.width + @image.height) / 4) * scale : 1
                   end
       end
     end

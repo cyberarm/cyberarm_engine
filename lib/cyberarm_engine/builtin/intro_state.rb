@@ -18,7 +18,7 @@ module CyberarmEngine
 
       @gosu_logo = generate_proxy("Gosu",     "Game Library",         0xff_111111)
       @ruby_logo = generate_proxy("Ruby",     "Programming Language", 0xff_880000)
-      @opengl_logo = generate_proxy("OpenGL", "Graphics API",         0xff_5586a4) if defined?(OpenGL)
+      @opengl_logo = generate_proxy("OpenGL", "Graphics API",         0xff_5586a4) if RUBY_ENGINE != "mruby" && defined?(OpenGL)
 
       base_time = Gosu.milliseconds
 

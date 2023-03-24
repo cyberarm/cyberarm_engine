@@ -20,7 +20,8 @@ module CyberarmEngine
     attr_reader :hash
 
     def initialize(hash = {})
-      h = Marshal.load(Marshal.dump(hash))
+      h = hash
+      # h = Marshal.load(Marshal.dump(hash))
 
       h[:default] = {}
 
