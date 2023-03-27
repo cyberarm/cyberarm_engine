@@ -76,7 +76,7 @@ module CyberarmEngine
       def update
         super
 
-        @tip = value.to_s
+        @tip = format("%.2f", value.to_f)
         @handle.tip = @tip
       end
 
@@ -87,7 +87,7 @@ module CyberarmEngine
       end
 
       def handle_dragged_to(x, _y)
-        @ratio = ((x - @handle.width / 2) - @x) / (content_width - @handle.outer_width)
+        @ratio = ((x - @handle.width / 2.0) - @x) / (content_width - @handle.outer_width.to_f)
 
         self.value = @ratio.clamp(0.0, 1.0) * (@range.max - @range.min) + @range.min
       end
