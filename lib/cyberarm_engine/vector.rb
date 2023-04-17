@@ -95,39 +95,58 @@ module CyberarmEngine
       Vector.new(@x, @y)
     end
 
-    # Performs math operation, excluding {weight}
-    private def operator(function, other)
-      if other.is_a?(Numeric)
-        Vector.new(
-          @x.send(:"#{function}", other),
-          @y.send(:"#{function}", other),
-          @z.send(:"#{function}", other)
-        )
-      else
-        Vector.new(
-          @x.send(:"#{function}", other.x),
-          @y.send(:"#{function}", other.y),
-          @z.send(:"#{function}", other.z)
-        )
-      end
-    end
-
     # Adds Vector and Numeric or Vector and Vector, excluding {weight}
     # @return [CyberarmEngine::Vector]
     def +(other)
-      operator("+", other)
+      if other.is_a?(Numeric)
+        Vector.new(
+          @x + other,
+          @y + other,
+          @z + other
+        )
+      else
+        Vector.new(
+          @x + other.x,
+          @y + other.y,
+          @z + other.z
+        )
+      end
     end
 
     # Subtracts Vector and Numeric or Vector and Vector, excluding {weight}
     # @return [CyberarmEngine::Vector]
     def -(other)
-      operator("-", other)
+      if other.is_a?(Numeric)
+        Vector.new(
+          @x - other,
+          @y - other,
+          @z - other
+        )
+      else
+        Vector.new(
+          @x - other.x,
+          @y - other.y,
+          @z - other.z
+        )
+      end
     end
 
     # Multiplies Vector and Numeric or Vector and Vector, excluding {weight}
     # @return [CyberarmEngine::Vector]
     def *(other)
-      operator("*", other)
+      if other.is_a?(Numeric)
+        Vector.new(
+          @x * other,
+          @y * other,
+          @z * other
+        )
+      else
+        Vector.new(
+          @x * other.x,
+          @y * other.y,
+          @z * other.z
+        )
+      end
     end
 
     def multiply_transform(transform)
