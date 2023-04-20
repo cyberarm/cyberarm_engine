@@ -8,8 +8,19 @@ module CyberarmEngine
     end
 
     def draw(camera, lights, entities)
+      Stats.frame.start_timing(:opengl_renderer)
+
+      Stats.frame.start_timing(:opengl_model_renderer)
       @opengl_renderer.render(camera, lights, entities)
-      @bounding_box_renderer.render(entities) if @show_bounding_boxes
+      Stats.frame.end_timing(:opengl_model_renderer)
+
+      if @show_bounding_boxes
+        Stats.frame.start_timing(:opengl_boundingbox_renderer)
+        @bounding_box_renderer.render(entities)
+        Stats.frame.end_timing(:opengl_boundingbox_renderer)
+      end
+
+      Stats.frame.end_timing(:opengl_renderer)
     end
 
     def canvas_size_changed

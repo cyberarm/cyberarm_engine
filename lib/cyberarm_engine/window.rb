@@ -8,14 +8,14 @@ module CyberarmEngine
 
     attr_accessor :show_cursor
     attr_writer :exit_on_opengl_error
-    attr_reader :last_frame_time, :states
+    attr_reader :last_frame_time, :delta_time, :states
 
     def self.now
       Gosu.milliseconds
     end
 
     def self.dt
-      instance.last_frame_time / 1000.0
+      instance.dt
     end
 
     def self.instance=(window)
@@ -37,6 +37,7 @@ module CyberarmEngine
 
       @last_frame_time = Gosu.milliseconds - 1
       @current_frame_time = Gosu.milliseconds
+      @delta_time = @last_frame_time
       self.caption = "CyberarmEngine #{CyberarmEngine::VERSION} #{Gosu.user_languages.join(', ')}"
 
       @states = []
@@ -50,16 +51,32 @@ module CyberarmEngine
     end
 
     def draw
+      Stats.frame.start_timing(:draw)
+
       current_state&.draw
+
+      Stats.frame.end_timing(:draw)
+      Stats.frame.start_timing(:interframe_sleep)
     end
 
     def update
-      Stats.clear
+      # Gosu calls update() then (optionally) draw(),
+      # so always end last frame and start next frame when update() is called.
+      Stats.frame&.end_timing(:interframe_sleep)
+      Stats.end_frame
 
-      current_state&.update
+      Stats.new_frame
+
+      @delta_time = (Gosu.milliseconds - @current_frame_time) * 0.001
 
       @last_frame_time = Gosu.milliseconds - @current_frame_time
       @current_frame_time = Gosu.milliseconds
+
+      Stats.frame.start_timing(:update)
+      current_state&.update
+      Stats.frame.end_timing(:update)
+
+      Stats.frame.start_timing(:interframe_sleep) unless needs_redraw?
     end
 
     def needs_cursor?

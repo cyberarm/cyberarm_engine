@@ -118,7 +118,7 @@ module CyberarmEngine
 
         return unless visible?
 
-        Stats.increment(:gui_recalculations_last_frame, 1)
+        Stats.frame.increment(:gui_recalculations)
 
         stylize
 
@@ -176,7 +176,7 @@ module CyberarmEngine
           child.recalculate
           child.reposition # TODO: Implement top,bottom,left,center, and right positioning
 
-          Stats.increment(:gui_recalculations_last_frame, 1)
+          Stats.frame.increment(:gui_recalculations)
 
           child.element_visible = child.x >= @x - child.width && child.x <= @x + width &&
                                   child.y >= @y - child.height && child.y <= @y + height
