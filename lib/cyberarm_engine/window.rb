@@ -6,7 +6,7 @@ module CyberarmEngine
     SAMPLES = {}
     SONGS = {}
 
-    attr_accessor :show_cursor
+    attr_accessor :show_cursor, :show_stats_plotter
     attr_writer :exit_on_opengl_error
     attr_reader :last_frame_time, :delta_time, :states
 
@@ -31,6 +31,7 @@ module CyberarmEngine
     def initialize(width: 800, height: 600, fullscreen: false, update_interval: 1000.0 / 60, resizable: false, borderless: false)
       @show_cursor = false
       @has_focus = false
+      @show_stats_plotter = false
 
       super(width, height, fullscreen: fullscreen, update_interval: update_interval, resizable: resizable, borderless: borderless)
       Window.instance = self
@@ -43,6 +44,7 @@ module CyberarmEngine
       @states = []
       @exit_on_opengl_error = false
       preload_default_shaders if respond_to?(:preload_default_shaders)
+      @stats_plotter = Stats::StatsPlotter.new(2, 28) # FIXME: Make positioning easy
 
       setup
     end
@@ -54,6 +56,9 @@ module CyberarmEngine
       Stats.frame.start_timing(:draw)
 
       current_state&.draw
+      Stats.frame.start_timing(:engine_stats_renderer)
+      @stats_plotter&.draw if @show_stats_plotter
+      Stats.frame.end_timing(:engine_stats_renderer)
 
       Stats.frame.end_timing(:draw)
       Stats.frame.start_timing(:interframe_sleep)
