@@ -44,7 +44,7 @@ module CyberarmEngine
 
       attr_reader :frame_timing, :counters, :timings, :multitimings
       def initialize
-        @frame_timing = Timing.new(start_time: Gosu.milliseconds, end_time: -1, duration: -1)
+        @frame_timing = Timing.new(Gosu.milliseconds, -1, -1)
         @attempted_multitiming = false
 
         @counters = {
@@ -70,7 +70,7 @@ module CyberarmEngine
           return
         end
 
-        @timings[key] = Timing.new(start_time: Gosu.milliseconds, end_time: -1, duration: -1)
+        @timings[key] = Timing.new(Gosu.milliseconds, -1, -1)
       end
 
       def end_timing(key)
