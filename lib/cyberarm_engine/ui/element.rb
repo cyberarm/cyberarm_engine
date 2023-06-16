@@ -462,14 +462,12 @@ module CyberarmEngine
       if @parent && @style.fill &&
          (dimension == :width && @parent.is_a?(Flow) ||
           dimension == :height && @parent.is_a?(Stack))
-        return space_available_width - noncontent_width if dimension == :width && @parent.is_a?(Flow)
-        return space_available_height - noncontent_height if dimension == :height && @parent.is_a?(Stack)
-
-      # Handle min_width/height and max_width/height
-      else
-        return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size.to_f < @style.send(:"min_#{dimension}")
-        return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size.to_f > @style.send(:"max_#{dimension}")
+        new_size = space_available_width - noncontent_width if dimension == :width && @parent.is_a?(Flow)
+        new_size = space_available_height - noncontent_height if dimension == :height && @parent.is_a?(Stack)
       end
+
+      return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size.to_f < @style.send(:"min_#{dimension}")
+      return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size.to_f > @style.send(:"max_#{dimension}")
 
       new_size
     end

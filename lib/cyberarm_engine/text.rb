@@ -81,6 +81,7 @@ module CyberarmEngine
         @size = size
         @font = font_name
 
+        invalidate_cache!
         @textobject = check_cache(size, font_name)
       end
     end

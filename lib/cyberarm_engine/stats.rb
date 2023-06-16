@@ -63,7 +63,8 @@ module CyberarmEngine
       def start_timing(key)
         raise "key must be a symbol!" unless key.is_a?(Symbol)
         if @timings[key]
-          warn "Only one timing per key per frame. (Timing for #{key.inspect} already exists!)"
+          # FIXME: Make it not spammy...
+          # warn "Only one timing per key per frame. (Timing for #{key.inspect} already exists!)"
           @attempted_multitiming = true
           @multitimings[key] = true
 
@@ -76,7 +77,8 @@ module CyberarmEngine
       def end_timing(key)
         timing = @timings[key]
 
-        warn "Timing #{key.inspect} already ended!" if timing.end_time != -1
+        # FIXME: Make it not spammy...
+        # warn "Timing #{key.inspect} already ended!" if timing.end_time != -1
 
         timing.end_time = Gosu.milliseconds
         timing.duration = timing.end_time - timing.start_time

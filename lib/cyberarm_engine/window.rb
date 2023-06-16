@@ -158,6 +158,8 @@ module CyberarmEngine
     end
 
     private def child_of?(input, klass)
+      return false unless input
+
       input.ancestors.detect { |c| c == klass }
     end
 

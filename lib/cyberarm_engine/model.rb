@@ -50,7 +50,8 @@ module CyberarmEngine
       @objects.each { |o| @vertex_count += o.vertices.size }
 
       start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
-      # build_collision_tree
+      build_collision_tree
+      puts "    Building mesh collision tree took #{((Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond) - start_time) / 1000.0).round(2)} seconds"
     end
 
     def parse(parser)
@@ -177,7 +178,7 @@ module CyberarmEngine
     end
 
     def build_collision_tree
-      @aabb_tree = AABBTree.new
+      @aabb_tree = IMICFPS::AABBTree.new
 
       @faces.each do |face|
         box = BoundingBox.new

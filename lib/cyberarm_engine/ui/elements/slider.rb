@@ -33,7 +33,8 @@ module CyberarmEngine
         end
       end
 
-      attr_reader :range, :step_size, :value
+      attr_reader :step_size, :value
+      attr_accessor :range, :step_size
 
       def initialize(options = {}, block = nil)
         super(options, block)

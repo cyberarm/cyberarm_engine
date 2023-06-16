@@ -186,6 +186,9 @@ module CyberarmEngine
 
         update_background
 
+        # Fixes resized container scrolled past bottom
+        self.scroll_top = -@scroll_position.y
+
         root.gui_state.request_repaint if @width != old_width || @height != old_height
       end
 

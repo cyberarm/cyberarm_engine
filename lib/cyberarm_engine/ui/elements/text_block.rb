@@ -18,6 +18,15 @@ module CyberarmEngine
         @raw_text = text
       end
 
+      def update
+        super
+
+        if @text.textobject.name != safe_style_fetch(:font)
+          set_font
+          root.gui_state.request_recalculate
+        end
+      end
+
       def render
         # Gosu.clip_to is too expensive to always use so check if we actually need it.
         if @text.width > width || @text.height > height
