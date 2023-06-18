@@ -442,11 +442,11 @@ module CyberarmEngine
     end
 
     def max_scroll_width
-      scroll_width - outer_width
+      (scroll_width - outer_width).positive? ? scroll_width - outer_width : scroll_width
     end
 
     def max_scroll_height
-      scroll_height - outer_height
+      (scroll_height - outer_height).positive? ? scroll_height - outer_height : scroll_height
     end
 
     def dimensional_size(size, dimension)

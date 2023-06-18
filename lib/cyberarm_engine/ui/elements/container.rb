@@ -20,8 +20,10 @@ module CyberarmEngine
         @gui_state = options.delete(:gui_state)
         super
 
+        @last_scroll_position = Vector.new(0, 0)
         @scroll_position = Vector.new(0, 0)
-        @scroll_speed = 40
+        @scroll_target_position = Vector.new(0, 0)
+        @scroll_speed = 80
 
         @text_color = options[:color]
 
@@ -77,7 +79,9 @@ module CyberarmEngine
           content_width + 1,
           content_height + 1
         ) do
-          @children.each(&:draw)
+          Gosu.translate(@scroll_position.x, @scroll_position.y) do
+            @children.each(&:draw)
+          end
         end
       end
 
@@ -90,31 +94,68 @@ module CyberarmEngine
       end
 
       def update
+        update_scroll
         @children.each(&:update)
       end
 
       def hit_element?(x, y)
         return unless hit?(x, y)
 
+        # Offset child hit point by scroll position/offset
+        child_x = x - @scroll_position.x
+        child_y = y - @scroll_position.y
+
         @children.reverse_each do |child|
           next unless child.visible?
 
           case child
           when Container
-            if element = child.hit_element?(x, y)
+            if element = child.hit_element?(child_x, child_y)
               return element
             end
           else
-            return child if child.hit?(x, y)
+            return child if child.hit?(child_x, child_y)
           end
         end
 
         self if hit?(x, y)
       end
 
+      def update_child_element_visibity(child)
+        child.element_visible = child.x >= (@x - @scroll_position.x) - child.width && child.x <= (@x - @scroll_position.x) + width &&
+                                child.y >= (@y - @scroll_position.y) - child.height && child.y <= (@y - @scroll_position.y) + height
+      end
+
+      def update_scroll
+        scroll_x_diff = (@scroll_target_position.x - @scroll_position.x)
+        scroll_y_diff = (@scroll_target_position.y - @scroll_position.y)
+
+        @scroll_position.x += scroll_x_diff * 0.25
+        @scroll_position.y += scroll_y_diff * 0.25
+
+        @scroll_position.x = @scroll_target_position.x if scroll_x_diff.abs < 1.0
+        @scroll_position.y = @scroll_target_position.y if scroll_y_diff.abs < 1.0
+
+        # Scrolled PAST top
+        if @scroll_position.y > 0
+          @scroll_target_position.y = 0
+
+        # Scrolled PAST bottom
+        elsif @scroll_position.y.abs > max_scroll_height
+          @scroll_target_position.y = -max_scroll_height
+        end
+
+        if @last_scroll_position != @scroll_position
+          @children.each { |child| update_child_element_visibity(child) }
+          root.gui_state.request_repaint
+        end
+
+        @last_scroll_position.x = @scroll_position.x
+        @last_scroll_position.y = @scroll_position.y
+      end
+
       def recalculate
         @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
-        @current_position += @scroll_position
 
         return unless visible?
 
@@ -178,8 +219,7 @@ module CyberarmEngine
 
           Stats.frame.increment(:gui_recalculations)
 
-          child.element_visible = child.x >= @x - child.width && child.x <= @x + width &&
-                                  child.y >= @y - child.height && child.y <= @y + height
+          update_child_element_visibity(child)
         end
 
         # puts "TOOK: #{Gosu.milliseconds - s}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}"
@@ -188,6 +228,7 @@ module CyberarmEngine
 
         # Fixes resized container scrolled past bottom
         self.scroll_top = -@scroll_position.y
+        @scroll_target_position.y = @scroll_position.y
 
         root.gui_state.request_repaint if @width != old_width || @height != old_height
       end
@@ -249,12 +290,13 @@ module CyberarmEngine
       def mouse_wheel_up(sender, x, y)
         return unless @style.scroll
 
-        if @scroll_position.y < 0
-          @scroll_position.y += @scroll_speed
-          @scroll_position.y = 0 if @scroll_position.y > 0
-
-          root.gui_state.request_recalculate_for(self)
-          root.gui_state.request_repaint
+        # Allow overscrolling UP, only if one can scroll DOWN
+        if height < scroll_height
+          if @scroll_target_position.y > 0
+            @scroll_target_position.y = @scroll_speed
+          else
+            @scroll_target_position.y += @scroll_speed
+          end
 
           return :handled
         end
@@ -265,15 +307,13 @@ module CyberarmEngine
 
         return unless height < scroll_height
 
-        if @scroll_position.y.abs < max_scroll_height
-          @scroll_position.y -= @scroll_speed
-          @scroll_position.y = -max_scroll_height if @scroll_position.y.abs > max_scroll_height
-
-          root.gui_state.request_recalculate_for(self)
-          root.gui_state.request_repaint
-
-          return :handled
+        if @scroll_target_position.y > 0
+          @scroll_target_position.y = -@scroll_speed
+        else
+          @scroll_target_position.y -= @scroll_speed
         end
+
+        return :handled
       end
 
       def scroll_top
