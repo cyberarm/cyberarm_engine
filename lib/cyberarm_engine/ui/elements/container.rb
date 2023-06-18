@@ -23,7 +23,8 @@ module CyberarmEngine
         @last_scroll_position = Vector.new(0, 0)
         @scroll_position = Vector.new(0, 0)
         @scroll_target_position = Vector.new(0, 0)
-        @scroll_speed = 80
+        @scroll_chunk = 120
+        @scroll_speed = 40
 
         @text_color = options[:color]
 
@@ -127,11 +128,13 @@ module CyberarmEngine
       end
 
       def update_scroll
+        dt = window.dt > 1 ? 1.0 : window.dt
+
         scroll_x_diff = (@scroll_target_position.x - @scroll_position.x)
         scroll_y_diff = (@scroll_target_position.y - @scroll_position.y)
 
-        @scroll_position.x += (scroll_x_diff * 0.25).round
-        @scroll_position.y += (scroll_y_diff * 0.25).round
+        @scroll_position.x += (scroll_x_diff * @scroll_speed * 0.25 * dt).round
+        @scroll_position.y += (scroll_y_diff * @scroll_speed * 0.25 * dt).round
 
         @scroll_position.x = @scroll_target_position.x if scroll_x_diff.abs < 1.0
         @scroll_position.y = @scroll_target_position.y if scroll_y_diff.abs < 1.0
@@ -293,9 +296,9 @@ module CyberarmEngine
         # Allow overscrolling UP, only if one can scroll DOWN
         if height < scroll_height
           if @scroll_target_position.y > 0
-            @scroll_target_position.y = @scroll_speed
+            @scroll_target_position.y = @scroll_chunk
           else
-            @scroll_target_position.y += @scroll_speed
+            @scroll_target_position.y += @scroll_chunk
           end
 
           return :handled
@@ -308,9 +311,9 @@ module CyberarmEngine
         return unless height < scroll_height
 
         if @scroll_target_position.y > 0
-          @scroll_target_position.y = -@scroll_speed
+          @scroll_target_position.y = -@scroll_chunk
         else
-          @scroll_target_position.y -= @scroll_speed
+          @scroll_target_position.y -= @scroll_chunk
         end
 
         return :handled
