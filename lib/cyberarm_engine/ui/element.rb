@@ -411,10 +411,14 @@ module CyberarmEngine
     end
 
     def scroll_width
-      @children.sum(&:outer_width)
+      return @cached_scroll_width if @cached_scroll_width && is_a?(Container)
+
+      @cached_scroll_width = @children.sum(&:outer_width)
     end
 
     def scroll_height
+      return @cached_scroll_height if @cached_scroll_height && is_a?(Container)
+
       if is_a?(CyberarmEngine::Element::Flow)
         return 0 if @children.size.zero?
 
@@ -435,9 +439,9 @@ module CyberarmEngine
 
         pairs_ << a_ unless pairs_.last == a_
 
-        pairs_.sum { |pair|  + @style.padding_top + @style.border_thickness_top + pair.map(&:outer_height).max } + @style.padding_bottom + @style.border_thickness_bottom
+        @cached_scroll_height = pairs_.sum { |pair|  + @style.padding_top + @style.border_thickness_top + pair.map(&:outer_height).max } + @style.padding_bottom + @style.border_thickness_bottom
       else
-        @style.padding_top + @style.border_thickness_top + @children.sum(&:outer_height) + @style.padding_bottom + @style.border_thickness_bottom
+        @cached_scroll_height = @style.padding_top + @style.border_thickness_top + @children.sum(&:outer_height) + @style.padding_bottom + @style.border_thickness_bottom
       end
     end
 

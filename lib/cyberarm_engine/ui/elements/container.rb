@@ -173,6 +173,9 @@ module CyberarmEngine
         old_width  = @width
         old_height = @height
 
+        @cached_scroll_width = nil
+        @cached_scroll_height = nil
+
         if is_root?
           @width  = @style.width  = window.width
           @height = @style.height = window.height
