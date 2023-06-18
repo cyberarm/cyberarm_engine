@@ -130,8 +130,8 @@ module CyberarmEngine
         scroll_x_diff = (@scroll_target_position.x - @scroll_position.x)
         scroll_y_diff = (@scroll_target_position.y - @scroll_position.y)
 
-        @scroll_position.x += scroll_x_diff * 0.25
-        @scroll_position.y += scroll_y_diff * 0.25
+        @scroll_position.x += (scroll_x_diff * 0.25).round
+        @scroll_position.y += (scroll_y_diff * 0.25).round
 
         @scroll_position.x = @scroll_target_position.x if scroll_x_diff.abs < 1.0
         @scroll_position.y = @scroll_target_position.y if scroll_y_diff.abs < 1.0
