@@ -36,17 +36,17 @@ module CyberarmEngine
       def build
         @block.call(self) if @block
 
-        root.gui_state.request_recalculate
+        root.gui_state.request_recalculate_for(self)
       end
 
       def add(element)
         @children << element
 
-        root.gui_state.request_recalculate
+        root.gui_state.request_recalculate_for(self)
       end
 
       def remove(element)
-        root.gui_state.request_recalculate if @children.delete(element)
+        root.gui_state.request_recalculate_for(self) if @children.delete(element)
       end
 
       def clear(&block)
@@ -59,7 +59,7 @@ module CyberarmEngine
 
         CyberarmEngine::Element::Container.current_container = old_container
 
-        root.gui_state.request_recalculate
+        root.gui_state.request_recalculate_for(self)
       end
 
       def append(&block)
@@ -70,7 +70,7 @@ module CyberarmEngine
 
         CyberarmEngine::Element::Container.current_container = old_container
 
-        root.gui_state.request_recalculate
+        root.gui_state.request_recalculate_for(self)
       end
 
       def render
@@ -235,6 +235,15 @@ module CyberarmEngine
         # Fixes resized container scrolled past bottom
         self.scroll_top = -@scroll_position.y
         @scroll_target_position.y = @scroll_position.y
+
+        # NOTE: Experiment for removing need to explicitly call gui_state#recalculate at least 3 times for layout to layout...
+        if old_width != @width || old_height != @height
+          if @parent
+            root.gui_state.request_recalculate_for(@parent)
+          else
+            root.gui_state.request_recalculate
+          end
+        end
 
         root.gui_state.request_repaint if @width != old_width || @height != old_height
       end

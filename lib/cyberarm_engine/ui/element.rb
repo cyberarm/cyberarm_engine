@@ -578,6 +578,20 @@ module CyberarmEngine
       @gui_state != nil
     end
 
+    def child_of?(element)
+      return element == self if is_root?
+      return false unless element.is_a?(Container)
+      return true if element.children.find { |child| child == self }
+
+      element.children.find { |child| child.child_of?(element) if child.is_a?(Container) }
+    end
+
+    # def parent_of?(element)
+    #   return true if element.children.find { |child| child == self }
+
+    #   element.children.find { |child| child.parent}
+    # end
+
     def focus(_)
       warn "#{self.class}#focus was not overridden!"
 
