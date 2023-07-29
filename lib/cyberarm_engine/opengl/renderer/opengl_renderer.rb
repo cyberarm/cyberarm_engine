@@ -44,7 +44,7 @@ module CyberarmEngine
             shader.uniform_transform("projection", camera.projection_matrix)
             shader.uniform_transform("view", camera.view_matrix)
             shader.uniform_transform("model", entity.model_matrix)
-            shader.uniform_vec3("cameraPosition", camera.position)
+            shader.uniform_vector3("camera_position", camera.position)
 
             gl_error?
             draw_model(entity.model, shader)
@@ -154,15 +154,21 @@ module CyberarmEngine
         glBindTexture(GL_TEXTURE_2D, @g_buffer.texture(:depth))
         shader.uniform_integer("depth", 4)
 
-        lights.each_with_index do |light, _i|
-          shader.uniform_integer("light[0].type", light.type)
-          shader.uniform_vec3("light[0].direction", light.direction)
-          shader.uniform_vec3("light[0].position", light.position)
-          shader.uniform_vec3("light[0].diffuse", light.diffuse)
-          shader.uniform_vec3("light[0].ambient", light.ambient)
-          shader.uniform_vec3("light[0].specular", light.specular)
+        # FIXME: Try to figure out how to up this to 32 and/or beyond
+        #        (currently fails with more then 7 lights passed in to shader)
+        lights.each_slice(7).each do |light_group|
+          light_group.each_with_index do |light, _i|
+            shader.uniform_integer("light_count", light_group.size)
 
-          glDrawArrays(GL_TRIANGLES, 0, @g_buffer.vertices.size)
+            shader.uniform_integer("lights[#{_i}].type",      light.type)
+            shader.uniform_vector3("lights[#{_i}].direction", light.direction)
+            shader.uniform_vector3("lights[#{_i}].position",  light.position)
+            shader.uniform_vector3("lights[#{_i}].diffuse",   light.diffuse)
+            shader.uniform_vector3("lights[#{_i}].ambient",   light.ambient)
+            shader.uniform_vector3("lights[#{_i}].specular",  light.specular)
+
+            glDrawArrays(GL_TRIANGLES, 0, @g_buffer.vertices.size)
+          end
         end
 
         glBindVertexArray(0)
@@ -215,7 +221,7 @@ module CyberarmEngine
 
       offset = 0
       model.objects.each do |object|
-        shader.uniform_boolean("hasTexture", object.has_texture?)
+        shader.uniform_boolean("has_texture", object.has_texture?)
 
         if object.has_texture?
           glBindTexture(GL_TEXTURE_2D, object.materials.find { |mat| mat.texture_id }.texture_id)

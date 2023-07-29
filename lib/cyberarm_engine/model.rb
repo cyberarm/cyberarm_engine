@@ -49,9 +49,9 @@ module CyberarmEngine
 
       @objects.each { |o| @vertex_count += o.vertices.size }
 
-      start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
-      build_collision_tree
-      puts "    Building mesh collision tree took #{((Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond) - start_time) / 1000.0).round(2)} seconds"
+      # start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond)
+      # build_collision_tree
+      # puts "    Building mesh collision tree took #{((Process.clock_gettime(Process::CLOCK_MONOTONIC, :float_millisecond) - start_time) / 1000.0).round(2)} seconds"
     end
 
     def parse(parser)
@@ -151,24 +151,24 @@ module CyberarmEngine
       glBindBuffer(GL_ARRAY_BUFFER, @positions_buffer_id)
       gl_error?
 
-      #                     inPosition
+      #                     in_position
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nil)
       gl_error?
       # colors
       glBindBuffer(GL_ARRAY_BUFFER, @colors_buffer_id)
-      #                     inColor
+      #                     in_color
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nil)
       gl_error?
       # normals
       glBindBuffer(GL_ARRAY_BUFFER, @normals_buffer_id)
-      #                     inNormal
+      #                     in_normal
       glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 0, nil)
       gl_error?
 
       if has_texture?
         # uvs
         glBindBuffer(GL_ARRAY_BUFFER, @uvs_buffer_id)
-        #                     inUV
+        #                     in_uv
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, nil)
         gl_error?
       end

@@ -1,28 +1,28 @@
 # version 330 core
 
-layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec3 inColor;
-layout(location = 2) in vec3 inNormal;
-layout(location = 3) in vec3 inUV;
+layout(location = 0) in vec3 in_position;
+layout(location = 1) in vec3 in_color;
+layout(location = 2) in vec3 in_normal;
+layout(location = 3) in vec3 in_uv;
 
 uniform mat4 projection, view, model;
-uniform int hasTexture;
-uniform vec3 cameraPos;
+uniform int has_texture;
+uniform vec3 camera_pos;
 
-out vec3 outPosition, outColor, outNormal, outUV;
-out vec3 outFragPos, outViewPos, outCameraPos;
-flat out int outHasTexture;
+out vec3 out_position, out_color, out_normal, out_uv;
+out vec3 out_frag_pos, out_view_pos, out_camera_pos;
+flat out int out_has_texture;
 
 void main() {
   // projection * view * model * position
-  outPosition = inPosition;
-  outColor = inColor;
-  outNormal= normalize(transpose(inverse(mat3(model))) * inNormal);
-  outUV    = inUV;
-  outHasTexture = hasTexture;
-  outCameraPos = cameraPos;
+  out_position = in_position;
+  out_color = in_color;
+  out_normal= normalize(transpose(inverse(mat3(model))) * in_normal);
+  out_uv    = in_uv;
+  out_has_texture = has_texture;
+  out_camera_pos = camera_pos;
 
-  outFragPos = vec3(model * vec4(inPosition, 1.0));
+  out_frag_pos = vec3(model * vec4(in_position, 1.0));
 
-  gl_Position = projection * view * model * vec4(inPosition, 1.0);
+  gl_Position = projection * view * model * vec4(in_position, 1.0);
 }

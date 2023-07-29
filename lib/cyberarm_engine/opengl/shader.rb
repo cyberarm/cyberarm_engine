@@ -385,7 +385,7 @@ module CyberarmEngine
     # @param value [Vector]
     # @param location [Integer]
     # @return [void]
-    def uniform_vec3(variable, value, location = nil)
+    def uniform_vector3(variable, value, location = nil)
       attr_loc = location || attribute_location(variable)
 
       glUniform3f(attr_loc, *value.to_a[0..2])
@@ -397,7 +397,7 @@ module CyberarmEngine
     # @param value [Vector]
     # @param location [Integer]
     # @return [void]
-    def uniform_vec4(variable, value, location = nil)
+    def uniform_vector4(variable, value, location = nil)
       attr_loc = location || attribute_location(variable)
 
       glUniform4f(attr_loc, *value.to_a)
