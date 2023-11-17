@@ -78,15 +78,6 @@ module CyberarmEngine
     end
 
     def update
-      if @pending_recalculate_request
-        Stats.frame.start_timing(:gui_recalculate)
-        @root_container.recalculate
-
-        @pending_recalculate_request = false
-
-        Stats.frame.end_timing(:gui_recalculate)
-      end
-
       Stats.frame.start_timing(:gui_element_recalculate_requests)
 
       # puts "PENDING REQUESTS: #{@pending_element_recalculate_requests.size}" if @pending_element_recalculate_requests.size.positive?
@@ -94,6 +85,16 @@ module CyberarmEngine
       @pending_element_recalculate_requests.clear
 
       Stats.frame.end_timing(:gui_element_recalculate_requests)
+
+      if @pending_recalculate_request
+        Stats.frame.start_timing(:gui_recalculate)
+
+        @root_container.recalculate
+
+        @pending_recalculate_request = false
+
+        Stats.frame.end_timing(:gui_recalculate)
+      end
 
       if @pending_focus_request
         @pending_focus_request = false

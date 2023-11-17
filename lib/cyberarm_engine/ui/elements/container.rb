@@ -246,6 +246,7 @@ module CyberarmEngine
         end
 
         root.gui_state.request_repaint if @width != old_width || @height != old_height
+        recalculate_if_size_changed
       end
 
       def layout

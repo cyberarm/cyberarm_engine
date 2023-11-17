@@ -30,6 +30,8 @@ module CyberarmEngine
       @y = @style.y
       @z = @style.z
 
+      @old_width  = 0
+      @old_height = 0
       @width  = 0
       @height = 0
 
@@ -342,6 +344,7 @@ module CyberarmEngine
     end
 
     def update
+      recalculate_if_size_changed
     end
 
     def button_down(id)
@@ -556,6 +559,15 @@ module CyberarmEngine
       @style.background_image_canvas.color = @style.background_image_color
 
       @style.background_image_canvas.image = @style.background_image
+    end
+
+    def recalculate_if_size_changed
+      if !is_a?(ToolTip) && (@old_width != width || @old_height != height)
+        root.gui_state.request_recalculate
+
+        @old_width = width
+        @old_height = height
+      end
     end
 
     def root
