@@ -7,12 +7,18 @@ else
 end
 require "json"
 require "excon"
-require "gosu_more_drawables"
 
 require_relative "cyberarm_engine/version"
 require_relative "cyberarm_engine/stats"
 
 require_relative "cyberarm_engine/common"
+
+require_relative "cyberarm_engine/gosu_ext/draw_arc"
+require_relative "cyberarm_engine/gosu_ext/draw_circle"
+require_relative "cyberarm_engine/gosu_ext/draw_path"
+
+require_relative "cyberarm_engine/notification"
+require_relative "cyberarm_engine/notification_manager"
 
 require_relative "cyberarm_engine/game_object"
 require_relative "cyberarm_engine/window"
