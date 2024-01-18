@@ -236,6 +236,11 @@ module CyberarmEngine
         self.scroll_top = -@scroll_position.y
         @scroll_target_position.y = @scroll_position.y
 
+        # Fixes resized container that is scrolled down from being stuck overscrolled when resized
+        if scroll_height < height
+          @scroll_target_position.y = 0
+        end
+
         # NOTE: Experiment for removing need to explicitly call gui_state#recalculate at least 3 times for layout to layout...
         if old_width != @width || old_height != @height
           if @parent
