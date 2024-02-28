@@ -163,7 +163,7 @@ module CyberarmEngine
       elsif background.is_a?(Range)
         set([background.begin, background.begin, background.end, background.end])
       else
-        raise ArgumentError, "background '#{background}' of type '#{background.class}' was not able to be processed"
+        raise ArgumentError, "background '#{background.inspect}' of type '#{background.class}' was not able to be processed"
       end
     end
   end

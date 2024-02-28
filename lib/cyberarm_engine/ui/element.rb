@@ -71,8 +71,19 @@ module CyberarmEngine
       root.gui_state.request_repaint
     end
 
-    def safe_style_fetch(*args)
-      @style.hash.dig(@style_event, *args) || @style.hash.dig(:default, *args) || default(*args)
+    def safe_style_fetch(key, fallback_key = nil)
+      # Attempt to return value for requested key
+      v = @style.hash.dig(@style_event, key)
+      return v if v
+
+      # Attempt to return overriding value
+      if fallback_key
+        v = @style.hash.dig(@style_event, fallback_key)
+        return v if v
+      end
+
+      # Fallback to default style
+      @style.hash.dig(:default, key) || default(key)
     end
 
     def set_static_position
@@ -104,10 +115,10 @@ module CyberarmEngine
 
       @style.background_nine_slice_from_edge = safe_style_fetch(:background_nine_slice_from_edge)
 
-      @style.background_nine_slice_left      = safe_style_fetch(:background_nine_slice_left)   || @style.background_nine_slice_from_edge
-      @style.background_nine_slice_top       = safe_style_fetch(:background_nine_slice_top)    || @style.background_nine_slice_from_edge
-      @style.background_nine_slice_right     = safe_style_fetch(:background_nine_slice_right)  || @style.background_nine_slice_from_edge
-      @style.background_nine_slice_bottom    = safe_style_fetch(:background_nine_slice_bottom) || @style.background_nine_slice_from_edge
+      @style.background_nine_slice_left      = safe_style_fetch(:background_nine_slice_left, :background_nine_slice_from_edge)
+      @style.background_nine_slice_top       = safe_style_fetch(:background_nine_slice_top, :background_nine_slice_from_edge)
+      @style.background_nine_slice_right     = safe_style_fetch(:background_nine_slice_right, :background_nine_slice_from_edge)
+      @style.background_nine_slice_bottom    = safe_style_fetch(:background_nine_slice_bottom, :background_nine_slice_from_edge)
     end
 
     def set_background_image
@@ -121,19 +132,19 @@ module CyberarmEngine
     def set_border_thickness
       @style.border_thickness = safe_style_fetch(:border_thickness)
 
-      @style.border_thickness_left   = safe_style_fetch(:border_thickness_left)   || @style.border_thickness
-      @style.border_thickness_right  = safe_style_fetch(:border_thickness_right)  || @style.border_thickness
-      @style.border_thickness_top    = safe_style_fetch(:border_thickness_top)    || @style.border_thickness
-      @style.border_thickness_bottom = safe_style_fetch(:border_thickness_bottom) || @style.border_thickness
+      @style.border_thickness_left   = safe_style_fetch(:border_thickness_left, :border_thickness)
+      @style.border_thickness_right  = safe_style_fetch(:border_thickness_right, :border_thickness)
+      @style.border_thickness_top    = safe_style_fetch(:border_thickness_top, :border_thickness)
+      @style.border_thickness_bottom = safe_style_fetch(:border_thickness_bottom, :border_thickness)
     end
 
     def set_border_color
       @style.border_color = safe_style_fetch(:border_color)
 
-      @style.border_color_left   = safe_style_fetch(:border_color_left)   || @style.border_color
-      @style.border_color_right  = safe_style_fetch(:border_color_right)  || @style.border_color
-      @style.border_color_top    = safe_style_fetch(:border_color_top)    || @style.border_color
-      @style.border_color_bottom = safe_style_fetch(:border_color_bottom) || @style.border_color
+      @style.border_color_left   = safe_style_fetch(:border_color_left, :border_color)
+      @style.border_color_right  = safe_style_fetch(:border_color_right, :border_color)
+      @style.border_color_top    = safe_style_fetch(:border_color_top, :border_color)
+      @style.border_color_bottom = safe_style_fetch(:border_color_bottom, :border_color)
 
       @style.border_canvas.color = [
         @style.border_color_top,
@@ -146,19 +157,19 @@ module CyberarmEngine
     def set_padding
       @style.padding = safe_style_fetch(:padding)
 
-      @style.padding_left   = safe_style_fetch(:padding_left)   || @style.padding
-      @style.padding_right  = safe_style_fetch(:padding_right)  || @style.padding
-      @style.padding_top    = safe_style_fetch(:padding_top)    || @style.padding
-      @style.padding_bottom = safe_style_fetch(:padding_bottom) || @style.padding
+      @style.padding_left   = safe_style_fetch(:padding_left, :padding)
+      @style.padding_right  = safe_style_fetch(:padding_right, :padding)
+      @style.padding_top    = safe_style_fetch(:padding_top, :padding)
+      @style.padding_bottom = safe_style_fetch(:padding_bottom, :padding)
     end
 
     def set_margin
       @style.margin = safe_style_fetch(:margin)
 
-      @style.margin_left   = safe_style_fetch(:margin_left)   || @style.margin
-      @style.margin_right  = safe_style_fetch(:margin_right)  || @style.margin
-      @style.margin_top    = safe_style_fetch(:margin_top)    || @style.margin
-      @style.margin_bottom = safe_style_fetch(:margin_bottom) || @style.margin
+      @style.margin_left   = safe_style_fetch(:margin_left, :margin)
+      @style.margin_right  = safe_style_fetch(:margin_right, :margin)
+      @style.margin_top    = safe_style_fetch(:margin_top, :margin)
+      @style.margin_bottom = safe_style_fetch(:margin_bottom, :margin)
     end
 
     def update_styles(event = :default)
