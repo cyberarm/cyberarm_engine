@@ -16,9 +16,9 @@ module CyberarmEngine
         @menu = Stack.new(parent: self, theme: @options[:theme])
         @menu.define_singleton_method(:recalculate_menu) do
           @x = @__list_box.x
-          @y = @__list_box.y + @__list_box.height
+          @y = parent.parent.scroll_top + @__list_box.y + @__list_box.height
 
-          @y = @__list_box.y - height if @y + height > window.height
+          @y = (parent.parent.scroll_top + @__list_box.y) - height if @y + height > window.height
         end
         @menu.instance_variable_set(:"@__list_box", self)
 

@@ -197,6 +197,10 @@ module CyberarmEngine
 
       event(:mouse_wheel_up)
       event(:mouse_wheel_down)
+      event(:scroll_jump_to_top)
+      event(:scroll_jump_to_end)
+      event(:scroll_page_up)
+      event(:scroll_page_down)
 
       event(:enter)
       event(:hover)

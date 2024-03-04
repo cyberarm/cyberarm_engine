@@ -186,6 +186,14 @@ module CyberarmEngine
         redirect_mouse_wheel(:up)
       when Gosu::MS_WHEEL_DOWN
         redirect_mouse_wheel(:down)
+      when Gosu::KB_HOME
+        redirect_scroll_jump_to(:top)
+      when Gosu::KB_END
+        redirect_scroll_jump_to(:end)
+      when Gosu::KB_PAGE_UP
+        redirect_scroll_page(:up)
+      when Gosu::KB_PAGE_DOWN
+        redirect_scroll_page(:down)
       end
 
       @focus.button_up(id) if @focus.respond_to?(:button_up)
@@ -251,7 +259,15 @@ module CyberarmEngine
     end
 
     def redirect_mouse_wheel(button)
-      @mouse_over.publish(:"mouse_wheel_#{button}", window.mouse_x, window.mouse_y) if @mouse_over
+      @mouse_over.publish(:"mouse_wheel_#{button}", window.mouse_x, window.mouse_y) if (@mouse_over && !@menu) || (@mouse_over && @mouse_over == @menu)
+    end
+
+    def redirect_scroll_jump_to(edge)
+      @mouse_over.publish(:"scroll_jump_to_#{edge}", window.mouse_x, window.mouse_y) if (@mouse_over && !@menu) || (@mouse_over && @mouse_over == @menu)
+    end
+
+    def redirect_scroll_page(edge)
+      @mouse_over.publish(:"scroll_page_#{edge}", window.mouse_x, window.mouse_y) if (@mouse_over && !@menu) || (@mouse_over && @mouse_over == @menu)
     end
 
     # Schedule a full GUI recalculation on next update

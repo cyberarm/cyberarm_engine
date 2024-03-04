@@ -4,7 +4,7 @@ module CyberarmEngine
       include Common
 
       attr_accessor :stroke_color, :fill_color
-      attr_reader :children, :gui_state, :scroll_position
+      attr_reader :children, :gui_state, :scroll_position, :scroll_target_position
 
       def self.current_container
         @@current_container
@@ -95,7 +95,7 @@ module CyberarmEngine
       end
 
       def update
-        update_scroll
+        update_scroll if @style.scroll
         @children.each(&:update)
       end
 
@@ -128,23 +128,16 @@ module CyberarmEngine
       end
 
       def update_scroll
-        dt = window.dt > 1 ? 1.0 : window.dt
-
-        scroll_x_diff = (@scroll_target_position.x - @scroll_position.x)
-        scroll_y_diff = (@scroll_target_position.y - @scroll_position.y)
-
-        @scroll_position.x += (scroll_x_diff * @scroll_speed * 0.25 * dt).round
-        @scroll_position.y += (scroll_y_diff * @scroll_speed * 0.25 * dt).round
-
-        @scroll_position.x = @scroll_target_position.x if scroll_x_diff.abs < 1.0
-        @scroll_position.y = @scroll_target_position.y if scroll_y_diff.abs < 1.0
+        dt = window.dt.clamp(0.000001, 0.025)
+        @scroll_position.x += (((@scroll_target_position.x - @scroll_position.x) * (@scroll_speed / 4.0) * 0.98) * dt).round
+        @scroll_position.y += (((@scroll_target_position.y - @scroll_position.y) * (@scroll_speed / 4.0) * 0.98) * dt).round
 
         # Scrolled PAST top
         if @scroll_position.y > 0
           @scroll_target_position.y = 0
 
         # Scrolled PAST bottom
-        elsif @scroll_position.y.abs > max_scroll_height
+        elsif @scroll_position.y < -max_scroll_height
           @scroll_target_position.y = -max_scroll_height
         end
 
@@ -162,7 +155,7 @@ module CyberarmEngine
 
         return unless visible?
 
-        Stats.frame.increment(:gui_recalculations)
+        Stats.frame&.increment(:gui_recalculations)
 
         stylize
 
@@ -233,8 +226,10 @@ module CyberarmEngine
         update_background
 
         # Fixes resized container scrolled past bottom
-        self.scroll_top = -@scroll_position.y
-        @scroll_target_position.y = @scroll_position.y
+        if old_height != @height
+          self.scroll_top = -@scroll_position.y
+          @scroll_target_position.y = @scroll_position.y
+        end
 
         # Fixes resized container that is scrolled down from being stuck overscrolled when resized
         if scroll_height < height
@@ -333,6 +328,44 @@ module CyberarmEngine
         else
           @scroll_target_position.y -= @scroll_chunk
         end
+
+        return :handled
+      end
+
+      def scroll_jump_to_top(sender, x, y)
+        return unless @style.scroll
+
+        @scroll_position.y = 0
+        @scroll_target_position.y = 0
+
+        return :handled
+      end
+
+      def scroll_jump_to_end(sender, x, y)
+        return unless @style.scroll
+
+        @scroll_position.y = -max_scroll_height
+        @scroll_target_position.y = -max_scroll_height
+
+        return :handled
+      end
+
+      def scroll_page_up(sender, x, y)
+        return unless @style.scroll
+
+        @scroll_position.y += height
+        @scroll_position.y = 0 if @scroll_position.y > 0
+        @scroll_target_position.y = @scroll_position.y
+
+        return :handled
+      end
+
+      def scroll_page_down(sender, x, y)
+        return unless @style.scroll
+
+        @scroll_position.y -= height
+        @scroll_position.y = -max_scroll_height if @scroll_position.y < -max_scroll_height
+        @scroll_target_position.y = @scroll_position.y
 
         return :handled
       end

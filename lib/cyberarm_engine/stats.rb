@@ -115,11 +115,11 @@ module CyberarmEngine
         @padding = 2
         @text_size = 16
 
-        @max_timing_label = CyberarmEngine::Text.new("", x: x + @padding + 1, y: y + @padding, z: z, size: @text_size, border: true)
-        @avg_timing_label = CyberarmEngine::Text.new("", x: x + @padding + 1, y: y + @padding + @height / 2 - @text_size / 2, z: z, size: @text_size, border: true)
-        @min_timing_label = CyberarmEngine::Text.new("", x: x + @padding + 1, y: y + @height - (@text_size + @padding / 2), z: z, size: @text_size, border: true)
+        @max_timing_label = CyberarmEngine::Text.new("", x: x + @padding + 1, y: y + @padding, z: z, size: @text_size, border: true, static: true)
+        @avg_timing_label = CyberarmEngine::Text.new("", x: x + @padding + 1, y: y + @padding + @height / 2 - @text_size / 2, z: z, size: @text_size, border: true, static: true)
+        @min_timing_label = CyberarmEngine::Text.new("", x: x + @padding + 1, y: y + @height - (@text_size + @padding / 2), z: z, size: @text_size, border: true, static: true)
 
-        @timings_label = CyberarmEngine::Text.new("", x: x + @padding + @width + @padding, y: y + @padding, z: z, size: @text_size, border: true)
+        @data_label = CyberarmEngine::Text.new("", x: x + @padding + @width + @padding, y: y + @padding, z: z, size: @text_size, border: true, static: true)
 
         @frame_stats = []
         @graphs = {
@@ -159,9 +159,9 @@ module CyberarmEngine
 
         calculate_graphs
 
-        @max_timing_label.text = "Max: #{@frame_stats.map { |f| f.frame_timing.duration }.max.to_s.rjust(3, " ")}ms"
-        @avg_timing_label.text = "Avg: #{(@frame_stats.map { |f| f.frame_timing.duration }.sum / @frame_stats.size).to_s.rjust(3, " ")}ms"
-        @min_timing_label.text = "Min: #{@frame_stats.map { |f| f.frame_timing.duration }.min.to_s.rjust(3, " ")}ms"
+        @max_timing_label.text = "<c=d44>Max:</c> #{@frame_stats.map { |f| f.frame_timing.duration }.max.to_s.rjust(3, " ")}ms"
+        @avg_timing_label.text = "<c=f80>Avg:</c> #{(@frame_stats.map { |f| f.frame_timing.duration }.sum / @frame_stats.size).to_s.rjust(3, " ")}ms"
+        @min_timing_label.text = "<c=0d0>Min:</c> #{@frame_stats.map { |f| f.frame_timing.duration }.min.to_s.rjust(3, " ")}ms"
 
         Gosu.draw_rect(@position.x, @position.y, @width, @height, 0xaa_222222, @position.z)
         Gosu.draw_rect(@position.x + @padding, @position.y + @padding, @width - @padding * 2, @height - @padding * 2, 0xaa_222222, @position.z)
@@ -173,19 +173,20 @@ module CyberarmEngine
         @min_timing_label.draw
 
         # TODO: Make this optional
-        draw_timings
+        draw_timings_and_counters
       end
 
       def draw_graphs
         Gosu.draw_path(@graphs[:frame_timings], Gosu::Color::WHITE, Float::INFINITY)
       end
 
-      def draw_timings
+      def draw_timings_and_counters
         frame = @frame_stats.last
 
-        @timings_label.text = "#{frame.attempted_multitiming? ? "<c=d00>Attempted Multitiming!\nTimings may be inaccurate for:\n#{frame.multitimings.map { |m, _| m}.join("\n") }</c>\n\n" : ''}#{frame.timings.map { |t, v| "#{t}: #{v.duration}ms" }.join("\n")}"
-        Gosu.draw_rect(@timings_label.x - @padding, @timings_label.y - @padding, @timings_label.width + @padding * 2, @timings_label.height + @padding * 2, 0xdd_222222, @position.z)
-        @timings_label.draw
+        @data_label.text = "<c=f8f>COUNTERS:</c>\n#{frame.counters.map { |t, v| "#{t}: #{v}" }.join("\n")}\n\n"\
+        "<c=f80>TIMINGS:</c>\n#{frame.attempted_multitiming? ? "<c=d00>Attempted Multitiming!\nTimings may be inaccurate for:\n#{frame.multitimings.map { |m, _| m}.join("\n") }</c>\n\n" : ''}#{frame.timings.map { |t, v| "#{t}: #{v.duration}ms" }.join("\n")}"
+        Gosu.draw_rect(@data_label.x - @padding, @data_label.y - @padding, @data_label.width + @padding * 2, @data_label.height + @padding * 2, 0xdd_222222, @position.z)
+        @data_label.draw
       end
     end
   end
