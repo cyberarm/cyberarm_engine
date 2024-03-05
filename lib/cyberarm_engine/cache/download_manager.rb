@@ -1,3 +1,5 @@
+require "excon"
+
 module CyberarmEngine
   module Cache
     class DownloadManager

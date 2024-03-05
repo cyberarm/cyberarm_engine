@@ -146,10 +146,15 @@ module CyberarmEngine
           slice += 1
         end
 
+        max_node = CyberarmEngine::Stats.frames.select(&:complete?).map { |f| f.frame_timing.duration }.max
+        scale = 1
+        scale = (@height - @padding).to_f / max_node
+        scale = 1 if scale > 1
+
         nodes.each_with_index do |cluster, i|
           break if cluster.empty?
 
-          @graphs[:frame_timings] << CyberarmEngine::Vector.new(@position.x + @padding + 1 * i, (@position.y + @height - @padding) - cluster.max)
+          @graphs[:frame_timings] << CyberarmEngine::Vector.new(@position.x + @padding + 1 * i, (@position.y + @height - @padding) - cluster.max * scale)
         end
       end
 
@@ -187,6 +192,8 @@ module CyberarmEngine
         "<c=f80>TIMINGS:</c>\n#{frame.attempted_multitiming? ? "<c=d00>Attempted Multitiming!\nTimings may be inaccurate for:\n#{frame.multitimings.map { |m, _| m}.join("\n") }</c>\n\n" : ''}#{frame.timings.map { |t, v| "#{t}: #{v.duration}ms" }.join("\n")}"
         Gosu.draw_rect(@data_label.x - @padding, @data_label.y - @padding, @data_label.width + @padding * 2, @data_label.height + @padding * 2, 0xdd_222222, @position.z)
         @data_label.draw
+
+        # puts "Recalcs this frame: #{frame.counters[:gui_recalculations]} [dt: #{(CyberarmEngine::Window.dt * 1000).round} ms]" if frame.counters[:gui_recalculations] && frame.counters[:gui_recalculations].positive?
       end
     end
   end

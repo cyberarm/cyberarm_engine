@@ -38,6 +38,10 @@ module CyberarmEngine
       @tip = Element::ToolTip.new("", parent: @root_container, z: Float::INFINITY, theme: current_theme)
     end
 
+    def menu
+      @menu
+    end
+
     # throws :blur event to focused element and sets GuiState focused element
     # Does NOT throw :focus event at element or set element as focused
     def focus=(element)
@@ -50,6 +54,24 @@ module CyberarmEngine
     end
 
     def draw
+      Stats.frame.start_timing(:gui_element_recalculate_requests)
+
+      # puts "PENDING REQUESTS: #{@pending_element_recalculate_requests.size}" if @pending_element_recalculate_requests.size.positive?
+      @pending_element_recalculate_requests.each(&:recalculate)
+      @pending_element_recalculate_requests.clear
+
+      Stats.frame.end_timing(:gui_element_recalculate_requests)
+
+      if @pending_recalculate_request
+        Stats.frame.start_timing(:gui_recalculate)
+
+        @root_container.recalculate
+
+        @pending_recalculate_request = false
+
+        Stats.frame.end_timing(:gui_recalculate)
+      end
+
       super
 
       if @menu
@@ -78,24 +100,6 @@ module CyberarmEngine
     end
 
     def update
-      Stats.frame.start_timing(:gui_element_recalculate_requests)
-
-      # puts "PENDING REQUESTS: #{@pending_element_recalculate_requests.size}" if @pending_element_recalculate_requests.size.positive?
-      @pending_element_recalculate_requests.each(&:recalculate)
-      @pending_element_recalculate_requests.clear
-
-      Stats.frame.end_timing(:gui_element_recalculate_requests)
-
-      if @pending_recalculate_request
-        Stats.frame.start_timing(:gui_recalculate)
-
-        @root_container.recalculate
-
-        @pending_recalculate_request = false
-
-        Stats.frame.end_timing(:gui_recalculate)
-      end
-
       if @pending_focus_request
         @pending_focus_request = false
 

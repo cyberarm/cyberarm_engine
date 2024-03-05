@@ -12,21 +12,7 @@ module CyberarmEngine
 
         @style.background_canvas.background = default(:background)
 
-        # TODO: "Clean Up" into own class?
-        @menu = Stack.new(parent: self, theme: @options[:theme])
-        @menu.define_singleton_method(:recalculate_menu) do
-          @x = @__list_box.x
-          @y = parent.parent.scroll_top + @__list_box.y + @__list_box.height
-
-          @y = (parent.parent.scroll_top + @__list_box.y) - height if @y + height > window.height
-        end
-        @menu.instance_variable_set(:"@__list_box", self)
-
-        def @menu.recalculate
-          super
-
-          recalculate_menu
-        end
+        @menu = Menu.new(parent: self, theme: @options[:theme])
 
         self.choose = @choose
       end
@@ -40,7 +26,13 @@ module CyberarmEngine
 
       def choose=(item)
         valid = @items.detect { |i| i == item }
-        raise "Invalid value '#{item}' for choose, valid options were: #{@items.map { |i| "#{i.inspect}" }.join(", ")}" unless valid
+
+        unless valid
+          warn "Invalid value '#{item}' for choose, valid options were: #{@items.map { |i| "#{i.inspect}" }.join(", ")}"
+          item = @items.first
+
+          raise "No items list" unless item
+        end
 
         @choose = item
 
@@ -62,39 +54,25 @@ module CyberarmEngine
       end
 
       def show_menu
-        @menu.clear
+        @menu.clear do
 
-        @menu.style.width = width
+          @menu.style.width = width
 
-        @items.each do |item|
-          next if item == self.value
+          @items.each do |item|
+            # prevent already selected item from appearing in list
+            # NOTE: Remove this? Might be kinda confusing...
+            next if item == self.value
 
-          btn = Button.new(
-            item,
-            {
-              parent: @menu,
-              width: 1.0,
-              theme: @options[:theme],
-              margin: 0,
-              border_color: 0x00ffffff
-            },
-            proc do
+            root.gui_state.menu_item(item, width: 1.0, margin: 0, border_color: 0x00ffffff) do
               self.choose = item
               @block&.call(self.value)
             end
-          )
-
-          @menu.add(btn)
+          end
         end
+
         recalculate
 
-        root.gui_state.show_menu(@menu)
-      end
-
-      def recalculate
-        super
-
-        @menu.recalculate
+        @menu.show
       end
     end
   end

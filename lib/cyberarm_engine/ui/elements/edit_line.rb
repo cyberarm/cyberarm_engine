@@ -278,7 +278,7 @@ module CyberarmEngine
         :handled
       end
 
-      def recalculate
+      def layout
         super
 
         @width = dimensional_size(@style.width, :width) || default(:width)

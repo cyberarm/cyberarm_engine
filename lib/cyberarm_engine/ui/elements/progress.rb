@@ -19,7 +19,7 @@ module CyberarmEngine
         @fraction_background.draw
       end
 
-      def recalculate
+      def layout
         _width = dimensional_size(@style.width, :width)
         _height = dimensional_size(@style.height, :height)
         @width = _width

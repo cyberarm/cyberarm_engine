@@ -208,6 +208,17 @@ module CyberarmEngine
         fraction_background: [0xffc75e61, 0xffe26623],
         border_thickness: 1,
         border_color: [0xffd59674, 0xffff8746]
+      },
+      Menu: { # < Stack
+        width: 200,
+        border_color: 0xaa_efefef,
+        border_thickness: 1
+      },
+
+      MenuItem: { # < Button
+        width: 1.0,
+        text_left: :left,
+        margin: 0
       }
     }.freeze
   end

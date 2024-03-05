@@ -180,9 +180,7 @@ module CyberarmEngine
 
       return if self.is_a?(ToolTip)
 
-      if old_width != width || old_height != height
-        root.gui_state.request_recalculate
-      end
+      root.gui_state.request_recalculate if old_width != width || old_height != height
 
       stylize
     end
@@ -577,7 +575,7 @@ module CyberarmEngine
     end
 
     def recalculate_if_size_changed
-      if !is_a?(ToolTip) && (@old_width != width || @old_height != height)
+      if @parent && !is_a?(ToolTip) && (@old_width != width || @old_height != height)
         root.gui_state.request_recalculate
 
         @old_width = width
@@ -628,7 +626,19 @@ module CyberarmEngine
     end
 
     def recalculate
-      raise "#{self.class}#recalculate was not overridden!"
+      old_width = width
+      old_height = height
+
+      stylize
+      layout
+
+      root.gui_state.request_recalculate if @parent && !is_a?(ToolTip) && (width != old_width || height != old_height)
+      root.gui_state.request_repaint if width != old_width || height != old_height
+
+      root.gui_state.menu.recalculate if root.gui_state.menu && root.gui_state.menu.parent == self
+    end
+
+    def layout
     end
 
     def reposition

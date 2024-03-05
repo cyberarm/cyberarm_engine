@@ -49,9 +49,7 @@ module CyberarmEngine
         root.gui_state.request_recalculate_for(self) if @children.delete(element)
       end
 
-      def clear(&block)
-        @children.clear
-
+      def append(&block)
         old_container = CyberarmEngine::Element::Container.current_container
 
         CyberarmEngine::Element::Container.current_container = self
@@ -62,7 +60,9 @@ module CyberarmEngine
         root.gui_state.request_recalculate_for(self)
       end
 
-      def append(&block)
+      def clear(&block)
+        @children.clear
+
         old_container = CyberarmEngine::Element::Container.current_container
 
         CyberarmEngine::Element::Container.current_container = self
@@ -151,20 +151,24 @@ module CyberarmEngine
       end
 
       def recalculate
+        return if @in_recalculate
+
+        @in_recalculate = true
+
         @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
 
         return unless visible?
 
         Stats.frame&.increment(:gui_recalculations)
 
-        stylize
-
         # s = Gosu.milliseconds
 
+        stylize
         layout
 
-        old_width  = @width
-        old_height = @height
+        # Old sizes MUST be determined AFTER call to layout
+        old_width = width
+        old_height = height
 
         @cached_scroll_width = nil
         @cached_scroll_height = nil
@@ -207,6 +211,7 @@ module CyberarmEngine
           end
         end
 
+        # t = Gosu.milliseconds
         # Move children to parent after positioning
         @children.each do |child|
           child.x += (@x + @style.border_thickness_left) - style.margin_left
@@ -216,12 +221,11 @@ module CyberarmEngine
           child.recalculate
           child.reposition # TODO: Implement top,bottom,left,center, and right positioning
 
-          Stats.frame.increment(:gui_recalculations)
+          Stats.frame&.increment(:gui_recalculations)
 
           update_child_element_visibity(child)
         end
-
-        # puts "TOOK: #{Gosu.milliseconds - s}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}"
+        # puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}'s #{@children.count} children"
 
         update_background
 
@@ -236,17 +240,11 @@ module CyberarmEngine
           @scroll_target_position.y = 0
         end
 
-        # NOTE: Experiment for removing need to explicitly call gui_state#recalculate at least 3 times for layout to layout...
-        if old_width != @width || old_height != @height
-          if @parent
-            root.gui_state.request_recalculate_for(@parent)
-          else
-            root.gui_state.request_recalculate
-          end
-        end
-
-        root.gui_state.request_repaint if @width != old_width || @height != old_height
         recalculate_if_size_changed
+
+        # puts "TOOK: #{Gosu.milliseconds - s}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}"
+
+        @in_recalculate = false
       end
 
       def layout

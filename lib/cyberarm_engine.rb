@@ -6,7 +6,6 @@ else
   require "gosu"
 end
 require "json"
-require "excon"
 
 require_relative "cyberarm_engine/version"
 require_relative "cyberarm_engine/stats"
@@ -62,6 +61,8 @@ require_relative "cyberarm_engine/ui/elements/check_box"
 require_relative "cyberarm_engine/ui/elements/radio"
 require_relative "cyberarm_engine/ui/elements/progress"
 require_relative "cyberarm_engine/ui/elements/slider"
+require_relative "cyberarm_engine/ui/elements/menu"
+require_relative "cyberarm_engine/ui/elements/menu_item"
 
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"

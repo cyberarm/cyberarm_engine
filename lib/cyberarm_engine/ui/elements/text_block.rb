@@ -38,15 +38,12 @@ module CyberarmEngine
         end
       end
 
-      def recalculate
+      def layout
         unless @enabled
           @text.color = @style.disabled[:color]
         else
           @text.color = @style.color
         end
-
-        old_width  = @width
-        old_height = @height
 
         @width  = 0
         @height = 0
@@ -91,9 +88,6 @@ module CyberarmEngine
         end
 
         update_background
-
-        root.gui_state.request_repaint if @width != old_width || @height != old_height
-        recalculate_if_size_changed
       end
 
       def handle_text_wrapping(max_width)

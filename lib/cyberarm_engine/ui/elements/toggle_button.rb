@@ -7,8 +7,6 @@ module CyberarmEngine
         if options.dig(:theme, :ToggleButton, :checkmark_image)
           options[:theme][:ToggleButton][:image_width] ||= options[:theme][:TextBlock][:text_size]
           super(get_image(options.dig(:theme, :ToggleButton, :checkmark_image)), options, block)
-
-          @_image = @image
         else
           super(options[:checkmark], options, block)
         end
@@ -16,10 +14,8 @@ module CyberarmEngine
         @value = options[:checked] || false
 
         if @value
-          @image = @_image if @_image
           @raw_text = @options[:checkmark]
         else
-          @image = nil
           @raw_text = ""
         end
       end
@@ -30,6 +26,14 @@ module CyberarmEngine
         @block.call(self) if @block
 
         :handled
+      end
+
+      def render
+        if @image
+          draw_image if @value
+        else
+          draw_text
+        end
       end
 
       def recalculate
@@ -49,10 +53,8 @@ module CyberarmEngine
         @value = boolean
 
         if boolean
-          @image = @_image if @_image
           @raw_text = @options[:checkmark]
         else
-          @image = nil
           @raw_text = ""
         end
 

@@ -34,7 +34,7 @@ module CyberarmEngine
         @text.draw
       end
 
-      def recalculate
+      def layout
         unless @enabled
           @style.background_canvas.background = @style.disabled[:background]
           @text.color = @style.disabled[:color]

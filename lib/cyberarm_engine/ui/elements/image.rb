@@ -27,7 +27,7 @@ module CyberarmEngine
         :handled
       end
 
-      def recalculate
+      def layout
         _width = dimensional_size(@style.width, :width)
         _height = dimensional_size(@style.height, :height)
 

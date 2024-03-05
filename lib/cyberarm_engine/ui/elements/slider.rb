@@ -47,7 +47,7 @@ module CyberarmEngine
         add(@handle)
       end
 
-      def recalculate
+      def layout
         _width = dimensional_size(@style.width, :width)
         _height = dimensional_size(@style.height, :height)
 
@@ -55,7 +55,7 @@ module CyberarmEngine
         @height = _height
 
         position_handle
-        @handle.recalculate
+        @handle.layout
         @handle.update_background
 
         update_background
