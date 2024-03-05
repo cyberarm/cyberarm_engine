@@ -151,10 +151,6 @@ module CyberarmEngine
       end
 
       def recalculate
-        return if @in_recalculate
-
-        @in_recalculate = true
-
         @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
 
         return unless visible?
@@ -243,8 +239,6 @@ module CyberarmEngine
         recalculate_if_size_changed
 
         # puts "TOOK: #{Gosu.milliseconds - s}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}"
-
-        @in_recalculate = false
       end
 
       def layout
