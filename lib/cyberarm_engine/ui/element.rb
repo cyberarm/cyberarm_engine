@@ -331,8 +331,7 @@ module CyberarmEngine
     end
 
     def debug_draw
-      # FIXME
-      return# if const_defined?(GUI_DEBUG_ONLY_ELEMENT) && self.class == GUI_DEBUG_ONLY_ELEMENT
+      return if CyberarmEngine.const_defined?("GUI_DEBUG_ONLY_ELEMENT") && self.class == GUI_DEBUG_ONLY_ELEMENT
 
       Gosu.draw_line(
         x, y, @debug_color,
@@ -350,7 +349,7 @@ module CyberarmEngine
         Float::INFINITY
       )
       Gosu.draw_line(
-        x, outer_height, @debug_color,
+        x, y + outer_height, @debug_color,
         x, y, @debug_color,
         Float::INFINITY
       )

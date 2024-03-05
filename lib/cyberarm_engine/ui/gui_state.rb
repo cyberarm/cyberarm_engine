@@ -85,8 +85,7 @@ module CyberarmEngine
         @tip.draw
       end
 
-      # FIXME
-      if false# defined?(GUI_DEBUG)
+      if CyberarmEngine.const_defined?("GUI_DEBUG")
         Gosu.flush
 
         @root_container.debug_draw

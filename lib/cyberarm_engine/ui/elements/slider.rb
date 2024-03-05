@@ -33,7 +33,7 @@ module CyberarmEngine
         end
       end
 
-      attr_reader :step_size, :value
+      attr_reader :value
       attr_accessor :range, :step_size
 
       def initialize(options = {}, block = nil)
@@ -47,7 +47,7 @@ module CyberarmEngine
         add(@handle)
       end
 
-      def layout
+      def recalculate
         _width = dimensional_size(@style.width, :width)
         _height = dimensional_size(@style.height, :height)
 
@@ -55,7 +55,7 @@ module CyberarmEngine
         @height = _height
 
         position_handle
-        @handle.layout
+        @handle.recalculate
         @handle.update_background
 
         update_background
