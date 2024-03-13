@@ -170,10 +170,11 @@ module CyberarmEngine
 end
 
 # Add <=> method to support Range based gradients
-module Gosu
-  class Color
-    def <=>(_other)
-      self
-    end
-  end
-end
+# NOTE: Disabled, causes stack overflow 🙃
+# module Gosu
+#   class Color
+#     def <=>(_other)
+#       self
+#     end
+#   end
+# end
