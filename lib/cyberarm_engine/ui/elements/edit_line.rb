@@ -168,7 +168,7 @@ module CyberarmEngine
         @last_text = @text.text
         @last_pos = caret_pos
 
-        if caret_pos.between?(@offset_x, @width + @offset_x)
+        if caret_pos.between?(@offset_x + 1, @width + @offset_x)
           # Do nothing
 
         elsif caret_pos < @offset_x
@@ -197,7 +197,7 @@ module CyberarmEngine
 
       def text_input_position_for(method)
         if @type == :password
-          @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length)
+          @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length) - @style.border_thickness_left
         else
           @text.x + @text.width(@text_input.text[0...@text_input.send(method)]) - @style.border_thickness_left
         end
