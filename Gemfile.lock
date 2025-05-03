@@ -1,0 +1,24 @@
+PATH
+  remote: .
+  specs:
+    cyberarm_engine (0.24.4)
+      gosu (~> 1.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    gosu (1.4.6)
+    minitest (5.25.5)
+    rake (13.2.1)
+
+PLATFORMS
+  x64-mingw-ucrt
+
+DEPENDENCIES
+  bundler (~> 2.2)
+  cyberarm_engine!
+  minitest (~> 5.0)
+  rake (~> 13.0)
+
+BUNDLED WITH
+   2.5.3

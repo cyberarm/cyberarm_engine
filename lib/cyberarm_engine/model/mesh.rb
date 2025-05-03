@@ -1,6 +1,6 @@
 module CyberarmEngine
   class Model
-    class ModelObject
+    class Mesh
       attr_reader :id, :name, :vertices, :uvs, :normals, :materials, :bounding_box, :debug_color
       attr_accessor :faces, :scale
 

@@ -48,12 +48,12 @@ module CyberarmEngine
         if _model
           @model.current_object = _model
         else
-          raise "Couldn't find ModelObject!"
+          raise "Couldn't find Mesh!"
         end
       end
 
       def change_object(id, name)
-        @model.objects << Model::ModelObject.new(id, name)
+        @model.objects << Model::Mesh.new(id, name)
         @model.current_object = @model.objects.last
       end
 

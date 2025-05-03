@@ -67,12 +67,4 @@ require_relative "cyberarm_engine/ui/elements/menu_item"
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"
 
-require_relative "cyberarm_engine/model"
-require_relative "cyberarm_engine/model_cache"
-require_relative "cyberarm_engine/model/material"
-require_relative "cyberarm_engine/model/model_object"
-require_relative "cyberarm_engine/model/parser"
-require_relative "cyberarm_engine/model/parsers/wavefront_parser"
-require_relative "cyberarm_engine/model/parsers/collada_parser" if RUBY_ENGINE != "mruby" && defined?(Nokogiri)
-
 require_relative "cyberarm_engine/builtin/intro_state"

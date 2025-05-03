@@ -1,5 +1,7 @@
 module CyberarmEngine
   class Light
+    include OpenGL
+
     DIRECTIONAL = 0
     POINT = 1
     SPOT = 2

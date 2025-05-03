@@ -1,5 +1,7 @@
 module CyberarmEngine
   class GBuffer
+    include OpenGL
+
     attr_reader :screen_vbo, :vertices, :uvs
     attr_reader :width, :height
 

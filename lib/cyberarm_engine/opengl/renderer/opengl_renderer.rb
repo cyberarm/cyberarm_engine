@@ -1,5 +1,8 @@
 module CyberarmEngine
   class OpenGLRenderer
+    include OpenGL
+    include CyberarmEngine
+
     @@immediate_mode_warning = false
 
     attr_accessor :show_wireframe

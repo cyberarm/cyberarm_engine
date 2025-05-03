@@ -1,5 +1,8 @@
 module CyberarmEngine
   class PerspectiveCamera
+    include OpenGL
+    include GLU
+
     attr_accessor :position, :orientation, :aspect_ratio, :field_of_view,
                   :min_view_distance, :max_view_distance
 

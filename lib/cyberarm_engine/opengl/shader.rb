@@ -2,6 +2,7 @@ module CyberarmEngine
   # Ref: https://github.com/vaiorabbit/ruby-opengl/blob/master/sample/OrangeBook/brick.rb
   class Shader
     include OpenGL
+
     @@shaders = {} # Cache for {Shader} instances
     PREPROCESSOR_CHARACTER = "@".freeze # magic character for preprocessor phase of {Shader} compilation
 
@@ -298,6 +299,7 @@ module CyberarmEngine
     # @see Shader.use Shader.use
     def use(&block)
       return unless compiled?
+
       raise "Another shader is already in use! #{Shader.active_shader.name.inspect}" if Shader.active_shader
 
       Shader.active_shader = self
