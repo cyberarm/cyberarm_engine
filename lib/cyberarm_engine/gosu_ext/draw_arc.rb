@@ -33,12 +33,23 @@ module Gosu
   #
   # @return [void]
   def self.draw_arc(x, y, radius, percentage = 1.0, segments = 128, thickness = 4, color = Gosu::Color::WHITE, z = 0, mode = :default)
-    segments = 360.0 / segments
-
     return if percentage == 0.0
 
-    0.step((359 * percentage), percentage > 0 ? segments : -segments) do |angle|
-      angle2 = angle + segments
+    angle_per_segment = 360.0 / segments
+    arc_completion = 360 * percentage
+    next_segment_angle = angle_per_segment
+
+    angle = 0
+    loop do
+      break if angle >= arc_completion
+
+      if angle + angle_per_segment > arc_completion
+        next_segment_angle = arc_completion - angle
+      else
+        next_segment_angle = angle_per_segment
+      end
+
+      angle2 = angle + next_segment_angle
 
       point_a_left_x = x + Gosu.offset_x(angle, radius - thickness)
       point_a_left_y = y + Gosu.offset_y(angle, radius - thickness)
@@ -93,6 +104,8 @@ module Gosu
           z, mode
         )
       end
+
+      angle += next_segment_angle
     end
   end
 end
