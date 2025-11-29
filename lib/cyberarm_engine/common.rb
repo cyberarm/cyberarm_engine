@@ -1,5 +1,7 @@
 module CyberarmEngine
   module Common
+    ImageBlob = Data.define(:to_blob, :columns, :rows)
+
     def push_state(klass, options = {})
       window.push_state(klass, options)
     end
@@ -85,7 +87,8 @@ module CyberarmEngine
       unless asset
         instance = nil
         instance = if klass == Gosu::Image
-                     klass.new(path, retro: retro, tileable: tileable)
+                     path_or_blob = path.is_a?(String) ? path : ImageBlob.new(path.to_blob, path.width, path.height)
+                     klass.new(path_or_blob, retro: retro, tileable: tileable)
                    else
                      klass.new(path)
                    end
