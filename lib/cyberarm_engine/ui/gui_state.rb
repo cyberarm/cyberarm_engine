@@ -57,7 +57,8 @@ module CyberarmEngine
       Stats.frame.start_timing(:gui_element_recalculate_requests)
 
       # puts "PENDING REQUESTS: #{@pending_element_recalculate_requests.size}" if @pending_element_recalculate_requests.size.positive?
-      @pending_element_recalculate_requests.each(&:recalculate)
+      @pending_recalculate_request = true if @pending_element_recalculate_requests.size.positive?
+      # @pending_element_recalculate_requests.each(&:recalculate)
       @pending_element_recalculate_requests.clear
 
       Stats.frame.end_timing(:gui_element_recalculate_requests)

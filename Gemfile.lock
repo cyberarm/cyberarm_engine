@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cyberarm_engine (0.24.4)
+    cyberarm_engine (0.24.5)
       gosu (~> 1.1)
 
 GEM
@@ -13,6 +13,7 @@ GEM
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   bundler (~> 2.2)
@@ -21,4 +22,4 @@ DEPENDENCIES
   rake (~> 13.0)
 
 BUNDLED WITH
-   2.5.3
+   2.6.8

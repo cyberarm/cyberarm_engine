@@ -7,13 +7,13 @@ module CyberarmEngine
       attr_reader :children, :gui_state, :scroll_position, :scroll_target_position
 
       def self.current_container
-        @@current_container
+        @current_container
       end
 
       def self.current_container=(container)
         raise ArgumentError, "Expected container to an an instance of CyberarmEngine::Element::Container, got #{container.class}" unless container.is_a?(CyberarmEngine::Element::Container)
 
-        @@current_container = container
+        @current_container = container
       end
 
       def initialize(options = {}, block = nil)
@@ -26,6 +26,11 @@ module CyberarmEngine
         @scroll_chunk = 120
         @scroll_speed = 40
 
+        if @gui_state
+          @width = window.width
+          @height = window.height
+        end
+
         @text_color = options[:color]
 
         @children = []
@@ -34,7 +39,7 @@ module CyberarmEngine
       end
 
       def build
-        @block.call(self) if @block
+        @block&.call(self)
 
         root.gui_state.request_recalculate_for(self)
       end
@@ -53,7 +58,7 @@ module CyberarmEngine
         old_container = CyberarmEngine::Element::Container.current_container
 
         CyberarmEngine::Element::Container.current_container = self
-        block.call(self) if block
+        block&.call(self)
 
         CyberarmEngine::Element::Container.current_container = old_container
 
@@ -66,7 +71,7 @@ module CyberarmEngine
         old_container = CyberarmEngine::Element::Container.current_container
 
         CyberarmEngine::Element::Container.current_container = self
-        block.call(self) if block
+        block&.call(self)
 
         CyberarmEngine::Element::Container.current_container = old_container
 
@@ -89,9 +94,7 @@ module CyberarmEngine
       def debug_draw
         super
 
-        @children.each do |child|
-          child.debug_draw
-        end
+        @children.each(&:debug_draw)
       end
 
       def update
@@ -111,7 +114,7 @@ module CyberarmEngine
 
           case child
           when Container
-            if element = child.hit_element?(child_x, child_y)
+            if (element = child.hit_element?(child_x, child_y))
               return element
             end
           else
@@ -207,7 +210,7 @@ module CyberarmEngine
           end
         end
 
-        # t = Gosu.milliseconds
+        t = Gosu.milliseconds
         # Move children to parent after positioning
         @children.each do |child|
           child.x += (@x + @style.border_thickness_left) - style.margin_left
@@ -221,7 +224,7 @@ module CyberarmEngine
 
           update_child_element_visibity(child)
         end
-        # puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{self.object_id.to_s(16)}'s #{@children.count} children"
+        puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{object_id.to_s(16)}'s #{@children.count} children"
 
         update_background
 
@@ -299,15 +302,15 @@ module CyberarmEngine
         return unless @style.scroll
 
         # Allow overscrolling UP, only if one can scroll DOWN
-        if height < scroll_height
-          if @scroll_target_position.y > 0
-            @scroll_target_position.y = @scroll_chunk
-          else
-            @scroll_target_position.y += @scroll_chunk
-          end
+        return unless height < scroll_height
 
-          return :handled
+        if @scroll_target_position.y.positive?
+          @scroll_target_position.y = @scroll_chunk
+        else
+          @scroll_target_position.y += @scroll_chunk
         end
+
+        :handled
       end
 
       def mouse_wheel_down(sender, x, y)
@@ -315,13 +318,13 @@ module CyberarmEngine
 
         return unless height < scroll_height
 
-        if @scroll_target_position.y > 0
+        if @scroll_target_position.y.positive?
           @scroll_target_position.y = -@scroll_chunk
         else
           @scroll_target_position.y -= @scroll_chunk
         end
 
-        return :handled
+        :handled
       end
 
       def scroll_jump_to_top(sender, x, y)
@@ -330,7 +333,7 @@ module CyberarmEngine
         @scroll_position.y = 0
         @scroll_target_position.y = 0
 
-        return :handled
+        :handled
       end
 
       def scroll_jump_to_end(sender, x, y)
@@ -339,7 +342,7 @@ module CyberarmEngine
         @scroll_position.y = -max_scroll_height
         @scroll_target_position.y = -max_scroll_height
 
-        return :handled
+        :handled
       end
 
       def scroll_page_up(sender, x, y)
@@ -349,7 +352,7 @@ module CyberarmEngine
         @scroll_position.y = 0 if @scroll_position.y > 0
         @scroll_target_position.y = @scroll_position.y
 
-        return :handled
+        :handled
       end
 
       def scroll_page_down(sender, x, y)
@@ -359,7 +362,7 @@ module CyberarmEngine
         @scroll_position.y = -max_scroll_height if @scroll_position.y < -max_scroll_height
         @scroll_target_position.y = @scroll_position.y
 
-        return :handled
+        :handled
       end
 
       def scroll_top
