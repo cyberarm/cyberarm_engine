@@ -35,16 +35,6 @@ module CyberarmEngine
     end
 
     def update
-      origin_x = (@x + (@width / 2))
-      origin_y = (@y + (@height / 2))
-
-      # points = [
-      #   @top_left     = Vector.new(@x, @y),
-      #   @top_right    = Vector.new(@x + @width, @y),
-      #   @bottom_left  = Vector.new(@x, @y + @height),
-      #   @bottom_right = Vector.new(@x + @width, @y + @height)
-      # ]
-
       @top_left.x     = @x
       @top_left.y     = @y
       @top_right.x    = @x + @width
@@ -53,27 +43,6 @@ module CyberarmEngine
       @bottom_left.y  = @y + @height
       @bottom_right.x = @x + @width
       @bottom_right.y = @y + @height
-
-      [@top_left, @top_right, @bottom_left, @bottom_right].each do |vector|
-        temp_x = vector.x - origin_x
-        temp_y = vector.y - origin_y
-
-        # 90 is up here, while gosu uses 0 for up.
-        radians = (@angle + 90).gosu_to_radians
-        vector.x = (@x + (@width / 2))  + ((temp_x * Math.cos(radians)) - (temp_y * Math.sin(radians)))
-        vector.y = (@y + (@height / 2)) + ((temp_x * Math.sin(radians)) + (temp_y * Math.cos(radians)))
-      end
-
-      # [
-      #   [:top,    @top_left, @top_right],
-      #   [:right,  @top_right, @bottom_right],
-      #   [:bottom, @bottom_right, @bottom_left],
-      #   [:left,   @bottom_left, @top_left]
-      # ].each do |edge|
-      #   points.each do |point|
-      #     puts "#{edge.first} -> #{shortest_distance(point, edge[1], edge[2])}"
-      #   end
-      # end
     end
 
     def shortest_distance(point, la, lb)
