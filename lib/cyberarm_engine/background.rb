@@ -38,12 +38,21 @@ module CyberarmEngine
       origin_x = (@x + (@width / 2))
       origin_y = (@y + (@height / 2))
 
-      points = [
-        @top_left     = Vector.new(@x, @y),
-        @top_right    = Vector.new(@x + @width, @y),
-        @bottom_left  = Vector.new(@x, @y + @height),
-        @bottom_right = Vector.new(@x + @width, @y + @height)
-      ]
+      # points = [
+      #   @top_left     = Vector.new(@x, @y),
+      #   @top_right    = Vector.new(@x + @width, @y),
+      #   @bottom_left  = Vector.new(@x, @y + @height),
+      #   @bottom_right = Vector.new(@x + @width, @y + @height)
+      # ]
+
+      @top_left.x     = @x
+      @top_left.y     = @y
+      @top_right.x    = @x + @width
+      @top_right.y    = @y
+      @bottom_left.x  = @x
+      @bottom_left.y  = @y + @height
+      @bottom_right.x = @x + @width
+      @bottom_right.y = @y + @height
 
       [@top_left, @top_right, @bottom_left, @bottom_right].each do |vector|
         temp_x = vector.x - origin_x
