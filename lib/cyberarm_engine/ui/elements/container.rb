@@ -210,7 +210,7 @@ module CyberarmEngine
           end
         end
 
-        t = Gosu.milliseconds
+        # t = Gosu.milliseconds
         # Move children to parent after positioning
         @children.each do |child|
           child.x += (@x + @style.border_thickness_left) - style.margin_left
@@ -224,7 +224,7 @@ module CyberarmEngine
 
           update_child_element_visibity(child)
         end
-        puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{object_id.to_s(16)}'s #{@children.count} children" if is_root?
+        # puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{object_id.to_s(16)}'s #{@children.count} children" if is_root?
 
         update_background
 

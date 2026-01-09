@@ -54,26 +54,28 @@ module CyberarmEngine
     end
 
     def draw
+      # t = Gosu.milliseconds
+      # report_recalculate_time = @pending_recalculate_request || @pending_element_recalculate_requests.size.positive?
+
+      StackProf.start(mode: :wall) if RUBY_ENGINE != "mruby" && defined?(StackProf)
       Stats.frame.start_timing(:gui_element_recalculate_requests)
 
       # puts "PENDING REQUESTS: #{@pending_element_recalculate_requests.size}" if @pending_element_recalculate_requests.size.positive?
-      @pending_recalculate_request = true if @pending_element_recalculate_requests.size.positive?
-      # @pending_element_recalculate_requests.each(&:recalculate)
-      @pending_element_recalculate_requests.clear
+      @pending_element_recalculate_requests.shift(&:recalculate)
 
       Stats.frame.end_timing(:gui_element_recalculate_requests)
 
-      if @pending_recalculate_request
-        Stats.frame.start_timing(:gui_recalculate)
+      Stats.frame.start_timing(:gui_recalculate)
 
-        StackProf.start(mode: :wall) if RUBY_ENGINE != "mruby" && defined?(StackProf)
-        @root_container.recalculate
-        StackProf.stop if RUBY_ENGINE != "mruby" && defined?(StackProf)
-
+      while(@pending_recalculate_request)
         @pending_recalculate_request = false
 
-        Stats.frame.end_timing(:gui_recalculate)
+        @root_container.recalculate
       end
+
+      StackProf.stop if RUBY_ENGINE != "mruby" && defined?(StackProf)
+      Stats.frame.end_timing(:gui_recalculate)
+      # puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{object_id.to_s(16)}" if report_recalculate_time && Gosu.milliseconds - t > 0
 
       super
 
