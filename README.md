@@ -35,7 +35,7 @@ class Hello < CyberarmEngine::GuiState
     background Gosu::Color::GRAY
 
     stack do
-      label "Hello World!"
+      banner "Hello World!"
 
       button "close" do
         window.close
