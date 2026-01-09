@@ -16,6 +16,8 @@ module CyberarmEngine
         )
 
         @raw_text = text
+        @text_width = @text.width
+        @text_height = @text.height
       end
 
       def update
@@ -29,7 +31,7 @@ module CyberarmEngine
 
       def render
         # Gosu.clip_to is too expensive to always use so check if we actually need it.
-        if @text.width > width || @text.height > height
+        if @text_width > width || @text_height > height
           Gosu.clip_to(@x, @y, width, height) do
             @text.draw
           end
@@ -53,8 +55,12 @@ module CyberarmEngine
 
         handle_text_wrapping(_width)
 
-        @width  = _width  || @text.width.floor
-        @height = _height || @text.height.floor
+        # Update cached text width and height
+        @text_width = @text.width
+        @text_height = @text.height
+
+        @width  = _width  || @text_width.floor
+        @height = _height || @text_height.floor
 
         @text.y = @style.border_thickness_top + @style.padding_top + @y
         @text.z = @z + 3
@@ -64,26 +70,26 @@ module CyberarmEngine
           when :left
             @text.x = @style.border_thickness_left + @style.padding_left + @x
           when :center
-            @text.x = if @text.width <= width
-                        @x + width / 2 - @text.width / 2
+            @text.x = if @text_width <= width
+                        @x + width / 2 - @text_width / 2
                       else # Act as left aligned
                         @style.border_thickness_left + @style.padding_left + @x
                       end
           when :right
-            @text.x = @x + outer_width - (@text.width + @style.border_thickness_right + @style.padding_right)
+            @text.x = @x + outer_width - (@text_width + @style.border_thickness_right + @style.padding_right)
           end
         end
 
         if (vertical_alignment = @options[:text_v_align])
           case vertical_alignment
           when :center
-            @text.y = if @text.height <= height
-                        @y + height / 2 - @text.height / 2
+            @text.y = if @text_height <= height
+                        @y + height / 2 - @text_height / 2
                       else
                         @style.border_thickness_top + @style.padding_top + @y
                       end
           when :bottom
-            @text.y = @y + outer_height - (@text.height + @style.border_thickness_bottom + @style.padding_bottom)
+            @text.y = @y + outer_height - (@text_height + @style.border_thickness_bottom + @style.padding_bottom)
           end
         end
 
