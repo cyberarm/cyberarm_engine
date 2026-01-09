@@ -68,3 +68,7 @@ require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"
 
 require_relative "cyberarm_engine/builtin/intro_state"
+
+at_exit do
+  StackProf.results("./_prof.txt") if RUBY_ENGINE != "mruby" && defined?(StackProf)
+end

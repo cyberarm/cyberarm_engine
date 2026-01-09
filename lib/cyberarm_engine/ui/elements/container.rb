@@ -224,7 +224,7 @@ module CyberarmEngine
 
           update_child_element_visibity(child)
         end
-        puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{object_id.to_s(16)}'s #{@children.count} children"
+        puts "TOOK: #{Gosu.milliseconds - t}ms to recalculate #{self.class}:0x#{object_id.to_s(16)}'s #{@children.count} children" if is_root?
 
         update_background
 

@@ -66,7 +66,9 @@ module CyberarmEngine
       if @pending_recalculate_request
         Stats.frame.start_timing(:gui_recalculate)
 
+        StackProf.start(mode: :wall) if RUBY_ENGINE != "mruby" && defined?(StackProf)
         @root_container.recalculate
+        StackProf.stop if RUBY_ENGINE != "mruby" && defined?(StackProf)
 
         @pending_recalculate_request = false
 
