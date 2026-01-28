@@ -9,6 +9,7 @@ require "json"
 
 require_relative "cyberarm_engine/version"
 require_relative "cyberarm_engine/stats"
+require_relative "cyberarm_engine/result"
 
 require_relative "cyberarm_engine/common"
 
