@@ -79,7 +79,19 @@ module CyberarmEngine
       end
 
       def caret_position_under_mouse(mouse_x, mouse_y)
-        active_line = row_at(mouse_y)
+        # get y scroll offset of element to get EditBox's selected row
+        y_scroll_offset = 0
+        e = parent
+        while (e)
+          if e.is_a?(Container)
+            y_scroll_offset += e.scroll_position.y
+
+            # root element has no parent so loop will terminate
+            e = e.parent
+          end
+        end
+
+        active_line = row_at(mouse_y - y_scroll_offset)
         right_offset = column_at(mouse_x, mouse_y)
 
         buffer = @text_input.text.lines[0..active_line].join if active_line != 0
