@@ -271,10 +271,14 @@ module CyberarmEngine
     end
 
     def redirect_scroll_jump_to(edge)
+      return if window.text_input
+
       @mouse_over.publish(:"scroll_jump_to_#{edge}", window.mouse_x, window.mouse_y) if (@mouse_over && !@menu) || (@mouse_over && @mouse_over == @menu)
     end
 
     def redirect_scroll_page(edge)
+      return if window.text_input
+
       @mouse_over.publish(:"scroll_page_#{edge}", window.mouse_x, window.mouse_y) if (@mouse_over && !@menu) || (@mouse_over && @mouse_over == @menu)
     end
 
