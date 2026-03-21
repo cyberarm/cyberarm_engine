@@ -19,5 +19,9 @@ module CyberarmEngine
         @block.call if @block
       end
     end
+
+    def dead?
+      @triggered && !@looping
+    end
   end
 end

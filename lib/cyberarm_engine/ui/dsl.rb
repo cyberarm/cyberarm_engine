@@ -1,5 +1,17 @@
 module CyberarmEngine
   module DSL
+    def every(milliseconds, &block)
+      element_parent.gui_state.add_timer(
+        CyberarmEngine::Timer.new(milliseconds, true, &block)
+      )
+    end
+
+    def after(milliseconds, &block)
+      element_parent.gui_state.add_timer(
+        CyberarmEngine::Timer.new(milliseconds, false, &block)
+      )
+    end
+
     def flow(options = {}, &block)
       container(CyberarmEngine::Element::Flow, options, &block)
     end
