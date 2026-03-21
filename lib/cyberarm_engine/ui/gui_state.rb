@@ -6,6 +6,7 @@ module CyberarmEngine
     def initialize(options = {})
       @options = options
       @game_objects = []
+      @timers = []
       @global_pause = false
 
       @down_keys = {}

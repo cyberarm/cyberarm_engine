@@ -3,11 +3,12 @@ module CyberarmEngine
     include Common
 
     attr_accessor :options, :global_pause
-    attr_reader :game_objects
+    attr_reader :game_objects, :timers
 
     def initialize(options = {})
       @options = options
       @game_objects = []
+      @timers = []
       @global_pause = false
       window.text_input = nil unless options[:preserve_text_input]
 
@@ -28,6 +29,8 @@ module CyberarmEngine
 
     def update
       @game_objects.each(&:update)
+      @timers.each(&:update)
+      @timers.delete_if(&:dead?)
     end
 
     def needs_redraw?
@@ -119,6 +122,10 @@ module CyberarmEngine
 
     def add_game_object(object)
       @game_objects << object
+    end
+
+    def add_timer(timer)
+      @timers << timer
     end
   end
 end
