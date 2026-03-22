@@ -16,8 +16,10 @@ module Gosu
 end
 
 module CyberarmEngine
-  class Style
-    attr_reader :hash
+  class StyleData
+    def initialize(hash = {})
+      @hash = hash
+    end
 
     %i[
       x y z width height min_width min_height max_width max_height color background
@@ -28,12 +30,9 @@ module CyberarmEngine
       border_thickness border_thickness_left border_thickness_right border_thickness_top border_thickness_bottom
       padding padding_left padding_right padding_top padding_bottom
       margin margin_left margin_right margin_top margin_bottom
-      background_canvas background_nine_slice_canvas background_image_canvas border_canvas
 
-      fraction_background scroll fill text_wrap v_align h_align delay tag
+      fraction_background scroll fill text_wrap v_align h_align delay tag font text_size
       image_width image_height
-
-      default hover active disabled
     ].each do |item|
       define_method(item) do
         @hash[item]
@@ -43,19 +42,23 @@ module CyberarmEngine
       end
     end
 
+    # NOTE: do not change return value
+    def default
+      nil
+    end
+  end
+
+  class Style < StyleData
+    attr_reader :hash, :hover, :active, :disabled
+
     def initialize(hash = {})
-      h = hash
-      # h = Marshal.load(Marshal.dump(hash))
+      @hash = hash
 
-      h[:default] = {}
+      @hover = StyleData.new(hash[:hover] || {})
+      @active = StyleData.new(hash[:active] || {})
+      @disabled = StyleData.new(hash[:disabled] || {})
 
-      h.each do |key, value|
-        next if value.is_a?(Hash)
-
-        h[:default][key] = value
-      end
-
-      @hash = h
+      super
     end
   end
 end

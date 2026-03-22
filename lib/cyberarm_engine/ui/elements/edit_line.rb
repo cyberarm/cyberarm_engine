@@ -197,9 +197,9 @@ module CyberarmEngine
 
       def text_input_position_for(method)
         if @type == :password
-          @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length) - @style.border_thickness_left
+          @text.x + @text.width(default(:password_character) * @text_input.text[0...@text_input.send(method)].length) - styled(:border_thickness_left)
         else
-          @text.x + @text.width(@text_input.text[0...@text_input.send(method)]) - @style.border_thickness_left
+          @text.x + @text.width(@text_input.text[0...@text_input.send(method)]) - styled(:border_thickness_left)
         end
       end
 

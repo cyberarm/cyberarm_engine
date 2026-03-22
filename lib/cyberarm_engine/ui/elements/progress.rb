@@ -11,7 +11,7 @@ module CyberarmEngine
         @marquee_offset = 0
         @marquee_animation_time = Gosu.milliseconds
         @type = options[:type] || :linear
-        @fraction_background = Background.new(background: @style.fraction_background)
+        @fraction_background = Background.new(background: styled(:fraction_background))
         self.value = options[:fraction] || 0.0
       end
 
@@ -31,13 +31,13 @@ module CyberarmEngine
       def update_background
         super
 
-        @fraction_background.x = (@style.border_thickness_left + @style.padding_left + @x) + @marquee_offset
-        @fraction_background.y = @style.border_thickness_top + @style.padding_top + @y
+        @fraction_background.x = (styled(:border_thickness_left) + styled(:padding_left) + @x) + @marquee_offset
+        @fraction_background.y = styled(:border_thickness_top) + styled(:padding_top) + @y
         @fraction_background.z = @z
         @fraction_background.width = @width * (@type == :marquee ? @marquee_width : @fraction)
         @fraction_background.height = @height
 
-        @fraction_background.background = @style.fraction_background
+        @fraction_background.background = styled(:fraction_background)
       end
 
       def update

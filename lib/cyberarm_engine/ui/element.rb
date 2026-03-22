@@ -38,10 +38,10 @@ module CyberarmEngine
       @style.width  = default(:width)  || nil
       @style.height = default(:height) || nil
 
-      @style.background_canvas = Background.new
-      @style.background_nine_slice_canvas = BackgroundNineSlice.new
-      @style.background_image_canvas = BackgroundImage.new
-      @style.border_canvas = BorderCanvas.new(element: self)
+      @background_canvas = Background.new
+      @background_nine_slice_canvas = BackgroundNineSlice.new
+      @background_image_canvas = BackgroundImage.new
+      @border_canvas = BorderCanvas.new(element: self)
 
       @style_event = :default
 
@@ -58,27 +58,38 @@ module CyberarmEngine
       set_color
       set_font
 
-      set_padding
-      set_margin
-
       set_background
       set_background_nine_slice
       set_background_image
 
-      set_border_thickness
-      set_border_color
+      set_border
 
       root.gui_state.request_repaint
     end
 
+    def styled(key)
+      case key
+      when :border_color_bottom, :border_color_left, :border_color_right, :border_color_top
+        safe_style_fetch(key, :border_color)
+      when :border_thickness_bottom, :border_thickness_left, :border_thickness_right, :border_thickness_top
+        safe_style_fetch(key, :border_thickness)
+      when :margin_bottom, :margin_left, :margin_right, :margin_top
+        safe_style_fetch(key, :margin)
+      when :padding_bottom, :padding_left, :padding_right, :padding_top
+        safe_style_fetch(key, :padding)
+      else
+        safe_style_fetch(key)
+      end
+    end
+
     def safe_style_fetch(key, fallback_key = nil)
       # Attempt to return value for requested key
-      v = @style.hash.dig(@style_event, key)
+      v = @style.send(@style_event)&.send(key) || @style.send(key)
       return v if v
 
       # Attempt to return overriding value
       if fallback_key
-        v = @style.hash.dig(@style_event, fallback_key)
+        v = @style.send(@style_event)&.send(fallback_key) || @style.send(fallback_key)
         return v if v
       end
 
@@ -92,8 +103,7 @@ module CyberarmEngine
     end
 
     def set_color
-      @style.color = safe_style_fetch(:color)
-      @text&.color = @style.color
+      @text&.color = safe_style_fetch(:color)
     end
 
     def set_font
@@ -101,75 +111,41 @@ module CyberarmEngine
     end
 
     def set_background
-      @style.background = safe_style_fetch(:background)
-
-      @style.background_canvas.background = @style.background
+      @background_canvas.background = safe_style_fetch(:background)
     end
 
     def set_background_nine_slice
-      @style.background_nine_slice = safe_style_fetch(:background_nine_slice)
+      @background_nine_slice_canvas.x = @x
+      @background_nine_slice_canvas.y = @y
+      @background_nine_slice_canvas.z = @z
+      @background_nine_slice_canvas.width = width
+      @background_nine_slice_canvas.height = height
 
-      @style.background_nine_slice_mode = safe_style_fetch(:background_nine_slice_mode) || :stretch
-      @style.background_nine_slice_color = safe_style_fetch(:background_nine_slice_color) || Gosu::Color::WHITE
-      @style.background_nine_slice_canvas.color = @style.background_nine_slice_color
+      @background_nine_slice_canvas.mode = safe_style_fetch(:background_nine_slice_mode) || :stretch
 
-      @style.background_nine_slice_from_edge = safe_style_fetch(:background_nine_slice_from_edge)
+      @background_nine_slice_canvas.color = safe_style_fetch(:background_nine_slice_color) || Gosu::Color::WHITE
 
-      @style.background_nine_slice_left      = safe_style_fetch(:background_nine_slice_left, :background_nine_slice_from_edge)
-      @style.background_nine_slice_top       = safe_style_fetch(:background_nine_slice_top, :background_nine_slice_from_edge)
-      @style.background_nine_slice_right     = safe_style_fetch(:background_nine_slice_right, :background_nine_slice_from_edge)
-      @style.background_nine_slice_bottom    = safe_style_fetch(:background_nine_slice_bottom, :background_nine_slice_from_edge)
+      @background_nine_slice_canvas.left   = safe_style_fetch(:background_nine_slice_left, :background_nine_slice_from_edge)
+      @background_nine_slice_canvas.top    = safe_style_fetch(:background_nine_slice_top, :background_nine_slice_from_edge)
+      @background_nine_slice_canvas.right  = safe_style_fetch(:background_nine_slice_right, :background_nine_slice_from_edge)
+      @background_nine_slice_canvas.bottom = safe_style_fetch(:background_nine_slice_bottom, :background_nine_slice_from_edge)
+
+      @background_nine_slice_canvas.image = safe_style_fetch(:background_nine_slice)
     end
 
     def set_background_image
-      @style.background_image = safe_style_fetch(:background_image)
-      @style.background_image_mode = safe_style_fetch(:background_image_mode) || :stretch
-      @style.background_image_color = safe_style_fetch(:background_image_color) || Gosu::Color::WHITE
-      @style.background_image_canvas.mode = @style.background_image_mode
-      @style.background_image_canvas.color = @style.background_image_color
+      @background_image_canvas.image = safe_style_fetch(:background_image)
+      @background_image_canvas.mode = safe_style_fetch(:background_image_mode) || :stretch
+      @background_image_canvas.color = safe_style_fetch(:background_image_color) || Gosu::Color::WHITE
     end
 
-    def set_border_thickness
-      @style.border_thickness = safe_style_fetch(:border_thickness)
-
-      @style.border_thickness_left   = safe_style_fetch(:border_thickness_left, :border_thickness)
-      @style.border_thickness_right  = safe_style_fetch(:border_thickness_right, :border_thickness)
-      @style.border_thickness_top    = safe_style_fetch(:border_thickness_top, :border_thickness)
-      @style.border_thickness_bottom = safe_style_fetch(:border_thickness_bottom, :border_thickness)
-    end
-
-    def set_border_color
-      @style.border_color = safe_style_fetch(:border_color)
-
-      @style.border_color_left   = safe_style_fetch(:border_color_left, :border_color)
-      @style.border_color_right  = safe_style_fetch(:border_color_right, :border_color)
-      @style.border_color_top    = safe_style_fetch(:border_color_top, :border_color)
-      @style.border_color_bottom = safe_style_fetch(:border_color_bottom, :border_color)
-
-      @style.border_canvas.color = [
-        @style.border_color_top,
-        @style.border_color_right,
-        @style.border_color_bottom,
-        @style.border_color_left
+    def set_border
+      @border_canvas.color = [
+        styled(:border_color_top),
+        styled(:border_color_right),
+        styled(:border_color_bottom),
+        styled(:border_color_left)
       ]
-    end
-
-    def set_padding
-      @style.padding = safe_style_fetch(:padding)
-
-      @style.padding_left   = safe_style_fetch(:padding_left, :padding)
-      @style.padding_right  = safe_style_fetch(:padding_right, :padding)
-      @style.padding_top    = safe_style_fetch(:padding_top, :padding)
-      @style.padding_bottom = safe_style_fetch(:padding_bottom, :padding)
-    end
-
-    def set_margin
-      @style.margin = safe_style_fetch(:margin)
-
-      @style.margin_left   = safe_style_fetch(:margin_left, :margin)
-      @style.margin_right  = safe_style_fetch(:margin_right, :margin)
-      @style.margin_top    = safe_style_fetch(:margin_top, :margin)
-      @style.margin_bottom = safe_style_fetch(:margin_bottom, :margin)
     end
 
     def update_styles(event = :default)
@@ -322,10 +298,10 @@ module CyberarmEngine
       return unless visible?
       return unless element_visible?
 
-      @style.background_canvas.draw
-      @style.background_nine_slice_canvas.draw
-      @style.background_image_canvas.draw
-      @style.border_canvas.draw
+      @background_canvas.draw
+      @background_nine_slice_canvas.draw
+      @background_image_canvas.draw
+      @border_canvas.draw
 
       render
     end
@@ -394,11 +370,11 @@ module CyberarmEngine
     end
 
     def outer_width
-      @style.margin_left + width + @style.margin_right
+      styled(:margin_left) + width + styled(:margin_right)
     end
 
     def inner_width
-      (@style.border_thickness_left + @style.padding_left) + (@style.padding_right + @style.border_thickness_right)
+      (styled(:border_thickness_left) + styled(:padding_left)) + (styled(:padding_right) + styled(:border_thickness_right))
     end
 
     def height
@@ -418,11 +394,11 @@ module CyberarmEngine
     end
 
     def outer_height
-      @style.margin_top + height + @style.margin_bottom
+      styled(:margin_top) + height + styled(:margin_bottom)
     end
 
     def inner_height
-      (@style.border_thickness_top + @style.padding_top) + (@style.padding_bottom + @style.border_thickness_bottom)
+      (styled(:border_thickness_top) + styled(:padding_top)) + (styled(:padding_bottom) + styled(:border_thickness_bottom))
     end
 
     def scroll_width
@@ -454,9 +430,9 @@ module CyberarmEngine
 
         pairs_ << a_ unless pairs_.last == a_
 
-        @cached_scroll_height = pairs_.sum { |pair|  + @style.padding_top + @style.border_thickness_top + pair.map(&:outer_height).max } + @style.padding_bottom + @style.border_thickness_bottom
+        @cached_scroll_height = pairs_.sum { |pair|  + styled(:padding_top) + styled(:border_thickness_top) + pair.map(&:outer_height).max } + styled(:padding_bottom) + styled(:border_thickness_bottom)
       else
-        @cached_scroll_height = @style.padding_top + @style.border_thickness_top + @children.sum(&:outer_height) + @style.padding_bottom + @style.border_thickness_bottom
+        @cached_scroll_height = styled(:padding_top) + styled(:border_thickness_top) + @children.sum(&:outer_height) + styled(:padding_bottom) + styled(:border_thickness_bottom)
       end
     end
 
@@ -478,79 +454,60 @@ module CyberarmEngine
                  end
 
       # Handle fill behavior
-      if @parent && @style.fill &&
+      if @parent && styled(:fill) &&
          (dimension == :width && @parent.is_a?(Flow) ||
           dimension == :height && @parent.is_a?(Stack))
         new_size = space_available_width - noncontent_width if dimension == :width && @parent.is_a?(Flow)
         new_size = space_available_height - noncontent_height if dimension == :height && @parent.is_a?(Stack)
       end
 
-      return @style.send(:"min_#{dimension}") if @style.send(:"min_#{dimension}") && new_size.to_f < @style.send(:"min_#{dimension}")
-      return @style.send(:"max_#{dimension}") if @style.send(:"max_#{dimension}") && new_size.to_f > @style.send(:"max_#{dimension}")
+      return styled(:"min_#{dimension}") if styled(:"min_#{dimension}") && new_size.to_f < styled(:"min_#{dimension}")
+      return styled(:"max_#{dimension}") if styled(:"max_#{dimension}") && new_size.to_f > styled(:"max_#{dimension}")
 
       new_size
     end
 
     def space_available_width
       # TODO: This may get expensive if there are a lot of children, probably should cache it somehow
-      fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
+      fill_siblings = @parent.children.select { |c| c.styled(:fill) }.count.to_f # include self since we're dividing
 
-      available_space = ((@parent.content_width - (@parent.children.reject { |c| c.style.fill }).map(&:outer_width).sum) / fill_siblings)
+      available_space = ((@parent.content_width - (@parent.children.reject { |c| c.styled(:fill) }).map(&:outer_width).sum) / fill_siblings)
       (available_space.nan? || available_space.infinite?) ? 0 : available_space.floor # The parent element might not have its dimensions, yet.
     end
 
     def space_available_height
       # TODO: This may get expensive if there are a lot of children, probably should cache it somehow
-      fill_siblings = @parent.children.select { |c| c.style.fill }.count.to_f # include self since we're dividing
+      fill_siblings = @parent.children.select { |c| c.styled(:fill) }.count.to_f # include self since we're dividing
 
-      available_space = ((@parent.content_height - (@parent.children.reject { |c| c.style.fill }).map(&:outer_height).sum) / fill_siblings)
+      available_space = ((@parent.content_height - (@parent.children.reject { |c| c.styled(:fill) }).map(&:outer_height).sum) / fill_siblings)
       (available_space.nan? || available_space.infinite?) ? 0 : available_space.floor # The parent element might not have its dimensions, yet.
     end
 
     def background=(_background)
       root.gui_state.request_repaint
 
-      @style.background_canvas.background = _background
+      @background_canvas.background = _background
       update_background
     end
 
     def update_background
-      @style.background_canvas.x = @x
-      @style.background_canvas.y = @y
-      @style.background_canvas.z = @z
-      @style.background_canvas.width  = width
-      @style.background_canvas.height = height
+      @background_canvas.x = @x
+      @background_canvas.y = @y
+      @background_canvas.z = @z
+      @background_canvas.width  = width
+      @background_canvas.height = height
 
-      @style.background_canvas.update
-      update_background_nine_slice
+      @background_canvas.update
+      set_background_nine_slice
       update_background_image
-      @style.border_canvas.update
+      @border_canvas.update
     end
 
     def background_nine_slice=(_image_path)
       root.gui_state.request_repaint
 
-      @style.background_nine_slice_canvas.image = _image_path
-      update_background_nine_slice
-    end
-
-    def update_background_nine_slice
-      @style.background_nine_slice_canvas.x = @x
-      @style.background_nine_slice_canvas.y = @y
-      @style.background_nine_slice_canvas.z = @z
-      @style.background_nine_slice_canvas.width = width
-      @style.background_nine_slice_canvas.height = height
-
-      @style.background_nine_slice_canvas.mode = @style.background_nine_slice_mode
-
-      @style.background_nine_slice_canvas.color = @style.background_nine_slice_color
-
-      @style.background_nine_slice_canvas.left   = @style.background_nine_slice_left
-      @style.background_nine_slice_canvas.top    = @style.background_nine_slice_top
-      @style.background_nine_slice_canvas.right  = @style.background_nine_slice_right
-      @style.background_nine_slice_canvas.bottom = @style.background_nine_slice_bottom
-
-      @style.background_nine_slice_canvas.image = @style.background_nine_slice
+      @background_nine_slice_canvas.image = _image_path
+      set_background_nine_slice
     end
 
     def background_image=(image_path)
@@ -561,16 +518,16 @@ module CyberarmEngine
     end
 
     def update_background_image
-      @style.background_image_canvas.x = @x
-      @style.background_image_canvas.y = @y
-      @style.background_image_canvas.z = @z
-      @style.background_image_canvas.width = width
-      @style.background_image_canvas.height = height
+      @background_image_canvas.x = @x
+      @background_image_canvas.y = @y
+      @background_image_canvas.z = @z
+      @background_image_canvas.width = width
+      @background_image_canvas.height = height
 
-      @style.background_image_canvas.mode = @style.background_image_mode
-      @style.background_image_canvas.color = @style.background_image_color
+      @background_image_canvas.mode = safe_style_fetch(:background_image_mode) || :stretch
+      @background_image_canvas.color = safe_style_fetch(:background_image_color) || Gosu::Color::WHITE
 
-      @style.background_image_canvas.image = @style.background_image
+      @background_image_canvas.image = safe_style_fetch(:background_image)
     end
 
     def recalculate_if_size_changed

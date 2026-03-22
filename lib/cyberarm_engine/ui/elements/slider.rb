@@ -62,10 +62,10 @@ module CyberarmEngine
       end
 
       def position_handle
-        @handle.x = @x + @handle.style.margin_left + @style.padding_left + @style.border_thickness_left +
+        @handle.x = @x + @handle.styled(:margin_left) + styled(:padding_left) + styled(:border_thickness_left) +
                     ((content_width - @handle.outer_width) * (@value - @range.min) / (@range.max - @range.min).to_f)
 
-        @handle.y = @y + @handle.style.margin_top + @style.border_thickness_top + @style.padding_top
+        @handle.y = @y + @handle.styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top)
       end
 
       def draw

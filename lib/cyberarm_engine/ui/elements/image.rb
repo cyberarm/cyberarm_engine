@@ -14,10 +14,10 @@ module CyberarmEngine
 
       def render
         @image.draw(
-          @style.border_thickness_left + @style.padding_left + @x,
-          @style.border_thickness_top + @style.padding_top + @y,
+          styled(:border_thickness_left) + styled(:padding_left) + @x,
+          styled(:border_thickness_top) + styled(:padding_top) + @y,
           @z + 2,
-          @scale_x, @scale_y, @style.color
+          @scale_x, @scale_y, styled(:color)
         )
       end
 

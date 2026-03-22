@@ -10,7 +10,7 @@ module CyberarmEngine
 
         super(text_or_image, options, block)
 
-        @style.background_canvas.background = @style.background
+        @background_canvas.background = styled(:background)
       end
 
       def render
@@ -23,8 +23,8 @@ module CyberarmEngine
 
       def draw_image
         @image.draw(
-          @style.border_thickness_left + @style.padding_left + @x,
-          @style.border_thickness_top + @style.padding_top + @y,
+          styled(:border_thickness_left) + styled(:padding_left) + @x,
+          styled(:border_thickness_top) + styled(:padding_top) + @y,
           @z + 2,
           @scale_x, @scale_y, @text.color
         )
@@ -36,19 +36,19 @@ module CyberarmEngine
 
       def layout
         unless @enabled
-          @style.background_canvas.background = @style.disabled[:background]
-          @text.color = @style.disabled[:color]
+          @background_canvas.background = @style.disabled.background
+          @text.color = @style.disabled.color
         else
-          @style.background_canvas.background = @style.background
-          @text.color = @style.color
+          @background_canvas.background = styled(:background)
+          @text.color = styled(:color)
         end
 
         if @image
           @width = 0
           @height = 0
 
-          _width = dimensional_size(@style.image_width, :width)
-          _height = dimensional_size(@style.image_height, :height)
+          _width = dimensional_size(styled(:image_width), :width)
+          _height = dimensional_size(styled(:image_height), :height)
 
           if _width && _height
             @scale_x = _width.to_f / @image.width

@@ -80,8 +80,8 @@ module CyberarmEngine
 
       def render
         Gosu.clip_to(
-          @x + @style.border_thickness_left + @style.padding_left,
-          @y + @style.border_thickness_top + @style.padding_top,
+          @x + styled(:border_thickness_left) + styled(:padding_left),
+          @y + styled(:border_thickness_top) + styled(:padding_top),
           content_width + 1,
           content_height + 1
         ) do
@@ -98,7 +98,7 @@ module CyberarmEngine
       end
 
       def update
-        update_scroll if @style.scroll
+        update_scroll if styled(:scroll)
         @children.each(&:update)
       end
 
@@ -154,7 +154,7 @@ module CyberarmEngine
       end
 
       def recalculate
-        @current_position = Vector.new(@style.margin_left + @style.padding_left, @style.margin_top + @style.padding_top)
+        @current_position = Vector.new(styled(:margin_left) + styled(:padding_left), styled(:margin_top) + styled(:padding_top))
 
         return unless visible?
 
@@ -173,7 +173,7 @@ module CyberarmEngine
         @cached_scroll_height = nil
 
         if is_root?
-          @width  = @style.width  = window.width
+          @width  = @style.width = window.width
           @height = @style.height = window.height
         else
           @width = 0
@@ -188,10 +188,10 @@ module CyberarmEngine
 
         # FIXME: Correctly handle alignment when element has siblings
         # FIXME: Enable alignment for any element, not just containers
-        if @style.v_align
+        if styled(:v_align)
           space = space_available_height
 
-          case @style.v_align
+          case styled(:v_align)
           when :center
             @y = parent.height / 2 - height / 2
           when :bottom
@@ -199,10 +199,10 @@ module CyberarmEngine
           end
         end
 
-        if @style.h_align
+        if styled(:h_align)
           space = space_available_width
 
-          case @style.h_align
+          case styled(:h_align)
           when :center
             @x = parent.width / 2 - width / 2
           when :right
@@ -213,8 +213,8 @@ module CyberarmEngine
         # t = Gosu.milliseconds
         # Move children to parent after positioning
         @children.each do |child|
-          child.x += (@x + @style.border_thickness_left) - style.margin_left
-          child.y += (@y + @style.border_thickness_top) - style.margin_top
+          child.x += (@x + styled(:border_thickness_left)) - styled(:margin_left)
+          child.y += (@y + styled(:border_thickness_top)) - styled(:margin_top)
 
           child.stylize
           child.recalculate
@@ -249,13 +249,6 @@ module CyberarmEngine
       end
 
       def max_width
-        # _width = dimensional_size(@style.width, :width)
-        # if _width
-        #   outer_width
-        # else
-        #   window.width - (@parent ? @parent.style.margin_right + @style.margin_right : @style.margin_right)
-        # end
-
         outer_width
       end
 
@@ -265,8 +258,8 @@ module CyberarmEngine
       end
 
       def position_on_current_line(element) # Flow
-        element.x = element.style.margin_left + @current_position.x
-        element.y = element.style.margin_top  + @current_position.y
+        element.x = element.styled(:margin_left) + @current_position.x
+        element.y = element.styled(:margin_top)  + @current_position.y
 
         @current_position.x += element.outer_width
       end
@@ -282,24 +275,24 @@ module CyberarmEngine
       end
 
       def position_on_next_line(element) # Flow
-        @current_position.x = @style.margin_left + @style.padding_left
+        @current_position.x = styled(:margin_left) + styled(:padding_left)
         @current_position.y += tallest_neighbor(element, @current_position.y).outer_height
 
-        element.x = element.style.margin_left + @current_position.x
-        element.y = element.style.margin_top  + @current_position.y
+        element.x = element.styled(:margin_left) + @current_position.x
+        element.y = element.styled(:margin_top)  + @current_position.y
 
         @current_position.x += element.outer_width
       end
 
       def move_to_next_line(element) # Stack
-        element.x = element.style.margin_left + @current_position.x
-        element.y = element.style.margin_top  + @current_position.y
+        element.x = element.styled(:margin_left) + @current_position.x
+        element.y = element.styled(:margin_top)  + @current_position.y
 
         @current_position.y += element.outer_height
       end
 
       def mouse_wheel_up(sender, x, y)
-        return unless @style.scroll
+        return unless styled(:scroll)
 
         # Allow overscrolling UP, only if one can scroll DOWN
         return unless height < scroll_height
@@ -314,7 +307,7 @@ module CyberarmEngine
       end
 
       def mouse_wheel_down(sender, x, y)
-        return unless @style.scroll
+        return unless styled(:scroll)
 
         return unless height < scroll_height
 
@@ -328,7 +321,7 @@ module CyberarmEngine
       end
 
       def scroll_jump_to_top(sender, x, y)
-        return unless @style.scroll
+        return unless styled(:scroll)
 
         @scroll_position.y = 0
         @scroll_target_position.y = 0
@@ -337,7 +330,7 @@ module CyberarmEngine
       end
 
       def scroll_jump_to_end(sender, x, y)
-        return unless @style.scroll
+        return unless styled(:scroll)
 
         @scroll_position.y = -max_scroll_height
         @scroll_target_position.y = -max_scroll_height
@@ -346,7 +339,7 @@ module CyberarmEngine
       end
 
       def scroll_page_up(sender, x, y)
-        return unless @style.scroll
+        return unless styled(:scroll)
 
         @scroll_position.y += height
         @scroll_position.y = 0 if @scroll_position.y > 0
@@ -356,7 +349,7 @@ module CyberarmEngine
       end
 
       def scroll_page_down(sender, x, y)
-        return unless @style.scroll
+        return unless styled(:scroll)
 
         @scroll_position.y -= height
         @scroll_position.y = -max_scroll_height if @scroll_position.y < -max_scroll_height

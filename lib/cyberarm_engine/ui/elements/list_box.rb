@@ -10,7 +10,7 @@ module CyberarmEngine
 
         super(@choose, options, block)
 
-        @style.background_canvas.background = default(:background)
+        @background_canvas.background = default(:background)
 
         @menu = Menu.new(parent: self, theme: @options[:theme])
 
@@ -21,7 +21,7 @@ module CyberarmEngine
         super
 
         w = @text.textobject.text_width("▼")
-        @text.textobject.draw_text("▼", @x + content_width - w, @y + @style.padding_top, @z, 1, 1, @text.color)
+        @text.textobject.draw_text("▼", @x + content_width - w, @y + styled(:padding_top), @z, 1, 1, @text.color)
       end
 
       def choose=(item)

@@ -42,9 +42,9 @@ module CyberarmEngine
 
       def layout
         unless @enabled
-          @text.color = @style.disabled[:color]
+          @text.color = @style.disabled.color
         else
-          @text.color = @style.color
+          @text.color = styled(:color)
         end
 
         @width  = 0
@@ -62,21 +62,21 @@ module CyberarmEngine
         @width  = _width  || @text_width.floor
         @height = _height || @text_height.floor
 
-        @text.y = @style.border_thickness_top + @style.padding_top + @y
+        @text.y = styled(:border_thickness_top) + styled(:padding_top) + @y
         @text.z = @z + 3
 
         if (text_alignment = @options[:text_align] || @options[:text_h_align])
           case text_alignment
           when :left
-            @text.x = @style.border_thickness_left + @style.padding_left + @x
+            @text.x = styled(:border_thickness_left) + styled(:padding_left) + @x
           when :center
             @text.x = if @text_width <= width
                         @x + width / 2 - @text_width / 2
                       else # Act as left aligned
-                        @style.border_thickness_left + @style.padding_left + @x
+                        styled(:border_thickness_left) + styled(:padding_left) + @x
                       end
           when :right
-            @text.x = @x + outer_width - (@text_width + @style.border_thickness_right + @style.padding_right)
+            @text.x = @x + outer_width - (@text_width + styled(:border_thickness_right) + styled(:padding_right))
           end
         end
 
@@ -86,10 +86,10 @@ module CyberarmEngine
             @text.y = if @text_height <= height
                         @y + height / 2 - @text_height / 2
                       else
-                        @style.border_thickness_top + @style.padding_top + @y
+                        styled(:border_thickness_top) + styled(:padding_top) + @y
                       end
           when :bottom
-            @text.y = @y + outer_height - (@text_height + @style.border_thickness_bottom + @style.padding_bottom)
+            @text.y = @y + outer_height - (@text_height + styled(:border_thickness_bottom) + styled(:padding_bottom))
           end
         end
 
@@ -99,7 +99,7 @@ module CyberarmEngine
       def handle_text_wrapping(max_width)
         max_width ||= @parent&.content_width
         max_width ||= @x - (window.width + noncontent_width)
-        wrap_behavior = style.text_wrap
+        wrap_behavior = styled(:text_wrap)
         copy = @raw_text.to_s.dup
 
         # Only perform text wrapping: if it is enabled, is possible to wrap, and text is too long to fit on one line
