@@ -333,6 +333,11 @@ module CyberarmEngine
 
     def update
       recalculate_if_size_changed
+
+      if @style.dirty?
+        @style.mark_clean!
+        stylize
+      end
     end
 
     def button_down(id)

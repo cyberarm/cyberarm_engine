@@ -19,6 +19,7 @@ module CyberarmEngine
   class StyleData
     def initialize(hash = {})
       @hash = hash
+      @dirty = false
     end
 
     %i[
@@ -38,6 +39,8 @@ module CyberarmEngine
         @hash[item]
       end
       define_method(:"#{item}=") do |value|
+        @dirty = true if @hash[item] != value
+
         @hash[item] = value
       end
     end
@@ -45,6 +48,14 @@ module CyberarmEngine
     # NOTE: do not change return value
     def default
       nil
+    end
+
+    def dirty?
+      @dirty
+    end
+
+    def mark_clean!
+      @dirty = false
     end
   end
 
@@ -58,7 +69,18 @@ module CyberarmEngine
       @active = StyleData.new(hash[:active] || {})
       @disabled = StyleData.new(hash[:disabled] || {})
 
+      @substyles = [@hover, @active, @disabled]
+
       super
+    end
+
+    def dirty?
+      @dirty || @substyles.any?(&:dirty?)
+    end
+
+    def mark_clean!
+      @substyles.each(&:mark_clean!)
+      @dirty = false
     end
   end
 end
