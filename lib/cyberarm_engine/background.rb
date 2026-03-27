@@ -21,17 +21,25 @@ module CyberarmEngine
     end
 
     def draw
-      Gosu.clip_to(@x, @y, @width, @height) do
-        Gosu.draw_quad(
-          @top_left.x,     @top_left.y,     @paint.top_left,
-          @top_right.x,    @top_right.y,    @paint.top_right,
-          @bottom_right.x, @bottom_right.y, @paint.bottom_right,
-          @bottom_left.x,  @bottom_left.y,  @paint.bottom_left,
-          @z
-        )
+      if @angle.zero?
+        render
+      else
+        Gosu.clip_to(@x, @y, @width, @height) do
+          render
+        end
       end
 
       debug_outline if @debug
+    end
+
+    def render
+      Gosu.draw_quad(
+        @top_left.x,     @top_left.y,     @paint.top_left,
+        @top_right.x,    @top_right.y,    @paint.top_right,
+        @bottom_right.x, @bottom_right.y, @paint.bottom_right,
+        @bottom_left.x,  @bottom_left.y,  @paint.bottom_left,
+        @z
+      )
     end
 
     def update
@@ -146,13 +154,3 @@ module CyberarmEngine
     end
   end
 end
-
-# Add <=> method to support Range based gradients
-# NOTE: Disabled, causes stack overflow 🙃
-# module Gosu
-#   class Color
-#     def <=>(_other)
-#       self
-#     end
-#   end
-# end
