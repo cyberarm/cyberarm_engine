@@ -72,21 +72,21 @@ module CyberarmEngine
         margin: 1,
         padding: 4,
         border_thickness: 1,
-        border_color: ["ffd59674".hex, "ffff8746".hex],
+        border_color: [0xffd59674, 0xffff8746],
         border_radius: 0,
-        background: ["ffc75e61".to_i(16), "ffe26623".to_i(16)],
+        background: [0xffc75e61, 0xffe26623],
         text_align: :center,
         text_v_align: :center,
         text_wrap: :none,
 
         hover: {
           color: Gosu::Color.rgb(200, 200, 200),
-          background: ["ffB23E41".to_i(16), "ffFF7C00".to_i(16)]
+          background: [0xffB23E41, 0xffFF7C00]
         },
 
         active: {
           color: Gosu::Color::BLACK,
-          background: ["ffB23E41".to_i(16)]
+          background: [0xffB23E41]
         },
 
         disabled: {
