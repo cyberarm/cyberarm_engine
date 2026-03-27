@@ -38,10 +38,10 @@ module CyberarmEngine
       @style.width  = default(:width)  || nil
       @style.height = default(:height) || nil
 
-      @background_canvas = Background.new
-      @background_nine_slice_canvas = BackgroundNineSlice.new
-      @background_image_canvas = BackgroundImage.new
-      @border_canvas = BorderCanvas.new(element: self)
+      @background_canvas = nil # Background.new
+      @background_nine_slice_canvas = nil # BackgroundNineSlice.new
+      @background_image_canvas = nil # BackgroundImage.new
+      @border_canvas = nil # BorderCanvas.new(element: self)
 
       @style_event = :default
 
@@ -111,10 +111,19 @@ module CyberarmEngine
     end
 
     def set_background
-      @background_canvas.background = safe_style_fetch(:background)
+      return unless bg = safe_style_fetch(:background)
+
+      @background_canvas ||= Background.new
+      @background_canvas.background = bg
     end
 
     def set_background_nine_slice
+      return unless img = safe_style_fetch(:background_nine_slice)
+
+      @background_nine_slice_canvas ||= BackgroundNineSlice.new
+
+      @background_nine_slice_canvas.image = img
+
       @background_nine_slice_canvas.x = @x
       @background_nine_slice_canvas.y = @y
       @background_nine_slice_canvas.z = @z
@@ -129,18 +138,29 @@ module CyberarmEngine
       @background_nine_slice_canvas.top    = safe_style_fetch(:background_nine_slice_top, :background_nine_slice_from_edge)
       @background_nine_slice_canvas.right  = safe_style_fetch(:background_nine_slice_right, :background_nine_slice_from_edge)
       @background_nine_slice_canvas.bottom = safe_style_fetch(:background_nine_slice_bottom, :background_nine_slice_from_edge)
-
-      @background_nine_slice_canvas.image = safe_style_fetch(:background_nine_slice)
     end
 
     def set_background_image
-      @background_image_canvas.image = safe_style_fetch(:background_image)
+      return unless img = safe_style_fetch(:background_image)
+
+      @background_image_canvas ||= BackgroundImage.new
+
+      @background_image_canvas.image = img
       @background_image_canvas.mode = safe_style_fetch(:background_image_mode) || :stretch
       @background_image_canvas.color = safe_style_fetch(:background_image_color) || Gosu::Color::WHITE
     end
 
     def set_border
-      @border_canvas.color = [
+      return unless [
+        safe_style_fetch(:border_thickness_bottom, :border_thickness),
+        safe_style_fetch(:border_thickness_left, :border_thickness),
+        safe_style_fetch(:border_thickness_right, :border_thickness),
+        safe_style_fetch(:border_thickness_top, :border_thickness),
+      ].any?(&:positive?)
+
+      @border_canvas ||= BorderCanvas.new(element: self)
+
+      @border_canvas&.color = [
         styled(:border_color_top),
         styled(:border_color_right),
         styled(:border_color_bottom),
@@ -298,10 +318,10 @@ module CyberarmEngine
       return unless visible?
       return unless element_visible?
 
-      @background_canvas.draw
-      @background_nine_slice_canvas.draw
-      @background_image_canvas.draw
-      @border_canvas.draw
+      @background_canvas&.draw
+      @background_nine_slice_canvas&.draw
+      @background_image_canvas&.draw
+      @border_canvas&.draw
 
       render
     end
@@ -496,16 +516,16 @@ module CyberarmEngine
     end
 
     def update_background
-      @background_canvas.x = @x
-      @background_canvas.y = @y
-      @background_canvas.z = @z
-      @background_canvas.width  = width
-      @background_canvas.height = height
+      @background_canvas&.x = @x
+      @background_canvas&.y = @y
+      @background_canvas&.z = @z
+      @background_canvas&.width  = width
+      @background_canvas&.height = height
 
-      @background_canvas.update
+      @background_canvas&.update
       set_background_nine_slice
       update_background_image
-      @border_canvas.update
+      @border_canvas&.update
     end
 
     def background_nine_slice=(_image_path)
@@ -523,6 +543,8 @@ module CyberarmEngine
     end
 
     def update_background_image
+      return unless @background_image_canvas
+
       @background_image_canvas.x = @x
       @background_image_canvas.y = @y
       @background_image_canvas.z = @z
