@@ -32,7 +32,7 @@ module CyberarmEngine
       def render
         # Gosu.clip_to is too expensive to always use so check if we actually need it.
         if @text_width > width || @text_height > height
-          Gosu.clip_to(@x, @y, width, height) do
+          Gosu.clip_to(@text.x, @text.y, @width, @height) do
             @text.draw
           end
         else
