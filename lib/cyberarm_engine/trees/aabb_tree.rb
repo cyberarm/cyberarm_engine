@@ -30,7 +30,8 @@ module CyberarmEngine
 
     def update(object, bounding_box)
       leaf = remove(object)
-      leaf.bounding_box = bounding_box
+      leaf.bounding_box = bounding_box.dup
+      @objects[object] = leaf
       insert_leaf(leaf)
     end
 

@@ -72,8 +72,10 @@ module CyberarmEngine
       end
 
       def remove_subtree(leaf)
-        if leaf
-          self
+        return self unless leaf
+
+        if leaf == self
+          nil
         elsif leaf.parent == self
           other_child = other(leaf)
           other_child.parent = @parent
