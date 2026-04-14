@@ -62,21 +62,21 @@ module CyberarmEngine
         @width  = _width  || @text_width.floor
         @height = _height || @text_height.floor
 
-        @text.y = styled(:border_thickness_top) + styled(:padding_top) + @y
+        @text.y = styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top) + @y
         @text.z = @z + 3
 
         if (text_alignment = @options[:text_align] || @options[:text_h_align])
           case text_alignment
           when :left
-            @text.x = styled(:border_thickness_left) + styled(:padding_left) + @x
+            @text.x = styled(:margin_left) + styled(:border_thickness_left) + styled(:padding_left) + @x
           when :center
             @text.x = if @text_width <= width
-                        @x + width / 2 - @text_width / 2
+                        @x + styled(:margin_left) + width / 2 - @text_width / 2
                       else # Act as left aligned
-                        styled(:border_thickness_left) + styled(:padding_left) + @x
+                        styled(:margin_left) + styled(:border_thickness_left) + styled(:padding_left) + @x
                       end
           when :right
-            @text.x = @x + outer_width - (@text_width + styled(:border_thickness_right) + styled(:padding_right))
+            @text.x = @x + styled(:margin_left) + outer_width - (@text_width + styled(:border_thickness_right) + styled(:padding_right))
           end
         end
 
@@ -84,12 +84,12 @@ module CyberarmEngine
           case vertical_alignment
           when :center
             @text.y = if @text_height <= height
-                        @y + height / 2 - @text_height / 2
+                        @y + styled(:margin_top) + height / 2 - @text_height / 2
                       else
-                        styled(:border_thickness_top) + styled(:padding_top) + @y
+                        styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top) + @y
                       end
           when :bottom
-            @text.y = @y + outer_height - (@text_height + styled(:border_thickness_bottom) + styled(:padding_bottom))
+            @text.y = @y + styled(:margin_top) + outer_height - (@text_height + styled(:border_thickness_bottom) + styled(:padding_bottom))
           end
         end
 

@@ -79,16 +79,16 @@ module CyberarmEngine
       end
 
       def render
-        Gosu.clip_to(
-          @x + styled(:border_thickness_left) + styled(:padding_left),
-          @y + styled(:border_thickness_top) + styled(:padding_top),
-          content_width + 1,
-          content_height + 1
-        ) do
+        # Gosu.clip_to(
+        #   @x - 1 + styled(:margin_left) + styled(:border_thickness_left) + styled(:padding_left),
+        #   @y - 1 + styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top),
+        #   content_width + 1,
+        #   content_height + 1
+        # ) do
           Gosu.translate(@scroll_position.x, @scroll_position.y) do
             @children.each(&:draw)
           end
-        end
+        # end
       end
 
       def debug_draw
@@ -126,8 +126,8 @@ module CyberarmEngine
       end
 
       def update_child_element_visibity(child)
-        child.element_visible = child.x >= (@x - @scroll_position.x) - child.width && child.x <= (@x - @scroll_position.x) + width &&
-                                child.y >= (@y - @scroll_position.y) - child.height && child.y <= (@y - @scroll_position.y) + height
+        child.element_visible = child.x >= ((styled(:margin_left) + @x) - @scroll_position.x) - child.width && child.x <= ((styled(:margin_left) + @x) - @scroll_position.x) + width &&
+                                child.y >= ((styled(:margin_top) + @y) - @scroll_position.y) - child.height && child.y <= ((styled(:margin_top) + @y) - @scroll_position.y) + height
       end
 
       def update_scroll
@@ -182,8 +182,20 @@ module CyberarmEngine
           _width = dimensional_size(@style.width, :width)
           _height = dimensional_size(@style.height, :height)
 
-          @width  = _width  || (@children.map { |c| c.x + c.outer_width }.max || 0).floor
-          @height = _height || (@children.map { |c| c.y + c.outer_height }.max || 0).floor
+          width_correction = 0
+          height_correction = 0
+          o = self
+          while (par = o&.parent)
+            if o.is_a?(Container)
+              width_correction += o.styled(:margin_left) + o.styled(:padding_left)
+              height_correction += o.styled(:margin_top) + o.styled(:padding_top)
+            end
+
+            o = par.parent
+          end
+
+          @width  = _width  || (@children.map { |c| c.x + c.outer_width }.max.to_f - width_correction).floor
+          @height = _height || (@children.map { |c| c.y + c.outer_height }.max.to_f - height_correction).floor
         end
 
         # FIXME: Correctly handle alignment when element has siblings
@@ -213,8 +225,8 @@ module CyberarmEngine
         # t = Gosu.milliseconds
         # Move children to parent after positioning
         @children.each do |child|
-          child.x += (@x + styled(:border_thickness_left)) - styled(:margin_left)
-          child.y += (@y + styled(:border_thickness_top)) - styled(:margin_top)
+          child.x += (@x + styled(:border_thickness_left))
+          child.y += (@y + styled(:border_thickness_top))
 
           child.stylize
           child.recalculate
@@ -258,8 +270,8 @@ module CyberarmEngine
       end
 
       def position_on_current_line(element) # Flow
-        element.x = element.styled(:margin_left) + @current_position.x
-        element.y = element.styled(:margin_top)  + @current_position.y
+        element.x = @current_position.x
+        element.y = @current_position.y
 
         @current_position.x += element.outer_width
       end
@@ -275,18 +287,18 @@ module CyberarmEngine
       end
 
       def position_on_next_line(element) # Flow
-        @current_position.x = styled(:margin_left) + styled(:padding_left)
+        @current_position.x = 0
         @current_position.y += tallest_neighbor(element, @current_position.y).outer_height
 
-        element.x = element.styled(:margin_left) + @current_position.x
-        element.y = element.styled(:margin_top)  + @current_position.y
+        element.x = @current_position.x
+        element.y = @current_position.y
 
         @current_position.x += element.outer_width
       end
 
       def move_to_next_line(element) # Stack
-        element.x = element.styled(:margin_left) + @current_position.x
-        element.y = element.styled(:margin_top)  + @current_position.y
+        element.x = @current_position.x
+        element.y = @current_position.y
 
         @current_position.y += element.outer_height
       end

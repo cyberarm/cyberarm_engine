@@ -18,6 +18,7 @@ module CyberarmEngine
       @visible = !@options.key?(:visible) ? true  : @options[:visible]
       @tip     = @options[:tip] || ""
 
+      @debug = @options[:debug]
       @debug_color = @options[:debug_color].nil? ? Gosu::Color::RED : @options[:debug_color]
 
       @style = Style.new(options)
@@ -124,8 +125,8 @@ module CyberarmEngine
 
       @background_nine_slice_canvas.image = img
 
-      @background_nine_slice_canvas.x = @x
-      @background_nine_slice_canvas.y = @y
+      @background_nine_slice_canvas.x = @x + styled(:margin_left)
+      @background_nine_slice_canvas.y = @y + styled(:margin_top)
       @background_nine_slice_canvas.z = @z
       @background_nine_slice_canvas.width = width
       @background_nine_slice_canvas.height = height
@@ -324,9 +325,12 @@ module CyberarmEngine
       @border_canvas&.draw
 
       render
+
+      debug_draw if @debug
     end
 
     def debug_draw
+      return if @debug == false # allow elements to opt out of debug drawing, makes debugging some things easier.
       return if CyberarmEngine.const_defined?("GUI_DEBUG_ONLY_ELEMENT") && self.class == GUI_DEBUG_ONLY_ELEMENT
 
       Gosu.draw_line(
@@ -374,8 +378,8 @@ module CyberarmEngine
     end
 
     def hit?(x, y)
-      x.between?(@x, @x + width) &&
-        y.between?(@y, @y + height)
+      x.between?(@x + styled(:margin_left), @x + styled(:margin_left) + width) &&
+        y.between?(@y + styled(:margin_top), @y + styled(:margin_top) + height)
     end
 
     def width
@@ -516,8 +520,8 @@ module CyberarmEngine
     end
 
     def update_background
-      @background_canvas&.x = @x
-      @background_canvas&.y = @y
+      @background_canvas&.x = @x + styled(:margin_left)
+      @background_canvas&.y = @y + styled(:margin_top)
       @background_canvas&.z = @z
       @background_canvas&.width  = width
       @background_canvas&.height = height
@@ -545,8 +549,8 @@ module CyberarmEngine
     def update_background_image
       return unless @background_image_canvas
 
-      @background_image_canvas.x = @x
-      @background_image_canvas.y = @y
+      @background_image_canvas.x = @x + styled(:margin_left)
+      @background_image_canvas.y = @y + styled(:margin_top)
       @background_image_canvas.z = @z
       @background_image_canvas.width = width
       @background_image_canvas.height = height

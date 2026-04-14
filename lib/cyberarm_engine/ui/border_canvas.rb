@@ -62,32 +62,32 @@ module CyberarmEngine
 
     def update
       # TOP
-      @top.x = @element.x + @element.styled(:border_thickness_left)
-      @top.y = @element.y
+      @top.x = @element.x + @element.styled(:margin_left) + @element.styled(:border_thickness_left)
+      @top.y = @element.y + @element.styled(:margin_top)
       @top.z = @element.z
 
       @top.width  = @element.width - @element.styled(:border_thickness_left)
       @top.height = @element.styled(:border_thickness_top)
 
       # RIGHT
-      @right.x = @element.x + @element.width
-      @right.y = @element.y + @element.styled(:border_thickness_top)
+      @right.x = @element.x + @element.styled(:margin_left) + @element.width
+      @right.y = @element.y + @element.styled(:margin_top) + @element.styled(:border_thickness_top)
       @right.z = @element.z
 
       @right.width  = -@element.styled(:border_thickness_right)
       @right.height = @element.height - @element.styled(:border_thickness_top)
 
       # BOTTOM
-      @bottom.x = @element.x
-      @bottom.y = @element.y + @element.height
+      @bottom.x = @element.x + @element.styled(:margin_left)
+      @bottom.y = @element.y + @element.styled(:margin_top) + @element.height
       @bottom.z = @element.z
 
       @bottom.width  = @element.width - @element.styled(:border_thickness_right)
       @bottom.height = -@element.styled(:border_thickness_bottom)
 
       # LEFT
-      @left.x = @element.x
-      @left.y = @element.y
+      @left.x = @element.x + @element.styled(:margin_left)
+      @left.y = @element.y + @element.styled(:margin_top)
       @left.z = @element.z
 
       @left.width  = @element.styled(:border_thickness_left)

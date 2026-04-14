@@ -31,6 +31,7 @@ module CyberarmEngine
       border_thickness border_thickness_left border_thickness_right border_thickness_top border_thickness_bottom
       padding padding_left padding_right padding_top padding_bottom
       margin margin_left margin_right margin_top margin_bottom
+      aspect_ratio
 
       fraction_background scroll fill text_wrap v_align h_align delay tag font text_size
       image_width image_height
