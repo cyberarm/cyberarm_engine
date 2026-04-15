@@ -79,16 +79,17 @@ module CyberarmEngine
       end
 
       def render
-        # Gosu.clip_to(
-        #   @x - 1 + styled(:margin_left) + styled(:border_thickness_left) + styled(:padding_left),
-        #   @y - 1 + styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top),
-        #   content_width + 1,
-        #   content_height + 1
-        # ) do
+        Gosu.clip_to(
+          @x - 1 + styled(:margin_left) + styled(:border_thickness_left) + styled(:padding_left),
+          @y - 1 + styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top),
+          content_width + 1,
+          content_height + 1
+        ) do
+
           Gosu.translate(@scroll_position.x, @scroll_position.y) do
             @children.each(&:draw)
           end
-        # end
+        end
       end
 
       def debug_draw
@@ -182,20 +183,8 @@ module CyberarmEngine
           _width = dimensional_size(@style.width, :width)
           _height = dimensional_size(@style.height, :height)
 
-          width_correction = 0
-          height_correction = 0
-          o = self
-          while (par = o&.parent)
-            if o.is_a?(Container)
-              width_correction += o.styled(:margin_left) + o.styled(:padding_left)
-              height_correction += o.styled(:margin_top) + o.styled(:padding_top)
-            end
-
-            o = par.parent
-          end
-
-          @width  = _width  || (@children.map { |c| c.x + c.outer_width }.max.to_f - width_correction).floor
-          @height = _height || (@children.map { |c| c.y + c.outer_height }.max.to_f - height_correction).floor
+          @width  = _width  || (@children.map { |c| c.x + c.outer_width }.max.to_f - (styled(:margin_left) + styled(:padding_left))).floor
+          @height = _height || (@children.map { |c| c.y + c.outer_height }.max.to_f - (styled(:margin_top) + styled(:padding_top))).floor
         end
 
         # FIXME: Correctly handle alignment when element has siblings
