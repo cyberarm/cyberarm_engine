@@ -56,7 +56,7 @@ module CyberarmEngine
       def show_menu
         @menu.clear do
 
-          @menu.style.width = width
+          @menu.style.width = width - (@menu.styled(:border_thickness_left) + @menu.styled(:border_thickness_right))
 
           @items.each do |item|
             # prevent already selected item from appearing in list

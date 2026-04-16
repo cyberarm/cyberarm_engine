@@ -11,10 +11,10 @@ module CyberarmEngine
         # FIXME: properly find scrollable parent, if any.
         parent_scroll_top = parent&.parent ? parent.parent.scroll_top : 0
 
-        @x = @parent.x
-        @y = parent_scroll_top + @parent.y + @parent.height
+        @x = @parent.x + @parent.styled(:border_thickness_left)
+        @y = parent_scroll_top + @parent.y + @parent.height + @parent.styled(:border_thickness_top)
 
-        @y = (parent_scroll_top + @parent.y) - height if @y + height > window.height
+        @y = (parent_scroll_top + @parent.y + @parent.styled(:border_thickness_top)) - height if @y + height > window.height
       end
 
       def show
