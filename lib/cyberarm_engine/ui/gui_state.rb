@@ -39,7 +39,7 @@ module CyberarmEngine
       @tip = Element::ToolTip.new("", parent: @root_container, z: Float::INFINITY, theme: current_theme)
     end
 
-    def menu
+    def active_menu
       @menu
     end
 
