@@ -23,8 +23,8 @@ module CyberarmEngine
 
       def draw_image
         @image.draw(
-          styled(:border_thickness_left) + styled(:padding_left) + @x,
-          styled(:border_thickness_top) + styled(:padding_top) + @y,
+          styled(:border_thickness_left) + styled(:margin_left) + styled(:padding_left) + @x,
+          styled(:border_thickness_top) + styled(:margin_top) + styled(:padding_top) + @y,
           @z + 2,
           @scale_x, @scale_y, @text.color
         )
