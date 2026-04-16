@@ -90,6 +90,9 @@ module CyberarmEngine
             @children.each(&:draw)
           end
         end
+
+        @children.each(&:debug_draw)
+        debug_draw
       end
 
       def debug_draw
@@ -194,9 +197,9 @@ module CyberarmEngine
 
           case styled(:v_align)
           when :center
-            @y = parent.height / 2 - height / 2
+            @y = parent.y + parent.height / 2 - height / 2
           when :bottom
-            @y = parent.height - height
+            @y = parent.y + parent.height - height
           end
         end
 
@@ -205,9 +208,9 @@ module CyberarmEngine
 
           case styled(:h_align)
           when :center
-            @x = parent.width / 2 - width / 2
+            @x = parent.x + parent.width / 2 - width / 2
           when :right
-            @x = parent.width - width
+            @x = parent.x + parent.width - width
           end
         end
 

@@ -18,7 +18,7 @@ module CyberarmEngine
       @visible = !@options.key?(:visible) ? true  : @options[:visible]
       @tip     = @options[:tip] || ""
 
-      @debug = @options[:debug]
+      @debug = @options[:debug] || false
       @debug_color = @options[:debug_color].nil? ? Gosu::Color::RED : @options[:debug_color]
 
       @style = Style.new(options)
@@ -325,12 +325,10 @@ module CyberarmEngine
       @border_canvas&.draw
 
       render
-
-      debug_draw if @debug
     end
 
     def debug_draw
-      return if @debug == false # allow elements to opt out of debug drawing, makes debugging some things easier.
+      return unless @debug # allow elements to opt out of debug drawing, makes debugging some things easier.
       return if CyberarmEngine.const_defined?("GUI_DEBUG_ONLY_ELEMENT") && self.class == GUI_DEBUG_ONLY_ELEMENT
 
       Gosu.draw_line(
@@ -622,7 +620,7 @@ module CyberarmEngine
       root.gui_state.request_recalculate if @parent && !is_a?(ToolTip) && (width != old_width || height != old_height)
       root.gui_state.request_repaint if width != old_width || height != old_height
 
-      root.gui_state.menu.recalculate if root.gui_state.menu && root.gui_state.menu.parent == self
+      root.gui_state.active_menu.recalculate if root.gui_state.active_menu && root.gui_state.active_menu.parent == self
     end
 
     def layout
