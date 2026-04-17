@@ -1,13 +1,13 @@
 module CyberarmEngine
   module DSL
     def every(milliseconds, &block)
-      element_parent.gui_state.add_timer(
+      element_parent.root.gui_state.add_timer(
         CyberarmEngine::Timer.new(milliseconds, true, &block)
       )
     end
 
     def after(milliseconds, &block)
-      element_parent.gui_state.add_timer(
+      element_parent.root.gui_state.add_timer(
         CyberarmEngine::Timer.new(milliseconds, false, &block)
       )
     end
@@ -110,6 +110,14 @@ module CyberarmEngine
       options[:theme] ||= current_theme
 
       add_element(Element::Slider.new(options, block))
+    end
+
+    def page(klass, options = {})
+      element_parent.root.gui_state.page(klass, options)
+    end
+
+    def current_page
+      element_parent.root.gui_state.current_page
     end
 
     def background(color = Gosu::Color::NONE)

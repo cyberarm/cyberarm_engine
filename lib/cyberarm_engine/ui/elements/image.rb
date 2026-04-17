@@ -14,8 +14,8 @@ module CyberarmEngine
 
       def render
         @image.draw(
-          styled(:border_thickness_left) + styled(:padding_left) + @x,
-          styled(:border_thickness_top) + styled(:padding_top) + @y,
+          styled(:margin_left) + styled(:border_thickness_left) + styled(:padding_left) + @x,
+          styled(:margin_top) + styled(:border_thickness_top) + styled(:padding_top) + @y,
           @z + 2,
           @scale_x, @scale_y, styled(:color)
         )

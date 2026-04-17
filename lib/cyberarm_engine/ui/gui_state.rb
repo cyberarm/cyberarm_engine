@@ -18,6 +18,10 @@ module CyberarmEngine
       @active_width  = window.width
       @active_height = window.height
 
+      @pages = {}
+      @page_host = nil
+      @page = nil
+
       @menu = nil
       @focus = nil
       @mouse_over = nil
@@ -41,6 +45,36 @@ module CyberarmEngine
 
     def active_menu
       @menu
+    end
+
+    def page(klass, options = {})
+      @page&.blur
+
+      @pages[klass] = klass.new(parent: options[:parent] || self) unless @pages[klass]
+      @page = @pages[klass]
+
+      @page.options = options
+      page_host.clear do
+        @page.setup
+      end
+      @page.focus
+    end
+
+    def current_page
+      @page
+    end
+
+    def page_host
+      return @page.parent if @page.parent.is_a?(CyberarmEngine::Element::Container)
+      return @page_host if @page_host && @page_host.is_a?(CyberarmEngine::Element::Container)
+
+      @root_container
+    end
+
+    def page_host=(container)
+      raise "page host must be a CyberarmEngine::Element::Container" unless container.is_a?(Container)
+
+      @page_host = container
     end
 
     # throws :blur event to focused element and sets GuiState focused element
@@ -98,6 +132,8 @@ module CyberarmEngine
       end
 
       @needs_repaint = false
+
+      @page&.draw
     end
 
     def needs_repaint?
@@ -162,6 +198,8 @@ module CyberarmEngine
 
       @last_mouse_pos = Vector.new(window.mouse_x, window.mouse_y)
       @mouse_pos = @last_mouse_pos.clone
+
+      @page&.update
     end
 
     def button_down(id)
@@ -179,6 +217,8 @@ module CyberarmEngine
       end
 
       @focus.button_down(id) if @focus.respond_to?(:button_down)
+
+      @page&.button_down(id)
     end
 
     def button_up(id)
@@ -209,6 +249,8 @@ module CyberarmEngine
 
       # Prevents menu from popping back up if the listbox is clicked to hide it.
       @hid_menu_for = nil
+
+      @page&.button_up(id)
     end
 
     def tool_tip_delay
