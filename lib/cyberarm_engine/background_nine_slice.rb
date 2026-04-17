@@ -1,8 +1,8 @@
 module CyberarmEngine
   class BackgroundNineSlice
     include CyberarmEngine::Common
-    attr_accessor :x, :y, :z, :width, :height, :left, :top, :right, :bottom, :mode, :color
-    attr_reader :image
+    attr_accessor :x, :y, :z, :width, :height, :mode, :color
+    attr_reader :image, :left, :top, :right, :bottom
 
     def initialize(image_path: nil, x: 0, y: 0, z: 0, width: 0, height: 0, mode: :tiled, left: 1, top: 1, right: 1, bottom: 1, color: Gosu::Color::WHITE)
       @image = get_image(image_path) if image_path
@@ -32,8 +32,43 @@ module CyberarmEngine
       nine_slice if @image && old_image != @image
     end
 
+    def set_edges(left: @left, right: @right, top: @top, bottom: @bottom)
+      changed = [left == @left, right == @right, top == @top, bottom == @bottom].any?(false)
+
+      @left = left
+      @top = top
+      @right = right
+      @bottom = bottom
+
+      nine_slice if changed
+    end
+
+    def left=(n)
+      nine_slice if n != @left
+      @left = n
+      n
+    end
+
+    def right=(n)
+      nine_slice if n != @right
+      @right = n
+      n
+    end
+
+    def top=(n)
+      nine_slice if n != @top
+      @top = n
+      n
+    end
+
+    def bottom=(n)
+      nine_slice if n != @bottom
+      @bottom = n
+      n
+    end
+
     def nine_slice
-      # pp [@left, @top, @right, @bottom, @image.width]
+      # pp [@left, @top, @right, @bottom, @image.width, @image.height]
 
       @segment_top_left = @image.subimage(0, 0, @left, @top)
       @segment_top_right = @image.subimage(@image.width - @right, 0, @right, @top)
@@ -92,6 +127,7 @@ module CyberarmEngine
       @segment_bottom.draw(@x + @segment_bottom_left.width, (@y + @height) - @segment_bottom.height, @z, width_scale, 1, @color) # SCALE X
       @segment_bottom_left.draw(@x, (@y + @height) - @segment_bottom_left.height, @z, 1, 1, @color)
       @segment_left.draw(@x, @y + @top, @z, 1, height_scale, @color) # SCALE Y
+
       @segment_middle.draw(@x + @segment_top_left.width, @y + @segment_top.height, @z, width_scale, height_scale, @color) # SCALE X and SCALE Y
     end
 

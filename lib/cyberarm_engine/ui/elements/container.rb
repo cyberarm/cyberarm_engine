@@ -197,9 +197,9 @@ module CyberarmEngine
 
           case styled(:v_align)
           when :center
-            @y = parent.y + parent.height / 2 - height / 2
+            @y = parent.y + parent.styled(:margin_top) + parent.height / 2 - height / 2
           when :bottom
-            @y = parent.y + parent.height - height
+            @y = parent.y + parent.styled(:margin_top) + parent.height - height
           end
         end
 
@@ -208,9 +208,9 @@ module CyberarmEngine
 
           case styled(:h_align)
           when :center
-            @x = parent.x + parent.width / 2 - width / 2
+            @x = parent.x + parent.styled(:margin_left) + parent.width / 2 - width / 2
           when :right
-            @x = parent.x + parent.width - width
+            @x = parent.x + parent.styled(:margin_left) + parent.width - width
           end
         end
 

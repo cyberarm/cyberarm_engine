@@ -135,10 +135,12 @@ module CyberarmEngine
 
       @background_nine_slice_canvas.color = safe_style_fetch(:background_nine_slice_color) || Gosu::Color::WHITE
 
-      @background_nine_slice_canvas.left   = safe_style_fetch(:background_nine_slice_left, :background_nine_slice_from_edge)
-      @background_nine_slice_canvas.top    = safe_style_fetch(:background_nine_slice_top, :background_nine_slice_from_edge)
-      @background_nine_slice_canvas.right  = safe_style_fetch(:background_nine_slice_right, :background_nine_slice_from_edge)
-      @background_nine_slice_canvas.bottom = safe_style_fetch(:background_nine_slice_bottom, :background_nine_slice_from_edge)
+      @background_nine_slice_canvas.set_edges(
+        left: safe_style_fetch(:background_nine_slice_left, :background_nine_slice_from_edge) || 1,
+        top: safe_style_fetch(:background_nine_slice_top, :background_nine_slice_from_edge) || 1,
+        right: safe_style_fetch(:background_nine_slice_right, :background_nine_slice_from_edge) || 1,
+        bottom: safe_style_fetch(:background_nine_slice_bottom, :background_nine_slice_from_edge) || 1
+      )
     end
 
     def set_background_image
@@ -457,9 +459,9 @@ module CyberarmEngine
 
         pairs_ << a_ unless pairs_.last == a_
 
-        @cached_scroll_height = pairs_.sum { |pair|  + styled(:padding_top) + styled(:border_thickness_top) + pair.map(&:outer_height).max } + styled(:padding_bottom) + styled(:border_thickness_bottom)
+        @cached_scroll_height = pairs_.sum { |pair| pair.map(&:outer_height).max } + noncontent_height
       else
-        @cached_scroll_height = styled(:padding_top) + styled(:border_thickness_top) + @children.sum(&:outer_height) + styled(:padding_bottom) + styled(:border_thickness_bottom)
+        @cached_scroll_height = noncontent_height + @children.sum(&:outer_height)
       end
     end
 
