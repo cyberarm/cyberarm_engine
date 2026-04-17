@@ -67,6 +67,7 @@ require_relative "cyberarm_engine/ui/elements/menu_item"
 
 require_relative "cyberarm_engine/game_state"
 require_relative "cyberarm_engine/ui/gui_state"
+require_relative "cyberarm_engine/ui/dialog"
 require_relative "cyberarm_engine/ui/page"
 
 require_relative "cyberarm_engine/builtin/intro_state"

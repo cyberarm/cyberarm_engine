@@ -120,6 +120,10 @@ module CyberarmEngine
       element_parent.root.gui_state.current_page
     end
 
+    def dialog(klass, options = {})
+      element_parent.root.gui_state.window.push_state(klass, options)
+    end
+
     def background(color = Gosu::Color::NONE)
       element_parent.style.background = color
     end
