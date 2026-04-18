@@ -58,6 +58,10 @@ module CyberarmEngine
     def mark_clean!
       @dirty = false
     end
+
+    def empty?
+      @hash.empty?
+    end
   end
 
   class Style < StyleData

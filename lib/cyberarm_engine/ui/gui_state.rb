@@ -31,6 +31,7 @@ module CyberarmEngine
       @dragging_element = nil
       @pending_recalculate_request = false
       @pending_element_recalculate_requests = []
+      @hit_elements = []
 
       @needs_repaint = false
 
@@ -81,6 +82,7 @@ module CyberarmEngine
     # Does NOT throw :focus event at element or set element as focused
     def focus=(element)
       @focus.publish(:blur) if @focus && element && @focus != element
+      @hit_elements.delete(@focus)
       @focus = element
     end
 
@@ -163,22 +165,37 @@ module CyberarmEngine
       return unless window.has_focus?
       return unless window.current_state == self
 
-      new_mouse_over = @menu.hit_element?(window.mouse_x, window.mouse_y) if @menu
-      new_mouse_over ||= @root_container.hit_element?(window.mouse_x, window.mouse_y)
+      # list of containers decending down to hit element
+      new_hit_elements = (@menu || @root_container).hit_element?(window.mouse_x, window.mouse_y)
+      # element the mouse is over, if any.
+      new_mouse_over = new_hit_elements&.last
 
-      if new_mouse_over
-        new_mouse_over.publish(:enter) if new_mouse_over != @mouse_over
-        new_mouse_over.publish(:hover)
-        # puts "#{new_mouse_over.class}[#{new_mouse_over.value}]: #{new_mouse_over.x}:#{new_mouse_over.y} #{new_mouse_over.width}:#{new_mouse_over.height}" if new_mouse_over != @mouse_over
+      # is the currently hit element the same as last hit element?
+      same_element = @mouse_over && new_mouse_over == @mouse_over
+
+      unless @hit_elements == new_hit_elements
+        added_hit_elements = (new_hit_elements || []) - @hit_elements
+        removed_hit_elements = @hit_elements - (new_hit_elements || [])
+
+        added_hit_elements.each do |e|
+          e.publish(:enter)
+          e.publish(:hover)
+        end
+
+        removed_hit_elements.each do |e|
+          e.publish(:leave)
+        end
       end
-      @mouse_over.publish(:leave) if @mouse_over && new_mouse_over != @mouse_over
+
       @mouse_over = new_mouse_over
+      @hit_elements = new_hit_elements || []
 
       redirect_holding_mouse_button(:left) if @mouse_over && Gosu.button_down?(Gosu::MS_LEFT)
       redirect_holding_mouse_button(:middle) if @mouse_over && Gosu.button_down?(Gosu::MS_MIDDLE)
       redirect_holding_mouse_button(:right) if @mouse_over && Gosu.button_down?(Gosu::MS_RIGHT)
 
-      if Vector.new(window.mouse_x, window.mouse_y) == @last_mouse_pos
+      # handle tooltip
+      if same_element
         if @mouse_over && (Gosu.milliseconds - @mouse_moved_at) > tool_tip_delay
           @tip.value = @mouse_over.tip if @mouse_over
           @tip.x = window.mouse_x
@@ -261,6 +278,7 @@ module CyberarmEngine
       hide_menu unless @menu && (@menu == @mouse_over) || (@mouse_over&.parent == @menu)
 
       if @focus && @mouse_over != @focus
+        @hit_elements.delete(@focus)
         @focus.publish(:blur)
         @focus = nil
       end

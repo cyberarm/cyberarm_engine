@@ -106,8 +106,11 @@ module CyberarmEngine
         @children.each(&:update)
       end
 
-      def hit_element?(x, y)
+      # return nil if element was not hit, or array of hit elements if hit, includes self.
+      def hit_element?(x, y, elements = [])
         return unless hit?(x, y)
+
+        elements << self
 
         # Offset child hit point by scroll position/offset
         child_x = x - @scroll_position.x
@@ -118,15 +121,18 @@ module CyberarmEngine
 
           case child
           when Container
-            if (element = child.hit_element?(child_x, child_y))
-              return element
+            if (child.hit_element?(child_x, child_y, elements))
+              return elements
             end
           else
-            return child if child.hit?(child_x, child_y)
+            if child.hit?(child_x, child_y)
+              elements << child
+              return elements
+            end
           end
         end
 
-        self if hit?(x, y)
+        elements
       end
 
       def update_child_element_visibity(child)

@@ -214,7 +214,7 @@ module CyberarmEngine
 
       if !@enabled
         update_styles(:disabled)
-      elsif @focus
+      elsif @focus && !@style.active.empty?
         update_styles(:active)
       else
         update_styles(:hover)
@@ -229,7 +229,7 @@ module CyberarmEngine
       unless @enabled
         update_styles(:disabled)
       else
-        update_styles(:active)
+        update_styles(:active) unless @style.active.empty?
       end
 
       window.current_state.focus = self
