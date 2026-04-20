@@ -214,6 +214,9 @@ module CyberarmEngine
     end
 
     class ToolTip < TextBlock
+      def needs_repaint?
+        @needs_repaint || !value.to_s.empty?
+      end
     end
 
     class Link < TextBlock

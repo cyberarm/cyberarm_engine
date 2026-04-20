@@ -168,7 +168,7 @@ module CyberarmEngine
       # list of containers decending down to hit element
       new_hit_elements = (@menu || @root_container).hit_element?(window.mouse_x, window.mouse_y)
       # element the mouse is over, if any.
-      new_mouse_over = new_hit_elements&.last
+      new_mouse_over = new_hit_elements&.find { |c| c.is_a?(CyberarmEngine::Element::Widget) } || new_hit_elements&.last
 
       # is the currently hit element the same as last hit element?
       same_element = @mouse_over && new_mouse_over == @mouse_over

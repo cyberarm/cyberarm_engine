@@ -20,6 +20,10 @@ module CyberarmEngine
       container(CyberarmEngine::Element::Stack, options, &block)
     end
 
+    def widget(options = {}, &block)
+      container(CyberarmEngine::Element::Widget, options, &block)
+    end
+
     def menu(options = {}, &block)
       container(CyberarmEngine::Element::Menu, options, &block)
     end
