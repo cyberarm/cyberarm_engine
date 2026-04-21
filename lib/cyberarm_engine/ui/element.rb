@@ -73,11 +73,11 @@ module CyberarmEngine
       when :border_color_bottom, :border_color_left, :border_color_right, :border_color_top
         safe_style_fetch(key, :border_color)
       when :border_thickness_bottom, :border_thickness_left, :border_thickness_right, :border_thickness_top
-        safe_style_fetch(key, :border_thickness)
+        visible? ? safe_style_fetch(key, :border_thickness) : 0
       when :margin_bottom, :margin_left, :margin_right, :margin_top
-        safe_style_fetch(key, :margin)
+        visible? ? safe_style_fetch(key, :margin) : 0
       when :padding_bottom, :padding_left, :padding_right, :padding_top
-        safe_style_fetch(key, :padding)
+        visible? ? safe_style_fetch(key, :padding) : 0
       else
         safe_style_fetch(key)
       end
