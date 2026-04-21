@@ -9,7 +9,7 @@ module CyberarmEngine
     end
 
     def okay?
-      !@error
+      !error?
     end
 
     def error?
@@ -17,4 +17,3 @@ module CyberarmEngine
     end
   end
 end
-
