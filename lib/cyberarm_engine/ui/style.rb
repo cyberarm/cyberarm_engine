@@ -23,7 +23,7 @@ module CyberarmEngine
     end
 
     %i[
-      x y z width height min_width min_height max_width max_height color background
+      x y z design_width width height min_width min_height max_width max_height color background
       background_image background_image_mode background_image_color
       background_nine_slice background_nine_slice_mode background_nine_slice_color background_nine_slice_from_edge
       background_nine_slice_left background_nine_slice_top background_nine_slice_right background_nine_slice_bottom
@@ -33,7 +33,10 @@ module CyberarmEngine
       margin margin_left margin_right margin_top margin_bottom
       aspect_ratio
 
-      fraction_background scroll fill text_wrap v_align h_align delay tag font text_size
+      fraction_background scroll fill text_wrap v_align h_align delay tag font
+      text_align text_static text_size
+      text_shadow text_shadow_size text_shadow_alpha text_shadow_color
+      text_border text_border_size text_border_alpha text_border_color
       image_width image_height
     ].each do |item|
       define_method(item) do

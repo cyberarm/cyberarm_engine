@@ -45,19 +45,23 @@ module CyberarmEngine
 
       def draw_selection
         selection_width = caret_position - selection_start_position
+        selection_start_line = calculate_line(@text_input.caret_pos)
+        selection_end_line = calculate_line(@text_input.selection_start)
 
-        Gosu.draw_rect(selection_start_position, @text.y, selection_width, @text.textobject.height,
+        # pp [selection_width, selection_start_line, selection_end_line]
+
+        Gosu.draw_rect(selection_start_position, @text.y + selection_start_line * @text.textobject.height, selection_width, @text.textobject.height,
                        default(:selection_color), @z)
       end
 
-      def text_input_position_for(_method)
-        line = @text_input.text[0...@text_input.caret_pos].lines.last
+      def text_input_position_for(method)
+        line = @text_input.text[0...@text_input.send(method)].lines.last
         _x = @text.x + @offset_x
 
         if @type == :password
-          _x + @text.width(default(:password_character) * line.length)
+          _x + @text.width(default(:password_character) * line.length) - @style.border_thickness_left
         else
-          _x + @text.width(line)
+          _x + @text.width(line) - @style.border_thickness_left
         end
       end
 
@@ -66,9 +70,12 @@ module CyberarmEngine
         @text_input.selection_start = @text_input.caret_pos = int
       end
 
+      def calculate_line(caret_pos = @text_input.caret_pos)
+        sub_text = @text_input.text[0...caret_pos].lines.size - 1
+      end
+
       def calculate_active_line
-        sub_text = @text_input.text[0...@text_input.caret_pos]
-        @active_line = sub_text.lines.size - 1
+        @active_line = calculate_line(@text_input.caret_pos)
       end
 
       def caret_stay_left_of_last_newline
@@ -92,7 +99,7 @@ module CyberarmEngine
         end
 
         active_line = row_at(mouse_y - y_scroll_offset)
-        right_offset = column_at(mouse_x, mouse_y)
+        right_offset = column_at(mouse_x, mouse_y - y_scroll_offset)
 
         buffer = @text_input.text.lines[0..active_line].join if active_line != 0
         buffer = @text_input.text.lines.first if active_line == 0
@@ -175,6 +182,8 @@ module CyberarmEngine
           text = @text_input.text.chomp.lines[0..@active_line].join("\n")
           pos = text.length
         end
+
+        pp [direction, pos, @active_line]
 
         set_position(pos)
       end

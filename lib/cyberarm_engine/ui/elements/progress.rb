@@ -83,9 +83,11 @@ module CyberarmEngine
         @fraction = decimal.clamp(0.0, 1.0)
         update_background
 
-        root.gui_state.request_repaint if @fraction != old_value
+        if @fraction != old_value
+          root.gui_state.request_repaint
+          publish(:changed, @fraction)
+        end
 
-        publish(:changed, @fraction)
         @fraction
       end
     end

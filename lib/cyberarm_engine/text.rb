@@ -23,7 +23,7 @@ module CyberarmEngine
         @color = Gosu::Color::WHITE
       end
       @mode      = options[:mode]      || :default
-      @alignment = options[:alignment] || nil
+      @alignment = options[:alignment] || :left
 
       @border   = options[:border]
       @border   = true if options[:border].nil?
@@ -39,17 +39,6 @@ module CyberarmEngine
       @static = options[:static] || (options[:static].nil? || options[:static] == false ? false : true)
 
       @textobject = check_cache(@size, @font)
-
-      if @alignment
-        case @alignment
-        when :left
-          @x = 0 + BUTTON_PADDING
-        when :center
-          @x = (CyberarmEngine::Window.instance.width / 2) - (@textobject.text_width(@text) / 2)
-        when :right
-          @x = CyberarmEngine::Window.instance.width - BUTTON_PADDING - @textobject.text_width(@text)
-        end
-      end
     end
 
     def check_cache(size, font_name)
@@ -113,6 +102,38 @@ module CyberarmEngine
       invalidate_cache! if old_color != color
     end
 
+    def alignment=(value)
+      invalidate_cache! if @alignment != value
+      @alignment = value
+    end
+
+    def shadow=(value)
+      invalidate_cache! if @shadow != value
+      @shadow = value
+    end
+
+    def shadow_color=(color)
+      old_color = @shadow_color
+
+      if color
+        @shadow_color = color.is_a?(Gosu::Color) ? color : Gosu::Color.new(color)
+      else
+        raise "color cannot be nil"
+      end
+
+      invalidate_cache! if old_color != color
+    end
+
+    def shadow_alpha=(value)
+      invalidate_cache! if @shadow_alpha != value
+      @shadow_alpha = value
+    end
+
+    def shadow_size=(value)
+      invalidate_cache! if @shadow_size != value
+      @shadow_size = value
+    end
+
     def border=(boolean)
       invalidate_cache! if @border != boolean
       @border = boolean
@@ -129,8 +150,15 @@ module CyberarmEngine
     end
 
     def border_color=(n)
-      invalidate_cache! if @border_color != n
-      @border_color = n
+      old_color = @border_color
+
+      if color
+        @border_color = color.is_a?(Gosu::Color) ? color : Gosu::Color.new(color)
+      else
+        raise "color cannot be nil"
+      end
+
+      invalidate_cache! if old_color != color
     end
 
     def width(text = @text)
@@ -194,9 +222,9 @@ module CyberarmEngine
           end
         end
 
-        @cached_text_shadow_image ||= Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font) if @shadow
+        @cached_text_shadow_image ||= Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font, align: @alignment) if @shadow
 
-        @gosu_cached_text_image ||= Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font)
+        @gosu_cached_text_image ||= Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font, align: @alignment)
 
         @cached_text_border_image.draw(@x, @y, @z, @factor_x, @factor_y, @border_color, @mode) if @border
 

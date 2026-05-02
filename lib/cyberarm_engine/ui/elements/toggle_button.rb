@@ -50,6 +50,8 @@ module CyberarmEngine
       end
 
       def value=(boolean)
+        old_value = self.value
+
         @value = boolean
 
         if boolean
@@ -60,7 +62,9 @@ module CyberarmEngine
 
         recalculate
 
-        publish(:changed, @value)
+        publish(:changed, @value) if old_value != boolean
+
+        boolean
       end
     end
   end

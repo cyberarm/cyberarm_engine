@@ -18,7 +18,7 @@ module CyberarmEngine
       @visible = !@options.key?(:visible) ? true  : @options[:visible]
       @tip     = @options[:tip] || ""
 
-      @debug = @options[:debug] || false
+      @debug = @options[:debug] || CyberarmEngine.const_defined?("GUI_DEBUG") && CyberarmEngine::GUI_DEBUG || false
       @debug_color = @options[:debug_color].nil? ? Gosu::Color::RED : @options[:debug_color]
 
       @style = Style.new(options)
@@ -44,7 +44,7 @@ module CyberarmEngine
       @background_image_canvas = nil # BackgroundImage.new
       @border_canvas = nil # BorderCanvas.new(element: self)
 
-      @style_event = :default
+      @style_event = enabled? ? :default : :disabled
 
       stylize
 
@@ -53,7 +53,15 @@ module CyberarmEngine
       root.gui_state.request_focus(self) if @options[:autofocus]
     end
 
+    def resolution_scaled(n)
+      return n unless @style.design_width
+
+      ((@style.design_width / Gosu.screen_width(window).to_f) * n).floor
+    end
+
     def stylize
+      @style_event = :disabled unless enabled?
+
       set_static_position
 
       set_color
@@ -108,7 +116,7 @@ module CyberarmEngine
     end
 
     def set_font
-      @text&.swap_font(safe_style_fetch(:text_size), safe_style_fetch(:font))
+      @text&.swap_font(resolution_scaled(safe_style_fetch(:text_size)), safe_style_fetch(:font))
     end
 
     def set_background
@@ -275,6 +283,7 @@ module CyberarmEngine
       root.gui_state.request_repaint if @enabled != boolean
 
       @enabled = boolean
+      @style_event = :default if boolean && @style_event == :disabled
 
       recalculate
 

@@ -13,7 +13,7 @@ module CyberarmEngine
     def publish(event, *args)
       raise ArgumentError, "#{self.class} does not handle #{event.inspect}" unless @event_handler.include?(event)
 
-      return unless enabled?
+      return if !enabled? && event != :changed
 
       was_handled = false
 

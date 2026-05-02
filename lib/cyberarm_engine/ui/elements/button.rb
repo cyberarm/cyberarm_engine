@@ -35,13 +35,8 @@ module CyberarmEngine
       end
 
       def layout
-        unless @enabled
-          @background_canvas.background = @style.disabled.background
-          @text.color = @style.disabled.color
-        else
-          @background_canvas.background = styled(:background)
-          @text.color = styled(:color)
-        end
+        @background_canvas.background = styled(:background)
+        @text.color = styled(:color)
 
         if @image
           @width = 0
@@ -78,6 +73,8 @@ module CyberarmEngine
       end
 
       def value=(value)
+        old_value = self.value
+
         if value.is_a?(Gosu::Image)
           @image = value
         else
@@ -93,7 +90,9 @@ module CyberarmEngine
           recalculate
         end
 
-        publish(:changed, self.value)
+        publish(:changed, self.value) if value != old_value
+
+        self.value
       end
     end
   end

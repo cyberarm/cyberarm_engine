@@ -30,6 +30,11 @@ module CyberarmEngine
         end
       end
 
+      # css-like style classes, however First In, First Out- that is,
+       options[:style_class]&.each do |klass|
+         hash = deep_merge(hash, _theme[klass]) if _theme[klass]
+       end
+
       deep_merge(hash, options)
     end
 
@@ -53,6 +58,7 @@ module CyberarmEngine
         y: 0,
         z: 30,
 
+        design_width: nil,
         width: nil,
         height: nil,
         color: Gosu::Color::WHITE,
@@ -68,7 +74,7 @@ module CyberarmEngine
         debug_color: Gosu::Color::YELLOW
       },
 
-      Button: { # < Label
+      Button: { # < TextBlock
         margin: 1,
         padding: 4,
         border_thickness: 1,
@@ -121,7 +127,13 @@ module CyberarmEngine
         text_size: 28,
         text_wrap: :word_wrap, # :word_wrap, :break_word, :none
         text_shadow: false,
+        text_shadow_color: 0,
+        text_shadow_alpha: 30,
+        text_shadow_size: 2,
         text_border: false,
+        text_border_color: 0,
+        text_border_alpha: 30,
+        text_border_size: 2,
         text_align: :left,
         font: "Arial",
         margin: 0,

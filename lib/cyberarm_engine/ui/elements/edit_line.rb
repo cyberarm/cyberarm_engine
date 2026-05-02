@@ -291,6 +291,8 @@ module CyberarmEngine
 
       def value=(string)
         @text_input.text = string
+
+        string
       end
     end
   end

@@ -56,12 +56,18 @@ module CyberarmEngine
       end
 
       def value=(path_or_image, retro: false, tileable: false)
+        old_value = self.value
+
         @path = path_or_image if path_or_image.is_a?(String)
 
         @image = Gosu::Image.new(path_or_image, retro: retro, tileable: tileable) if @path
         @image = path_or_image unless @path
 
         recalculate
+
+        publish(:changed, @image) if old_value != self.value
+
+        self.value
       end
 
       def path

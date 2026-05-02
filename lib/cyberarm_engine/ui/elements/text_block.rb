@@ -8,6 +8,7 @@ module CyberarmEngine
           text, font: @options[:font], z: @z, color: @options[:color],
                 size: @options[:text_size], shadow: @options[:text_shadow],
                 static: @options[:text_static],
+                alignment: @options[:text_align],
                 shadow_size: @options[:text_shadow_size],
                 shadow_color: @options[:text_shadow_color],
                 border: @options[:text_border],
@@ -41,11 +42,18 @@ module CyberarmEngine
       end
 
       def layout
-        unless @enabled
-          @text.color = @style.disabled.color
-        else
-          @text.color = styled(:color)
-        end
+        @text.color = styled(:color)
+        @text.alignment = styled(:text_align)
+
+        @text.shadow = styled(:text_shadow)
+        @text.shadow_color = styled(:text_shadow_color)
+        @text.shadow_alpha = styled(:text_shadow_alpha)
+        @text.shadow_size = styled(:text_shadow_size)
+
+        @text.border = styled(:text_border)
+        @text.border_color = styled(:text_border_color)
+        @text.border_alpha = styled(:text_border_alpha)
+        @text.border_size = styled(:text_border_size)
 
         @width  = 0
         @height = 0
@@ -186,9 +194,12 @@ module CyberarmEngine
           recalculate
         end
 
-        root.gui_state.request_repaint if old_value != @raw_text
+        if old_value != @raw_text
+          root.gui_state.request_repaint
+          publish(:changed, @raw_text)
+        end
 
-        publish(:changed, self.value)
+        value
       end
     end
 

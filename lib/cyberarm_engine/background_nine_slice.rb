@@ -1,6 +1,9 @@
 module CyberarmEngine
   class BackgroundNineSlice
     include CyberarmEngine::Common
+
+    CACHE = {}
+
     attr_accessor :x, :y, :z, :width, :height, :mode, :color
     attr_reader :image, :left, :top, :right, :bottom
 

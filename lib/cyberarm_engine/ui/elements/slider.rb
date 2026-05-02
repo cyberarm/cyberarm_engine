@@ -94,13 +94,17 @@ module CyberarmEngine
       end
 
       def value=(n)
+        old_value = this.value
+
         @value = n
         position_handle
         @handle.recalculate
 
         root.gui_state.request_repaint
 
-        publish(:changed, @value)
+        publish(:changed, @value) if old_value != n
+
+        n
       end
     end
   end
