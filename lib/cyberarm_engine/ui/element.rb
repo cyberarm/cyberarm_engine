@@ -56,7 +56,7 @@ module CyberarmEngine
     def resolution_scaled(n)
       return n unless @style.design_width
 
-      ((@style.design_width / Gosu.screen_width(window).to_f) * n).floor
+      ((Gosu.screen_width(window).to_f / @style.design_width) * n).floor
     end
 
     def stylize
