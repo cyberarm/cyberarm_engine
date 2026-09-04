@@ -24,7 +24,16 @@ module CyberarmEngine
       # Enable child elements to display their tooltips
       # but fall back to the Widget if no hit element has a tip
       def tip
-        elements = hit_element?(window.mouse_x, window.mouse_y)
+        parent_scroll_position = CyberarmEngine::Vector.new
+
+        element = self
+        while (parent_element = element.parent)
+          parent_scroll_position += parent_element.scroll_position
+
+          element = parent_element
+        end
+
+        elements = hit_element?(window.mouse_x - parent_scroll_position.x, window.mouse_y - parent_scroll_position.y)
 
         return @tip unless elements
 
