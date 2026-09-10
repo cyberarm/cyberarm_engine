@@ -215,6 +215,7 @@ module CyberarmEngine
       event(:blur)
 
       event(:changed)
+      event(:size_changed)
     end
 
     def enter(_sender)
@@ -576,6 +577,8 @@ module CyberarmEngine
 
         @old_width = width
         @old_height = height
+
+        publish(:size_changed)
       end
     end
 
