@@ -203,9 +203,9 @@ module CyberarmEngine
 
           case styled(:v_align)
           when :center
-            @y = parent.y + parent.styled(:margin_top) + parent.height / 2 - height / 2
+            @y = parent.y + parent.outer_height / 2 - outer_height / 2
           when :bottom
-            @y = parent.y + parent.styled(:margin_top) + parent.height - height
+            @y = parent.y + parent.outer_height - outer_height
           end
         end
 
@@ -214,9 +214,9 @@ module CyberarmEngine
 
           case styled(:h_align)
           when :center
-            @x = parent.x + parent.styled(:margin_left) + parent.width / 2 - width / 2
+            @x = parent.x + parent.outer_width / 2 - outer_width / 2
           when :right
-            @x = parent.x + parent.styled(:margin_left) + parent.width - width
+            @x = parent.x + parent.outer_width - outer_width
           end
         end
 
@@ -285,7 +285,7 @@ module CyberarmEngine
       end
 
       def position_on_next_line(element) # Flow
-        @current_position.x = 0
+        @current_position.x = styled(:margin_left) + styled(:padding_left)
         @current_position.y += tallest_neighbor(element, @current_position.y).outer_height
 
         element.x = @current_position.x
