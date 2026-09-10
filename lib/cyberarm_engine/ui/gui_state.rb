@@ -98,7 +98,15 @@ module CyberarmEngine
       Stats.frame.start_timing(:gui_element_recalculate_requests)
 
       # puts "PENDING REQUESTS: #{@pending_element_recalculate_requests.size}" if @pending_element_recalculate_requests.size.positive?
-      @pending_element_recalculate_requests.shift(&:recalculate)
+      while (e = @pending_element_recalculate_requests.shift)
+        # its pointless to recalculate individual elements when we've been asked to recalculate the whole gui
+        if @pending_recalculate_request
+          @pending_element_recalculate_requests.clear
+          break
+        end
+
+        e.recalculate
+      end
 
       Stats.frame.end_timing(:gui_element_recalculate_requests)
 
