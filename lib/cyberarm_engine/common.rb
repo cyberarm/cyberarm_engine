@@ -1,4 +1,6 @@
 module CyberarmEngine
+  GUI_DEBUG = false
+
   module Common
     ImageBlob = Data.define(:to_blob, :columns, :rows)
 

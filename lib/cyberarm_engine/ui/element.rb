@@ -18,7 +18,7 @@ module CyberarmEngine
       @visible = !@options.key?(:visible) ? true  : @options[:visible]
       @tip     = @options[:tip] || ""
 
-      @debug = @options[:debug] || CyberarmEngine.const_defined?("GUI_DEBUG") && CyberarmEngine::GUI_DEBUG || false
+      @debug = @options[:debug].nil? ? nil : @options[:debug]
       @debug_color = @options[:debug_color].nil? ? Gosu::Color::RED : @options[:debug_color]
 
       @style = Style.new(options)
@@ -36,7 +36,7 @@ module CyberarmEngine
       @width  = 0
       @height = 0
 
-      @style.width  = default(:width)  || nil
+      @style.width  = default(:width) || nil
       @style.height = default(:height) || nil
 
       @background_canvas = nil # Background.new
@@ -340,7 +340,7 @@ module CyberarmEngine
     end
 
     def debug_draw
-      return unless @debug # allow elements to opt out of debug drawing, makes debugging some things easier.
+      return if @debug == false || !CyberarmEngine::GUI_DEBUG # allow elements to opt out of debug drawing, makes debugging some things easier.
       return if CyberarmEngine.const_defined?("GUI_DEBUG_ONLY_ELEMENT") && self.class == GUI_DEBUG_ONLY_ELEMENT
 
       Gosu.draw_line(
@@ -394,7 +394,7 @@ module CyberarmEngine
 
     def width
       if visible?
-        inner_width + @width
+        inner_width + content_width
       else
         0
       end
@@ -418,7 +418,7 @@ module CyberarmEngine
 
     def height
       if visible?
-        inner_height + @height
+        inner_height + content_height
       else
         0
       end
@@ -488,6 +488,8 @@ module CyberarmEngine
 
       new_size = if size.is_a?(Float) && size.between?(0.0, 1.0)
                    (@parent.send(:"content_#{dimension}") * size).floor - send(:"noncontent_#{dimension}").floor
+                elsif size.is_a?(Numeric)
+                   (size - send(:"noncontent_#{dimension}")).floor
                  else
                    size
                  end

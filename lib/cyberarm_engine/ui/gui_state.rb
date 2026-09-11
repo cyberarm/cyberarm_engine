@@ -239,6 +239,9 @@ module CyberarmEngine
         redirect_mouse_button(:right)
       when Gosu::KB_F5
         request_recalculate
+      when Gosu::KB_F12
+        CyberarmEngine.const_set(:GUI_DEBUG, !CyberarmEngine::GUI_DEBUG)
+        request_repaint
       end
 
       @focus.button_down(id) if @focus.respond_to?(:button_down)

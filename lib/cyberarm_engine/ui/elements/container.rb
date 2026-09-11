@@ -88,17 +88,20 @@ module CyberarmEngine
 
           Gosu.translate(@scroll_position.x, @scroll_position.y) do
             @children.each(&:draw)
+
+            @children.each do |child|
+              next unless child.visible?
+
+              child.debug_draw
+            end
           end
         end
 
-        @children.each(&:debug_draw)
         debug_draw
       end
 
       def debug_draw
         super
-
-        @children.each(&:debug_draw)
       end
 
       def update
