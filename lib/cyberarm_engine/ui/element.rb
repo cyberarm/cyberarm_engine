@@ -518,7 +518,7 @@ module CyberarmEngine
 
     def space_available_height
       # TODO: This may get expensive if there are a lot of children, probably should cache it somehow
-      fill_siblings = @parent.children.select { |c| c.styled(:fill) }.count.to_f # include self since we're dividing
+      fill_siblings = @parent.children.select { |c| c.styled(:fill) && c.visible? }.count.to_f # include self since we're dividing
 
       available_space = ((@parent.content_height - (@parent.children.reject { |c| c.styled(:fill) }).map(&:outer_height).sum) / fill_siblings)
       (available_space.nan? || available_space.infinite?) ? 0 : available_space.floor # The parent element might not have its dimensions, yet.
