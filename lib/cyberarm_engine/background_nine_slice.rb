@@ -4,10 +4,10 @@ module CyberarmEngine
 
     CACHE = {}
 
-    attr_accessor :x, :y, :z, :width, :height, :mode, :color
+    attr_accessor :x, :y, :z, :width, :height, :mode, :color, :render_mode
     attr_reader :image, :left, :top, :right, :bottom
 
-    def initialize(image_path: nil, x: 0, y: 0, z: 0, width: 0, height: 0, mode: :tiled, left: 1, top: 1, right: 1, bottom: 1, color: Gosu::Color::WHITE)
+    def initialize(image_path: nil, x: 0, y: 0, z: 0, width: 0, height: 0, mode: :tiled, left: 1, top: 1, right: 1, bottom: 1, color: Gosu::Color::WHITE, render_mode: :default)
       @image = get_image(image_path) if image_path
 
       @x = x
@@ -25,6 +25,7 @@ module CyberarmEngine
       @bottom = bottom
 
       @color = color
+      @render_mode = render_mode
 
       nine_slice if @image
     end
@@ -121,58 +122,58 @@ module CyberarmEngine
     end
 
     def draw_stretched
-      @segment_top_left.draw(@x, @y, @z, 1, 1, @color)
-      @segment_top.draw(@x + @segment_top_left.width, @y, @z, width_scale, 1, @color) # SCALE X
-      @segment_top_right.draw((@x + @width) - @segment_top_right.width, @y, @z, 1, 1, @color)
+      @segment_top_left.draw(@x, @y, @z, 1, 1, @color, @render_mode)
+      @segment_top.draw(@x + @segment_top_left.width, @y, @z, width_scale, 1, @color, @render_mode) # SCALE X
+      @segment_top_right.draw((@x + @width) - @segment_top_right.width, @y, @z, 1, 1, @color, @render_mode)
 
-      @segment_right.draw((@x + @width) - @segment_right.width, @y + @top, @z, 1, height_scale, @color) # SCALE Y
-      @segment_bottom_right.draw((@x + @width) - @segment_bottom_right.width, @y + @height - @segment_bottom_right.height, @z, 1, 1, @color)
-      @segment_bottom.draw(@x + @segment_bottom_left.width, (@y + @height) - @segment_bottom.height, @z, width_scale, 1, @color) # SCALE X
-      @segment_bottom_left.draw(@x, (@y + @height) - @segment_bottom_left.height, @z, 1, 1, @color)
-      @segment_left.draw(@x, @y + @top, @z, 1, height_scale, @color) # SCALE Y
+      @segment_right.draw((@x + @width) - @segment_right.width, @y + @top, @z, 1, height_scale, @color, @render_mode) # SCALE Y
+      @segment_bottom_right.draw((@x + @width) - @segment_bottom_right.width, @y + @height - @segment_bottom_right.height, @z, 1, 1, @color, @render_mode)
+      @segment_bottom.draw(@x + @segment_bottom_left.width, (@y + @height) - @segment_bottom.height, @z, width_scale, 1, @color, @render_mode) # SCALE X
+      @segment_bottom_left.draw(@x, (@y + @height) - @segment_bottom_left.height, @z, 1, 1, @color, @render_mode)
+      @segment_left.draw(@x, @y + @top, @z, 1, height_scale, @color, @render_mode) # SCALE Y
 
-      @segment_middle.draw(@x + @segment_top_left.width, @y + @segment_top.height, @z, width_scale, height_scale, @color) # SCALE X and SCALE Y
+      @segment_middle.draw(@x + @segment_top_left.width, @y + @segment_top.height, @z, width_scale, height_scale, @color, @render_mode) # SCALE X and SCALE Y
     end
 
     def draw_tiled
-      @segment_top_left.draw(@x, @y, @z, 1, 1, @color)
+      @segment_top_left.draw(@x, @y, @z, 1, 1, @color, @render_mode)
 
       # p [width_scale, height_scale]
 
       Gosu.clip_to(@x + @segment_top_left.width, @y, @segment_top.width * width_scale, @segment_top.height) do
         width_scale.ceil.times do |i|
-          @segment_top.draw(@x + @segment_top_left.width + (@segment_top.width * i), @y, @z, 1, 1, @color) # SCALE X
+          @segment_top.draw(@x + @segment_top_left.width + (@segment_top.width * i), @y, @z, 1, 1, @color, @render_mode) # SCALE X
         end
       end
 
-      @segment_top_right.draw((@x + @width) - @segment_top_right.width, @y, @z, 1, 1, @color)
+      @segment_top_right.draw((@x + @width) - @segment_top_right.width, @y, @z, 1, 1, @color, @render_mode)
 
       Gosu.clip_to(@x + @width - @segment_top_right.width, @y + @top, @segment_right.width, @segment_right.height * height_scale) do
         height_scale.ceil.times do |i|
-          @segment_right.draw((@x + @width) - @segment_right.width, @y + @top + (@segment_right.height * i), @z, 1, 1, @color) # SCALE Y
+          @segment_right.draw((@x + @width) - @segment_right.width, @y + @top + (@segment_right.height * i), @z, 1, 1, @color, @render_mode) # SCALE Y
         end
       end
 
-      @segment_bottom_right.draw((@x + @width) - @segment_bottom_right.width, @y + @height - @segment_bottom_right.height, @z, 1, 1, @color)
+      @segment_bottom_right.draw((@x + @width) - @segment_bottom_right.width, @y + @height - @segment_bottom_right.height, @z, 1, 1, @color, @render_mode)
 
       Gosu.clip_to(@x + @segment_top_left.width, @y + @height - @segment_bottom.height, @segment_top.width * width_scale, @segment_bottom.height) do
         width_scale.ceil.times do |i|
-          @segment_bottom.draw(@x + @segment_bottom_left.width + (@segment_bottom.width * i), (@y + @height) - @segment_bottom.height, @z, 1, 1, @color) # SCALE X
+          @segment_bottom.draw(@x + @segment_bottom_left.width + (@segment_bottom.width * i), (@y + @height) - @segment_bottom.height, @z, 1, 1, @color, @render_mode) # SCALE X
         end
       end
 
-      @segment_bottom_left.draw(@x, (@y + @height) - @segment_bottom_left.height, @z, 1, 1, @color)
+      @segment_bottom_left.draw(@x, (@y + @height) - @segment_bottom_left.height, @z, 1, 1, @color, @render_mode)
 
       Gosu.clip_to(@x, @y + @top, @segment_left.width, @segment_left.height * height_scale) do
         height_scale.ceil.times do |i|
-          @segment_left.draw(@x, @y + @top + (@segment_left.height * i), @z, 1, 1, @color) # SCALE Y
+          @segment_left.draw(@x, @y + @top + (@segment_left.height * i), @z, 1, 1, @color, @render_mode) # SCALE Y
         end
       end
 
       Gosu.clip_to(@x + @segment_top_left.width, @y + @segment_top.height, @width - (@segment_left.width + @segment_right.width), @height - (@segment_top.height + @segment_bottom.height)) do
         height_scale.ceil.times do |y|
           width_scale.ceil.times do |x|
-            @segment_middle.draw(@x + @segment_top_left.width + (@segment_middle.width * x), @y + @segment_top.height + (@segment_middle.height * y), @z, 1, 1, @color) # SCALE X and SCALE Y
+            @segment_middle.draw(@x + @segment_top_left.width + (@segment_middle.width * x), @y + @segment_top.height + (@segment_middle.height * y), @z, 1, 1, @color, @render_mode) # SCALE X and SCALE Y
           end
         end
       end
