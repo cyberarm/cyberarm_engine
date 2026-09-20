@@ -149,7 +149,7 @@ module CyberarmEngine
       @border_alpha = n
     end
 
-    def border_color=(n)
+    def border_color=(color)
       old_color = @border_color
 
       if color
@@ -208,17 +208,17 @@ module CyberarmEngine
           img = Gosu::Image.send(:"from_#{method.to_s.split("_").last}", @text, @size, font: @font)
 
           @cached_text_border_image = Gosu.render((_width + (@border_size * 2)).ceil, (height + (@border_size * 2)).ceil) do
-            img.draw(-_x, 0, @z, @factor_x, @factor_y, @border_color, @mode)
-            img.draw(-_x, -_y, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(-_x, 0, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
+            img.draw(-_x, -_y, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
 
-            img.draw(0, -_y, @z, @factor_x, @factor_y, @border_color, @mode)
-            img.draw(_x, -_y, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(0, -_y, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
+            img.draw(_x, -_y, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
 
-            img.draw(_x, 0, @z, @factor_x, @factor_y, @border_color, @mode)
-            img.draw(_x, _y, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(_x, 0, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
+            img.draw(_x, _y, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
 
-            img.draw(0, _y, @z, @factor_x, @factor_y, @border_color, @mode)
-            img.draw(-_x, _y, @z, @factor_x, @factor_y, @border_color, @mode)
+            img.draw(0, _y, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
+            img.draw(-_x, _y, @z, @factor_x, @factor_y, Gosu::Color::WHITE, @mode)
           end
         end
 
@@ -256,7 +256,7 @@ module CyberarmEngine
             @textobject.send(method, @text, _x + @border_size, _y + @border_size, @z, @factor_x, @factor_y, white, @mode)
           end
 
-          @cached_text_border_image.draw(@x - @border_size, @y - @border_size, @z, @factor_x, @factor_y, border_color)
+          @cached_text_border_image.draw(@x - @border_size, @y - @border_size, @z, @factor_x, @factor_y, border_color, @mode)
         end
 
         if @shadow
