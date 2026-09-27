@@ -6,6 +6,9 @@ module CyberarmEngine
     SAMPLES = {}
     SONGS = {}
 
+    FixedUpdateProperties = Data.define(:fixed_timestep, :fixed_timestep_int_ms, :max_timestep)
+    FixedUpdate = Struct.new(:milliseconds, :accumulator, :interpolation, :alpha)
+
     attr_accessor :show_cursor, :show_stats_plotter
     attr_writer :exit_on_opengl_error
     attr_reader :last_frame_time, :delta_time, :states
@@ -28,7 +31,7 @@ module CyberarmEngine
       @@instance
     end
 
-    def initialize(width: 800, height: 600, fullscreen: false, update_interval: 1000.0 / 60, resizable: false, borderless: false)
+    def initialize(width: 800, height: 600, fullscreen: false, update_interval: 1000.0 / 60, resizable: false, borderless: false, fixed_update_timestep: 1.0 / 125, fixed_update_timestep_int_ms: 8, fixed_max_timestep: 1.0 / 60)
       @show_cursor = false
       @has_focus = false
       @show_stats_plotter = false
@@ -45,6 +48,9 @@ module CyberarmEngine
       @exit_on_opengl_error = false
       preload_default_shaders if respond_to?(:preload_default_shaders)
       @stats_plotter = Stats::StatsPlotter.new(2, 28) # FIXME: Make positioning easy
+
+      @fixed_timestep_data = FixedUpdateProperties.new(1.0 / 125, 8, 1.0 / 60)
+      @fixed_update = FixedUpdate.new(0, 0.0, 0.0, 1.0)
 
       setup
     end
@@ -79,9 +85,42 @@ module CyberarmEngine
 
       Stats.frame.start_timing(:update)
       current_state&.update
+      Stats.frame.start_timing(:fixed_update)
+      fixed_update
+      Stats.frame.end_timing(:fixed_update)
       Stats.frame.end_timing(:update)
 
       Stats.frame.start_timing(:interframe_sleep) unless needs_redraw?
+    end
+
+    def fixed_update
+      @delta_time = @fixed_timestep_data.max_timestep if @delta_time > @fixed_timestep_data.max_timestep
+      @fixed_update.accumulator += @delta_time
+
+      while @fixed_update.accumulator >= @fixed_timestep_data.fixed_timestep
+        @fixed_update.accumulator -= @fixed_timestep_data.fixed_timestep
+
+        @fixed_update.alpha = @fixed_update.accumulator / @fixed_timestep_data.fixed_timestep
+
+        @fixed_update.milliseconds += @fixed_timestep_data.fixed_timestep_int_ms
+        current_state&.fixed_update(@fixed_timestep_data.fixed_timestep)
+      end
+    end
+
+    def fixed_update_milliseconds
+      @fixed_update.milliseconds
+    end
+
+    def fixed_update_accumulator
+      @fixed_update.accumulator
+    end
+
+    def fixed_update_interpolation
+      @fixed_update.interpolation
+    end
+
+    def fixed_update_alpha
+      @fixed_update.alpha
     end
 
     def needs_cursor?

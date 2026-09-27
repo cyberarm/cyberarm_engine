@@ -33,6 +33,9 @@ module CyberarmEngine
       @timers.delete_if(&:dead?)
     end
 
+    def fixed_update(dt)
+    end
+
     def needs_redraw?
       true
     end
