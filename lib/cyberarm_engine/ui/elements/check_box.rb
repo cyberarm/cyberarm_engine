@@ -46,7 +46,7 @@ module CyberarmEngine
       end
 
       def value=(bool)
-        old_value = this.value
+        old_value = self.value
 
         @toggle_button.value = bool
         publish(:changed, bool) if bool != old_value

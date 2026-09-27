@@ -94,7 +94,7 @@ module CyberarmEngine
       end
 
       def value=(n)
-        old_value = this.value
+        old_value = self.value
 
         @value = n
         position_handle
