@@ -1,32 +1,45 @@
 module CyberarmEngine
   module Pathfinding
     class Grid < Graph
-      Cell = Data.define(:location, :blocker, :cost)
 
-      # nodes: a 2d array of nodes to convert to list of edges
-      def self.edges_from_world_grid(nodes:)
-        edges = {}
+      def add_node(x:, y:, z: 0, cost: 0, replace: false)
+        key = format(Node::KEY_FORMAT, x, y, z)
+        node = @node[key]
 
-        nodes.each_index do |y, y_index|
-          y.each_with_index do |x_index|
-            node = nodes[y_index][x_index]
-            next unless node
+        raise "Node at: #{key} already exists! (#{node})" if node && !replace
 
-            left = nodes[y_index]&.[x_index - 1]
-            right = nodes[y_index]&.[x_index + 1]
-            top = nodes[y_index - 1]&.[x_index]
-            bottom = nodes[y_index + 1]&.[x_index]
+        node = Node.new(x: x, y: y, z: z, cost: cost)
+        @nodes[key] = node
 
-            location = Location.new(x_index, y_index, 0, 0)
-            edges[location] = []
-            edges[location].push(Location.new(x_index - 1, y_index, 0, 0)) if left
-            edges[location].push(Location.new(x_index + 1, y_index, 0, 0)) if right
-            edges[location].push(Location.new(x_index, y_index - 1, 0, 0)) if top
-            edges[location].push(Location.new(x_index, y_index + 1, 0, 0)) if bottom
-          end
+        update_node_edge_nodes(node)
+      end
+
+      def remove_node(node)
+        update_node_edge_nodes(node, remove_node: true)
+
+        @nodes.delete(node.key)
+      end
+
+      def update_node_edge_nodes(node, remove_node: false)
+        x = node.x
+        y = node.y
+        z = node.z
+
+        # add node to neighbors
+        # 2D
+        left = @nodes[format(Node::KEY_FORMAT, x - 1, y, z)]
+        right = @nodes[format(Node::KEY_FORMAT, x + 1, y, z)]
+        top = @nodes[format(Node::KEY_FORMAT, x, y - 1, z)]
+        bottom = @nodes[format(Node::KEY_FORMAT, x, y + 1, z)]
+        # 3D
+        front = @nodes[format(Node::KEY_FORMAT, x, y, z - 1)]
+        back = @nodes[format(Node::KEY_FORMAT, x, y, z + 1)]
+
+        if remove_node
+          [left, right, top, bottom, front, back].remove_edge_node(node)
+        else
+          [left, right, top, bottom, front, back].add_edge_node(node)
         end
-
-        new(edges: edges)
       end
     end
   end
