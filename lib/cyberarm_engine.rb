@@ -42,6 +42,13 @@ require_relative "cyberarm_engine/console/command"
 require_relative "cyberarm_engine/console/subcommand"
 require_relative "cyberarm_engine/console/commands/help_command"
 
+require_relative "cyberarm_engine/pathfinding/graph"
+require_relative "cyberarm_engine/pathfinding/graphs/grid"
+require_relative "cyberarm_engine/pathfinding/graph_search"
+require_relative "cyberarm_engine/pathfinding/graph_searches/breadth_first_search"
+require_relative "cyberarm_engine/pathfinding/graph_searches/dijkstra_search"
+require_relative "cyberarm_engine/pathfinding/graph_searches/astar_search"
+
 require_relative "cyberarm_engine/ui/dsl"
 
 require_relative "cyberarm_engine/ui/theme"
