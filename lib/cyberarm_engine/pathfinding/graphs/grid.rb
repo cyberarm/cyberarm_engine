@@ -1,10 +1,9 @@
 module CyberarmEngine
   module Pathfinding
     class Grid < Graph
-
       def add_node(x:, y:, z: 0, cost: 0, replace: false)
         key = format(Node::KEY_FORMAT, x, y, z)
-        node = @node[key]
+        node = @nodes[key]
 
         raise "Node at: #{key} already exists! (#{node})" if node && !replace
 
@@ -12,6 +11,7 @@ module CyberarmEngine
         @nodes[key] = node
 
         update_node_edge_nodes(node)
+        node
       end
 
       def remove_node(node)
@@ -35,11 +35,17 @@ module CyberarmEngine
         front = @nodes[format(Node::KEY_FORMAT, x, y, z - 1)]
         back = @nodes[format(Node::KEY_FORMAT, x, y, z + 1)]
 
+        possible_edge_nodes = [left, right, top, bottom, front, back]
+
         if remove_node
-          [left, right, top, bottom, front, back].remove_edge_node(node)
+          possible_edge_nodes.each { |n| n&.remove_edge_node(node) }
         else
-          [left, right, top, bottom, front, back].add_edge_node(node)
+          possible_edge_nodes.each { |n| n&.add_edge_node(node) }
         end
+      end
+
+      def update_edge_nodes
+        @nodes.each { |k, n| update_node_edge_nodes(n) }
       end
     end
   end
