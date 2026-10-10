@@ -49,6 +49,15 @@ require_relative "cyberarm_engine/pathfinding/graph_searches/breadth_first_searc
 require_relative "cyberarm_engine/pathfinding/graph_searches/dijkstra_search"
 require_relative "cyberarm_engine/pathfinding/graph_searches/astar_search"
 
+require_relative "cyberarm_engine/ecs/entity"
+require_relative "cyberarm_engine/ecs/component"
+require_relative "cyberarm_engine/ecs/system"
+require_relative "cyberarm_engine/ecs/entity_store"
+require_relative "cyberarm_engine/ecs/components/position"
+require_relative "cyberarm_engine/ecs/components/velocity"
+require_relative "cyberarm_engine/ecs/components/render_2d"
+require_relative "cyberarm_engine/ecs/components/team"
+
 require_relative "cyberarm_engine/ui/dsl"
 
 require_relative "cyberarm_engine/ui/theme"
