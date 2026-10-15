@@ -53,6 +53,18 @@ module CyberarmEngine
     def gamepad_disconnected(index)
     end
 
+    def touch_began(touch)
+    end
+
+    def touch_moved(touch)
+    end
+
+    def touch_ended(touch)
+    end
+
+    def touch_cancelled(touch)
+    end
+
     def gain_focus
     end
 

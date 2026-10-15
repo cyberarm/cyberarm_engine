@@ -33,6 +33,9 @@ module CyberarmEngine
       @pending_element_recalculate_requests = []
       @hit_elements = []
 
+      @touch_down_position = {}
+      @min_touch_drag_distance = 50
+
       @needs_repaint = false
 
       @menu = nil
@@ -225,6 +228,31 @@ module CyberarmEngine
       @mouse_pos = @last_mouse_pos.clone
 
       @page&.update
+    end
+
+    def touch_began(touch)
+      @touch_down_position[touch.id] = touch
+    end
+
+    def touch_moved(touch)
+      # TODO: Support scrolling containers and dragging elements
+    end
+
+    def touch_ended(touch)
+      touch_down_pos = @touch_down_position[touch.id]
+      distance = Vector.new(touch_down_pos.x, touch_down_pos.y).distance(Vector.new(touch.x, touch.y))
+
+      # emulate mouse click
+      if distance < @min_touch_drag_distance
+        button_down(Gosu::MS_LEFT)
+        button_up(Gosu::MS_LEFT)
+      end
+
+      @touch_down_position.delete(touch.id)
+    end
+
+    def touch_cancelled(touch)
+      @touch_down_position.delete(touch.id)
     end
 
     def button_down(id)

@@ -143,6 +143,22 @@ module CyberarmEngine
       current_state&.gamepad_disconnected(index)
     end
 
+    def touch_began(touch)
+      current_state&.touch_began(touch)
+    end
+
+    def touch_moved(touch)
+      current_state&.touch_moved(touch)
+    end
+
+    def touch_ended(touch)
+      current_state&.touch_ended(touch)
+    end
+
+    def touch_cancelled(touch)
+      current_state&.touch_cancelled(touch)
+    end
+
     def gain_focus
       @has_focus = true
 
