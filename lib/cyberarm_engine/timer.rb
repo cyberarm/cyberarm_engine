@@ -16,8 +16,13 @@ module CyberarmEngine
         @last_interval = Gosu.milliseconds
         @triggered = true
 
-        @block.call if @block
+        @block.call(self) if @block
       end
+    end
+
+    def cancel
+      @looping = false
+      @triggered = true
     end
 
     def dead?
