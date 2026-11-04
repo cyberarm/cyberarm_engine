@@ -5,7 +5,7 @@ module CyberarmEngine
     include Common
 
     attr_accessor :x, :y, :z, :tip, :element_visible
-    attr_reader :parent, :options, :style, :event_handler, :background_canvas, :border_canvas
+    attr_reader :parent, :options, :style, :event_handler, :background_image_canvas, :background_canvas, :border_canvas
 
     def initialize(options = {}, block = nil)
       @parent = options.delete(:parent) # parent Container (i.e. flow/stack)
